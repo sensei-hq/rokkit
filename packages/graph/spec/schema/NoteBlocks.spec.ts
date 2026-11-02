@@ -64,4 +64,12 @@ describe('NoteBlocks', () => {
 
 		expect(kinds).toEqual(['P', 'UL'])
 	})
+
+	it('renders blocks already parsed — the rest of a split note', () => {
+		const { container } = render(NoteBlocks, {
+			blocks: [{ type: 'p', lines: [[{ code: false, text: 'second paragraph' }]] }]
+		})
+
+		expect(container.querySelector('p')?.textContent).toBe('second paragraph')
+	})
 })

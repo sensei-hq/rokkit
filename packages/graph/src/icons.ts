@@ -31,6 +31,13 @@ export const DEFAULT_ICONS: Record<string, string> = {
 	trigger: 'i-glyph:bolt',
 	/** A closed set of labels. */
 	enum: 'i-glyph:tag',
+	/** dbd v3. The collection has no sequence glyph; a number field is what one hands out. */
+	sequence: 'i-glyph:input-number',
+
+	// ─── design views ─────────────────────────────────────────────────────────
+	/** A schema groups objects, as a folder groups files. */
+	schema: 'i-glyph:folder',
+	database: 'i-glyph:database',
 
 	// ─── row badges ───────────────────────────────────────────────────────────
 	/** Identity constraint. The collection has no key glyph; `lock` is the closest. */

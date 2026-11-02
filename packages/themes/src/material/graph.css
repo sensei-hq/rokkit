@@ -621,3 +621,83 @@
   border: 1px solid var(--paper-edge);
 }
 
+/* ─── database-design views ─────────────────────────────────────────────── */
+
+[data-style='material'] [data-graph-design-page],
+[data-style='material'] [data-graph-design-sidebar] {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+[data-style='material'] [data-graph-design-head],
+[data-style='material'] [data-graph-design-sidebar],
+[data-style='material'] [data-graph-design-home],
+[data-style='material'] [data-graph-design-row],
+[data-style='material'] [data-graph-design-table] th,
+[data-style='material'] [data-graph-design-table] td,
+[data-style='material'] [data-graph-design-card],
+[data-style='material'] [data-graph-design-badge],
+[data-style='material'] [data-graph-design-stub],
+[data-style='material'] [data-graph-design-chip],
+[data-style='material'] [data-graph-design-search] {
+  border-color: var(--paper-edge);
+}
+
+[data-style='material'] [data-graph-design-schema],
+[data-style='material'] [data-graph-design-stats],
+[data-style='material'] [data-graph-design-lead],
+[data-style='material'] [data-graph-design-count],
+[data-style='material'] [data-graph-design-empty],
+[data-style='material'] [data-graph-design-muted],
+[data-style='material'] [data-graph-design-verb],
+[data-style='material'] [data-graph-design-ordinal],
+[data-style='material'] [data-graph-design-row-icon],
+[data-style='material'] [data-graph-design-card-icon],
+[data-style='material'] [data-graph-design-card-label],
+[data-style='material'] [data-graph-design-table] th,
+[data-style='material'] [data-graph-design-chip] {
+  color: var(--ink-mute);
+}
+
+[data-style='material'] [data-graph-design-row],
+[data-style='material'] [data-graph-design-link],
+[data-style='material'] [data-graph-design-strong],
+[data-style='material'] [data-graph-design-card-count],
+[data-style='material'] [data-graph-design-home] {
+  color: var(--ink);
+}
+
+[data-style='material'] [data-graph-design-body] {
+  background-color: var(--paper-soft);
+}
+
+[data-style='material'] [data-graph-design-card],
+[data-style='material'] [data-graph-design-search] {
+  background-color: var(--paper);
+}
+
+[data-style='material'] [data-graph-design-badge],
+[data-style='material'] [data-graph-design-stub] {
+  background-color: var(--paper-mute);
+  color: var(--ink);
+}
+
+[data-style='material'] button[data-graph-design-row]:hover,
+[data-style='material'] [data-graph-design-home]:hover {
+  background-color: var(--paper-mute);
+}
+
+[data-style='material'] [data-graph-design-home][data-active],
+[data-style='material'] [data-graph-design-chip][aria-pressed='true'] {
+  background-color: var(--paper-mute);
+  color: var(--ink);
+}
+
+[data-style='material'] [data-graph-design-search] {
+  color: var(--ink);
+}
+
+[data-style='material'] [data-graph-design-search]:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -1px;
+}

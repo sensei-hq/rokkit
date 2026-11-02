@@ -80,3 +80,14 @@ export function noteBlocks(src?: string): Block[] {
 
 	return out
 }
+
+/**
+ * A note split for a header: its first block as plain text (the subtitle), and every block
+ * after it (the rest, for a page with room). Split on blocks, not lines, so a paragraph that
+ * wraps across lines in the source is never cut in two.
+ */
+export function splitLead(src?: string): { lead?: string; rest: Block[] } {
+	const [first, ...rest] = noteBlocks(src)
+	if (!first) return { rest: [] }
+	return { lead: first.lines[0].map((seg) => seg.text).join(''), rest }
+}

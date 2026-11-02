@@ -483,3 +483,66 @@ describe('graph theme CSS — the scroll extent (#171)', () => {
 		expect(rules.some((r) => /overflow:\s*hidden/.test(r) && /position:\s*relative/.test(r))).toBe(true)
 	})
 })
+
+describe('graph theme CSS — the database-design views', () => {
+	it('lays the views out in base: a page that fills its box, a scrolling body, a sidebar column', () => {
+		const page = rulesFor('base/graph.css', '[data-graph-design-page]')
+		expect(page.some((r) => /flex-direction:\s*column/.test(r) && /min-height:\s*0/.test(r))).toBe(
+			true
+		)
+		expect(
+			rulesFor('base/graph.css', '[data-graph-design-body]').some((r) => /overflow:\s*auto/.test(r))
+		).toBe(true)
+		expect(
+			rulesFor('base/graph.css', '[data-graph-design-cards]').some((r) => /display:\s*grid/.test(r))
+		).toBe(true)
+		expect(
+			rulesFor('base/graph.css', '[data-graph-design-sidebar]').some((r) =>
+				/flex-direction:\s*column/.test(r)
+			)
+		).toBe(true)
+	})
+
+	it('draws the sidebar border on the edge it faces the page from, in base', () => {
+		expect(
+			rulesFor('base/graph.css', "[data-graph-design-sidebar][data-side='left']").some((r) =>
+				/border-right-width/.test(r)
+			)
+		).toBe(true)
+		expect(
+			rulesFor('base/graph.css', "[data-graph-design-sidebar][data-side='right']").some((r) =>
+				/border-left-width/.test(r)
+			)
+		).toBe(true)
+	})
+
+	it('puts no colour in base — colour is each style’s', () => {
+		const offenders = declarations('base/graph.css')
+			.split('}')
+			.filter((r) => r.includes('[data-graph-design'))
+			.filter((r) => /(^|[;{\s])(color|background-color|border-color):/.test(r))
+		expect(offenders).toEqual([])
+	})
+
+	it.each(STYLES)(
+		'%s colours the design views from tokens — paper, ink and their edges',
+		(style) => {
+			const css = declarations(`${style}/graph.css`)
+			for (const hook of [
+				'[data-graph-design-page]',
+				'[data-graph-design-sidebar]',
+				'[data-graph-design-row]',
+				'[data-graph-design-empty]',
+				'[data-graph-design-card]',
+				"[data-graph-design-chip][aria-pressed='true']"
+			]) {
+				expect(css, `${style} / ${hook}`).toContain(`[data-style='${style}'] ${hook}`)
+			}
+			const design = css.split('}').filter((r) => r.includes('[data-graph-design'))
+			expect(
+				design.filter((r) => /#[0-9a-f]{3,8}\b|rgba?\(|oklch\(/i.test(r)),
+				style
+			).toEqual([])
+		}
+	)
+})

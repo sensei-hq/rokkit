@@ -73,6 +73,12 @@ describe('default icons', () => {
 		expect(new Set(badges).size).toBe(4)
 	})
 
+	it('names a sequence, a schema and a database — the design views wear them', () => {
+		expect(DEFAULT_ICONS.sequence).toBe('i-glyph:input-number')
+		expect(DEFAULT_ICONS.schema).toBe('i-glyph:folder')
+		expect(DEFAULT_ICONS.database).toBe('i-glyph:database')
+	})
+
 	it('ships a fallback for an unknown kind', () => {
 		expect(DEFAULT_ICONS.fallback).toBeTruthy()
 	})

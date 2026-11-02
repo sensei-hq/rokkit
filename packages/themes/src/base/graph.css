@@ -733,6 +733,357 @@
   font-size: 0.85em;
 }
 
+/* ─── database-design views ─────────────────────────────────────────────────
+   ContentHeader, OverviewView, TableView, ObjectView, EnumView, SchemaSidebar. Structure only;
+   each style colours them. A page fills the box its host gives it: the head keeps its height,
+   the body (or the active tab's panel) takes the rest and scrolls. */
+
+[data-graph-design-page] {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+[data-graph-design-missing] {
+  align-items: center;
+  justify-content: center;
+}
+
+[data-graph-design-page] > [data-tabs] {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+[data-graph-design-page] > [data-tabs] > [data-tabs-panel][data-panel-active] {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  position: relative;
+  min-height: 0;
+}
+
+[data-graph-design-head] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem 1.5rem 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+[data-graph-design-page] > [data-graph-design-head] {
+  padding-bottom: 0.75rem;
+}
+
+[data-graph-design-heading] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+
+[data-graph-design-name] {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+[data-graph-design-title] {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-graph-design-schema] {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875rem;
+}
+
+[data-graph-design-stats] {
+  margin-left: auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+[data-graph-design-lead] {
+  max-width: 42rem;
+  font-size: 0.875rem;
+}
+
+[data-graph-design-badge],
+[data-graph-design-stub] {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+[data-graph-design-body] {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+[data-graph-design-body] > [data-graph-section] + [data-graph-section] {
+  margin-top: 2rem;
+}
+
+[data-graph-design-body] [data-graph-section-title] {
+  margin-bottom: 0.75rem;
+}
+
+[data-graph-design-line] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+[data-graph-design-cards] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+[data-graph-design-card] {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.5rem 0.375rem;
+  padding: 0.75rem 1rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.5rem;
+}
+
+[data-graph-design-card-icon] {
+  grid-column: 1 / -1;
+  font-size: 1.125rem;
+}
+
+[data-graph-design-card-count] {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+[data-graph-design-card-label] {
+  font-size: 0.75rem;
+}
+
+[data-graph-design-scroll] {
+  overflow-x: auto;
+}
+
+[data-graph-design-table] {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+}
+
+/* Six columns: below this the table scrolls sideways rather than squeezing every cell to a
+   few characters a line. */
+[data-graph-design-fields] {
+  min-width: 56rem;
+}
+
+[data-graph-design-table] th {
+  padding: 0.625rem 1rem 0.625rem 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+[data-graph-design-table] td {
+  padding: 0.625rem 1rem 0.625rem 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+[data-graph-design-table] [data-cell='name'] {
+  font-weight: 600;
+}
+
+[data-graph-design-table] [data-cell='notes'] {
+  min-width: 14rem;
+  font-family: var(--font-body, inherit);
+}
+
+[data-graph-design-table] [data-graph-column-badges] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+[data-graph-design-list] {
+  display: flex;
+  flex-direction: column;
+  max-width: 56rem;
+}
+
+[data-graph-design-row] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  font: inherit;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+[data-graph-design-row]:last-child {
+  border-bottom-width: 0;
+}
+
+button[data-graph-design-row] {
+  cursor: pointer;
+}
+
+[data-graph-design-row][data-unresolved] {
+  opacity: 0.6;
+}
+
+[data-graph-design-verb] {
+  margin-left: auto;
+}
+
+[data-graph-design-ordinal] {
+  min-width: 1.5rem;
+  text-align: right;
+}
+
+[data-graph-design-strong] {
+  font-weight: 600;
+}
+
+[data-graph-design-link] {
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+[data-graph-design-table] [data-graph-design-link] {
+  display: block;
+  max-width: 100%;
+}
+
+[data-graph-design-link]:hover {
+  text-decoration: underline;
+}
+
+[data-graph-design-empty] {
+  font-size: 0.875rem;
+}
+
+[data-graph-design-header] [data-tabs] {
+  margin-top: 0.5rem;
+}
+
+/* The sidebar is a column the host places; its border faces the page whichever side it is on. */
+[data-graph-design-sidebar] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+[data-graph-design-sidebar][data-side='left'] {
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+[data-graph-design-sidebar][data-side='right'] {
+  border-left-width: 1px;
+  border-left-style: solid;
+}
+
+[data-graph-design-home] {
+  padding: 0.75rem 1rem;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+[data-graph-design-search-box] {
+  padding: 0.75rem 0.75rem 0.5rem;
+}
+
+[data-graph-design-search] {
+  width: 100%;
+  padding: 0.375rem 0.625rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.375rem;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+[data-graph-design-chips] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0 0.75rem 0.5rem;
+}
+
+[data-graph-design-chip] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  cursor: pointer;
+}
+
+[data-graph-design-chip-count] {
+  opacity: 0.7;
+}
+
+[data-graph-design-tree] {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 0.5rem 1rem;
+}
+
+[data-graph-design-tree] [data-graph-design-empty] {
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+}
+
 /* ─── named diagrams: canvas, overlay, footer ───────────────────────────────
    A diagram is a canvas with controls over it and a key under it. The canvas takes the space
    the footer leaves rather than being overlaid by it — a legend that covers the picture it

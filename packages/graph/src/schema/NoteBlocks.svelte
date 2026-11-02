@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { noteBlocks } from './notes.js'
+	import type { Block } from './notes.js'
 
-	let { note }: { note?: string } = $props()
+	/** A note's source, or blocks already parsed — the rest of a note `splitLead` divided. */
+	let { note, blocks: parsed }: { note?: string; blocks?: Block[] } = $props()
 
-	const blocks = $derived(noteBlocks(note))
+	const blocks = $derived(parsed ?? noteBlocks(note))
 </script>
 
 {#snippet segs(parts: ReturnType<typeof noteBlocks>[number]['lines'][number])}

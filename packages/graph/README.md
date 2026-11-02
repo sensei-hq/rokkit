@@ -48,7 +48,7 @@ vocabulary lives entirely in the optional `./schema` entry point.
 | Import | Contains |
 |--------|----------|
 | `@rokkit/graph` | `Graph`, `GraphState`, layouts, presets, `normalizeGraph`, `DEFAULT_ICONS`, `appliesTo`, types |
-| `@rokkit/graph/schema` | `EntityView`, `EntitiesView`, `NoteBlocks`, `fromSchemaModel`, `toGraphInput`, `SCHEMA_FIELDS`, `DEPS_FIELDS` |
+| `@rokkit/graph/schema` | `EntityView`, `EntitiesView`, `NoteBlocks`, `fromSchemaModel`, `toGraphInput`, `SCHEMA_FIELDS`, `DEPS_FIELDS`; the design viewer — `ContentHeader`, `OverviewView`, `DiagramView`, `SchemaSidebar`, `TableView`, `ObjectView`, `EnumView` and their helpers |
 | `@rokkit/graph/icons` | `DEFAULT_ICONS` alone, with no Svelte imports — for your UnoCSS safelist |
 
 ## Named diagrams
@@ -134,6 +134,27 @@ import { toGraphInput } from '@rokkit/graph/schema'
 
 const er = toGraphInput(model, 'er')             // tables + refs
 const deps = toGraphInput(model, 'dependencies') // tables + entities, deps as edges
+```
+
+## The database-design viewer
+
+`@rokkit/graph/schema` also carries dbd's design viewer as views a host composes. Each reads one
+dbd-shaped `DesignModel` (`tables` and `refs`, the rest optional) and renders an empty state for
+whatever the model does not carry:
+
+| View | Shows |
+| --- | --- |
+| `ContentHeader` | name, dialect, `6 tables · 1 enum · 5 refs`, tabs (Overview, Diagram, Entities; pass `tabs` to add one) |
+| `OverviewView` | the dialect, a card per kind the design has, the schemas table |
+| `DiagramView` | `ErDiagram` over tables, refs and stubs, with its controls and schema legend |
+| `SchemaSidebar` | search, kind chips, the schemas as a `Tree`; `side="left" \| "right"` |
+| `TableView` / `ObjectView` / `EnumView` | one object's page; `pageFor(model, key)` says which |
+
+```svelte
+<SchemaSidebar {model} bind:value={selected} side="right" />
+{#if pageFor(model, selected) === 'table'}
+  <TableView {model} entityKey={selected} onselect={(key) => (selected = key)} />
+{/if}
 ```
 
 ## Imports against shared commits

@@ -248,6 +248,15 @@ describe('sidebar tree', () => {
 		expect(tree[0].children?.map((n) => n.label)).toEqual(['auth'])
 	})
 
+	it('drops a module whose entities the filter hides, rather than an empty group', () => {
+		const model = {
+			...ER_ONLY,
+			modules: [{ name: 'core' }],
+			tables: ER_ONLY.tables.map((t) => (t.schema === 'auth' ? { ...t, module: 'core' } : t))
+		}
+		expect(sidebarTree(model, { query: 'order' }).map((n) => n.label)).toEqual(['shop'])
+	})
+
 	it('never gives a group the value of an entity', () => {
 		const groups = sidebarTree(DESIGN).map((n) => n.value)
 		expect(groups.some((v) => allEntities(DESIGN).some((e) => e.key === v))).toBe(false)

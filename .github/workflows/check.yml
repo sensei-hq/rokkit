@@ -46,7 +46,8 @@ jobs:
     # Real-Chromium component specs (packages/*/browser) — the behaviour JSDOM cannot express:
     # layout, hit-testing, focusout on removal. Not part of `bun run check` (kept browser-free),
     # so without this job they rotted unnoticed through the vitest 4 upgrade.
-    runs-on: ubuntu-latest
+    # ubuntu-24.04, not -latest: Playwright cannot install Chromium on ubuntu 26.04 (Oct 2026).
+    runs-on: ubuntu-24.04
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:

@@ -23,7 +23,12 @@ const NOT_A_HOOK = new Set([
 	'data-style',
 	// A generic selected-state marker shared across the design system's controls, not a
 	// graph-specific hook — documenting it here would imply it is ours.
-	'data-selected'
+	'data-selected',
+	// Tabs' own hooks: a design page lets its active panel fill the page, but the attributes
+	// belong to @rokkit/ui's Tabs, not to graph.
+	'data-tabs',
+	'data-tabs-panel',
+	'data-panel-active'
 ])
 
 describe('graph demo meta', () => {

@@ -228,3 +228,26 @@ on, the verb is what you theme and label with.
 An edge whose endpoint does not resolve — a call to a built-in like `round()` — is **kept and
 dimmed, never dropped**. dbd flags the same case `unresolved` and gives the same instruction:
 *"the edge is real, the endpoint is not placeable."*
+
+### The design viewer
+
+`@rokkit/graph/schema` also carries dbd's design viewer as views a host composes. Each reads one
+dbd-shaped `DesignModel` (`tables` and `refs`, the rest optional) and renders an empty state for
+whatever the model does not carry:
+
+| View | Shows |
+| --- | --- |
+| `ContentHeader` | name, dialect, `6 tables · 1 enum · 5 refs`, tabs (Overview, Diagram, Entities; pass `tabs` to add one) |
+| `OverviewView` | the dialect, a card per kind the design has, the schemas table |
+| `DiagramView` | `ErDiagram` over tables, refs and stubs, with its controls and schema legend |
+| `SchemaSidebar` | search, kind chips, the schemas as a `Tree`; `side="left" \| "right"` |
+| `TableView` / `ObjectView` / `EnumView` | one object's page; `pageFor(model, key)` says which |
+
+```svelte
+<SchemaSidebar {model} bind:value={selected} side="right" />
+{#if pageFor(model, selected) === 'table'}
+  <TableView {model} entityKey={selected} onselect={(key) => (selected = key)} />
+{/if}
+```
+
+Pick **View → Design viewer** on a schema diagram to see them composed, with the sidebar on the right.

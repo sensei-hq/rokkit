@@ -9,7 +9,7 @@
 
 import { registry, type DiagramId } from './registry'
 
-export type GraphViewId = 'diagram' | 'entity' | 'entities'
+export type GraphViewId = 'diagram' | 'entity' | 'entities' | 'design'
 export type ChannelId = 'color' | 'pattern'
 
 class GraphExplorerStore {

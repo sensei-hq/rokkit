@@ -10966,3 +10966,22 @@ visitor's own Ollama.
   rejection failed `bun run bump` (2026-10-28). A failing folder now rejects (spec).
 - (2026-10-29) Families' dark `paper-edge` → the surface's 200 (L 0.25 on warm sumi), one step above
   paper-soft: at 300 sensei still read every divider as prominent. Light stays 400.
+
+## 2026-11-02 — graph/schema: dbd's database-design viewer
+
+dbd's site and sensei's app (Diagrams · Database · ER, sidebar on the right) now compose the same
+viewer from `@rokkit/graph/schema`. Ported from dbd `site/src/lib/design`, duck-typed to its
+`SchemaModel` as `DesignModel` (only `tables` + `refs` required; every other half optional, and a
+view whose data is absent says so rather than inventing it):
+
+- Views: `ContentHeader` (name, dialect, counts line, Overview | Diagram | Entities — a host
+  passes `tabs` to add a changelog later), `OverviewView`, `DiagramView` (ErDiagram over tables,
+  refs and stubs, with its controls and legend), `SchemaSidebar` (search, kind chips via
+  `choices`, the schemas as a rokkit `Tree`, `side="left|right"`), `TableView` (dbd's table page:
+  fields table with PK/FK/NN/UNIQUE/ENUM/IDENTITY/GENERATED, default, references, notes; refs
+  in/out; dependents; indexes; checks; Details | Diagram), `ObjectView`, `EnumView`.
+- Pure helpers with specs: `entities.ts` (`allEntities`, `entityAt`, `kindCounts`, `pageFor`),
+  `overview.ts`, `sidebar.ts`, `details.ts`, `splitLead`.
+- `EntityView` keeps its GraphState API (learn and sensei use it); dbd's table page is `TableView`.
+- Words in `messages.graph`; presses through `interactions`; colour per style from tokens
+  (`graph-css.spec.js` guards both). Learn: View → Design viewer on the schema diagrams.

@@ -618,6 +618,107 @@ const meta: DemoMeta = {
 				selector: '[data-graph-relationships-empty]',
 				desc: 'Shown when nothing references the entity'
 			},
+			// Database-design views (ContentHeader, OverviewView, DiagramView, SchemaSidebar,
+			// TableView, ObjectView, EnumView)
+			{
+				selector: '[data-graph-design-page]',
+				desc: 'A design view’s root — fills the box its host gives it'
+			},
+			{
+				selector: '[data-graph-design-missing]',
+				desc: 'The page shown for a key the design does not carry'
+			},
+			{
+				selector: '[data-graph-design-head]',
+				desc: 'Page head: the qualified name and its badges'
+			},
+			{
+				selector: '[data-graph-design-header]',
+				desc: 'ContentHeader root — the design’s own head, with its tabs'
+			},
+			{ selector: '[data-graph-design-heading]', desc: 'The title line inside a head' },
+			{
+				selector: '[data-graph-design-name]',
+				desc: 'Schema prefix and title, kept on one baseline'
+			},
+			{ selector: '[data-graph-design-schema]', desc: 'The `schema.` lead-in to an object’s name' },
+			{ selector: '[data-graph-design-title]', desc: 'The design’s or object’s name' },
+			{
+				selector: '[data-graph-design-stats]',
+				desc: 'ContentHeader counts line — tables · enums · refs'
+			},
+			{ selector: '[data-graph-design-lead]', desc: 'The first paragraph of the design note' },
+			{
+				selector: '[data-graph-design-badge]',
+				desc: 'A pill in a head or row: kind, counts, dialect'
+			},
+			{
+				selector: '[data-graph-design-stub]',
+				desc: 'Marks a reference whose target is a stub (external, out of scope, unresolved)'
+			},
+			{ selector: '[data-graph-design-body]', desc: 'The scrolling body of a page' },
+			{
+				selector: '[data-graph-section]',
+				desc: 'One section of a page, named: info | fields | references | dependencies | indexes | checks | uses | used-by | values | counts | notes | schemas'
+			},
+			{ selector: '[data-graph-design-count]', desc: 'The `· n` after a section title' },
+			{
+				selector: '[data-graph-design-line]',
+				desc: 'OverviewView’s dialect and model-version line'
+			},
+			{ selector: '[data-graph-design-cards]', desc: 'OverviewView’s grid of count cards' },
+			{ selector: '[data-graph-design-card]', desc: 'One count card, keyed by what it counts' },
+			{ selector: '[data-graph-design-card-icon]', desc: 'The card’s kind icon' },
+			{ selector: '[data-graph-design-card-count]', desc: 'The card’s number' },
+			{ selector: '[data-graph-design-card-label]', desc: 'The card’s label' },
+			{
+				selector: '[data-graph-design-scroll]',
+				desc: 'Scrolls a wide table sideways rather than squeezing it'
+			},
+			{ selector: '[data-graph-design-table]', desc: 'The fields table and the schemas table' },
+			{ selector: '[data-graph-design-fields]', desc: 'The fields table — scrolls sideways below its minimum width' },
+			{
+				selector: '[data-cell]',
+				desc: 'A fields-table cell: name | type | settings | default | refs | notes'
+			},
+			{
+				selector: '[data-graph-design-list]',
+				desc: 'A list of rows: references, dependencies, values, columns'
+			},
+			{ selector: '[data-graph-design-row]', desc: 'One row in a list' },
+			{
+				selector: '[data-unresolved]',
+				desc: 'A dependency whose target the design does not describe — dimmed, never dropped'
+			},
+			{ selector: '[data-graph-design-row-icon]', desc: 'A row’s kind icon' },
+			{ selector: '[data-graph-design-link]', desc: 'A name that opens its object' },
+			{
+				selector: '[data-graph-design-strong]',
+				desc: 'A name that cannot be opened, or the emphasised part of one'
+			},
+			{
+				selector: '[data-graph-design-verb]',
+				desc: 'reads | writes | calls | member, or a key’s referential action'
+			},
+			{ selector: '[data-graph-design-ordinal]', desc: 'An enum value’s position' },
+			{ selector: '[data-graph-design-muted]', desc: 'An absent value — the `—` in a cell' },
+			{ selector: '[data-graph-design-empty]', desc: 'What a view says when its data is absent' },
+			{ selector: '[data-graph-design-sidebar]', desc: 'SchemaSidebar root' },
+			{
+				selector: '[data-side]',
+				desc: 'left | right — the edge the host placed the sidebar on; its border faces the page'
+			},
+			{ selector: '[data-graph-design-home]', desc: 'The design’s own row, heading the sidebar' },
+			{ selector: '[data-active]', desc: 'On the home row while no object is selected' },
+			{ selector: '[data-graph-design-search-box]', desc: 'Wraps the sidebar search' },
+			{ selector: '[data-graph-design-search]', desc: 'The “Find an entity…” input' },
+			{ selector: '[data-graph-design-chips]', desc: 'The kind filter' },
+			{
+				selector: '[data-graph-design-chip]',
+				desc: 'One kind’s chip — aria-pressed while the kind is shown'
+			},
+			{ selector: '[data-graph-design-chip-count]', desc: 'The kind’s count on its chip' },
+			{ selector: '[data-graph-design-tree]', desc: 'Scrolls the sidebar’s Tree' },
 			// Notes
 			{ selector: '[data-graph-note]', desc: 'Rendered note blocks' },
 			{ selector: '[data-graph-note-list]', desc: 'Bullet list inside a note' },

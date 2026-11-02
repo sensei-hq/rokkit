@@ -4,7 +4,7 @@
   "description": "A minimal icon set for use in Rokkit applications.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrythomas/rokkit.git"
+    "url": "git+https://github.com/sensei-hq/rokkit.git"
   },
   "author": "Jerry Thomas <me@jerrythomas.name>",
   "exports": {

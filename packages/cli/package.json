@@ -4,7 +4,7 @@
   "description": "Command line utilities for icon bundling and conversion.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrythomas/rokkit.git"
+    "url": "git+https://github.com/sensei-hq/rokkit.git"
   },
   "author": "Jerry Thomas <me@jerrythomas.name>",
   "license": "MIT",

@@ -53,7 +53,7 @@ describe('convert module', () => {
 			expect(config.package).toEqual({
 				namespace: '@rokkit',
 				version: '1.0.0-test',
-				homepage: 'https://github.com/jerrythomas/rokkit'
+				homepage: 'https://github.com/sensei-hq/rokkit'
 			})
 			expect(config.app.color).toBe(false)
 			expect(config.web.color).toBe(true)
@@ -164,7 +164,7 @@ describe('convert module', () => {
 			const packageJson = readJSON(packageJsonPath)
 			expect(packageJson.name).toBe('@rokkit/app')
 			expect(packageJson.version).toBe('1.0.0-test')
-			expect(packageJson.homepage).toBe('https://github.com/jerrythomas/rokkit')
+			expect(packageJson.homepage).toBe('https://github.com/sensei-hq/rokkit')
 		})
 
 		it('creates the target directory when it does not exist', async () => {

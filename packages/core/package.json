@@ -4,7 +4,7 @@
   "description": "Contains core utility functions and classes that can be used in various components.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrythomas/rokkit.git"
+    "url": "git+https://github.com/sensei-hq/rokkit.git"
   },
   "author": "Jerry Thomas <me@jerrythomas.name>",
   "license": "MIT",

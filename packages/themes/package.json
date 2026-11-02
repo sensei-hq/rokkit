@@ -4,7 +4,7 @@
   "description": "Theme styles for @rokkit/ui components",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrythomas/rokkit.git"
+    "url": "git+https://github.com/sensei-hq/rokkit.git"
   },
   "type": "module",
   "main": "./src/index.js",

@@ -43,7 +43,7 @@
 	<section>
 		<header>Link</header>
 		<div class="row">
-			<Button {...spread} href="https://github.com/jerrythomas/rokkit" target="_blank">
+			<Button {...spread} href="https://github.com/sensei-hq/rokkit" target="_blank">
 				Repo on GitHub
 			</Button>
 		</div>

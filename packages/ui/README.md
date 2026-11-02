@@ -158,4 +158,4 @@ Components use `data-*` attribute selectors for styling (e.g., `[data-list-item]
 
 ---
 
-Part of [Rokkit](https://github.com/jerrythomas/rokkit) — a Svelte 5 component library and design system.
+Part of [Rokkit](https://github.com/sensei-hq/rokkit) — a Svelte 5 component library and design system.

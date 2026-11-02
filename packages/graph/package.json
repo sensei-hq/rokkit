@@ -4,7 +4,7 @@
 	"description": "Node-link diagram components \u2014 pluggable layouts, ER/schema views",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/jerrythomas/rokkit.git"
+		"url": "git+https://github.com/sensei-hq/rokkit.git"
 	},
 	"author": "Jerry Thomas <me@jerrythomas.name>",
 	"license": "MIT",

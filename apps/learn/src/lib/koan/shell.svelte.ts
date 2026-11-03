@@ -26,6 +26,7 @@ export type ShellDemoType =
 	| 'stepper'
 	| 'button'
 	| 'badge'
+	| 'stat-card'
 	| 'pill'
 	| 'avatar'
 	| 'divider'

@@ -3,8 +3,10 @@
 	 * A design at a glance: its dialect, a card for each kind it has — counted and iconed the
 	 * way the diagram draws each kind — the rest of its note, and the same counts per schema.
 	 *
-	 * A count or column the model does not carry is left out, never shown as 0.
+	 * A count or column the model does not carry is left out, never shown as 0. A host that shows
+	 * the counts elsewhere (its own header) turns them off with `counts={false}`.
 	 */
+	import { StatCard } from '@rokkit/ui'
 	import NoteBlocks from './NoteBlocks.svelte'
 	import { databaseLabel, overviewCounts, schemaRows } from './overview.js'
 	import { splitLead } from './notes.js'
@@ -12,7 +14,11 @@
 	import { DEFAULT_ICONS } from '../icons.js'
 	import { say } from '../messages.js'
 
-	let { model, class: className = '' }: { model: DesignModel; class?: string } = $props()
+	let {
+		model,
+		counts: showCounts = true,
+		class: className = ''
+	}: { model: DesignModel; counts?: boolean; class?: string } = $props()
 
 	const counts = $derived(overviewCounts(model))
 	const schemas = $derived(schemaRows(model))
@@ -26,30 +32,28 @@
 
 <div data-graph-design-page data-graph-design-overview class={className}>
 	<div data-graph-design-body>
-		<section data-graph-section="counts">
-			<h2 data-graph-section-title>{say('atAGlance')}</h2>
-			{#if dialect || model.version}
-				<p data-graph-design-line>
-					{#if dialect}
-						<span data-graph-design-row-icon class={DEFAULT_ICONS.database} aria-hidden="true"
-						></span>
-						<span data-graph-design-dialect>{dialect}</span>
-					{/if}
-					{#if model.version}<span data-graph-design-badge data-graph-design-version
-							>{say('modelVersion', { n: model.version })}</span
-						>{/if}
-				</p>
-			{/if}
-			<div data-graph-design-cards>
-				{#each counts as c (c.key)}
-					<div data-graph-design-card={c.key}>
-						<span data-graph-design-card-icon class={c.icon} aria-hidden="true"></span>
-						<span data-graph-design-card-count>{c.count}</span>
-						<span data-graph-design-card-label>{c.label}</span>
-					</div>
-				{/each}
-			</div>
-		</section>
+		{#if showCounts}
+			<section data-graph-section="counts">
+				<h2 data-graph-section-title>{say('atAGlance')}</h2>
+				{#if dialect || model.version}
+					<p data-graph-design-line>
+						{#if dialect}
+							<span data-graph-design-row-icon class={DEFAULT_ICONS.database} aria-hidden="true"
+							></span>
+							<span data-graph-design-dialect>{dialect}</span>
+						{/if}
+						{#if model.version}<span data-graph-design-badge data-graph-design-version
+								>{say('modelVersion', { n: model.version })}</span
+							>{/if}
+					</p>
+				{/if}
+				<div data-stat-cards>
+					{#each counts as c (c.key)}
+						<StatCard label={c.label} value={c.count} icon={c.icon} data-graph-design-card={c.key} />
+					{/each}
+				</div>
+			</section>
+		{/if}
 
 		{#if rest.length}
 			<section data-graph-section="notes">

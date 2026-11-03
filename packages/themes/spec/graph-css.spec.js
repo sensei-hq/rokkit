@@ -494,9 +494,6 @@ describe('graph theme CSS — the database-design views', () => {
 			rulesFor('base/graph.css', '[data-graph-design-body]').some((r) => /overflow:\s*auto/.test(r))
 		).toBe(true)
 		expect(
-			rulesFor('base/graph.css', '[data-graph-design-cards]').some((r) => /display:\s*grid/.test(r))
-		).toBe(true)
-		expect(
 			rulesFor('base/graph.css', '[data-graph-design-sidebar]').some((r) =>
 				/flex-direction:\s*column/.test(r)
 			)
@@ -533,7 +530,6 @@ describe('graph theme CSS — the database-design views', () => {
 				'[data-graph-design-sidebar]',
 				'[data-graph-design-row]',
 				'[data-graph-design-empty]',
-				'[data-graph-design-card]',
 				"[data-graph-design-chip][aria-pressed='true']"
 			]) {
 				expect(css, `${style} / ${hook}`).toContain(`[data-style='${style}'] ${hook}`)

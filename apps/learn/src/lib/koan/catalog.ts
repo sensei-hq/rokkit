@@ -19,6 +19,7 @@ import datePicker from './demos/date-picker/meta'
 import stepper from './demos/stepper/meta'
 import button from './demos/button/meta'
 import badge from './demos/badge/meta'
+import statCard from './demos/stat-card/meta'
 import pill from './demos/pill/meta'
 import avatar from './demos/avatar/meta'
 import divider from './demos/divider/meta'
@@ -77,6 +78,7 @@ export const catalog: DemoMeta[] = [
 	stepper,
 	button,
 	badge,
+	statCard,
 	pill,
 	avatar,
 	divider,
@@ -162,6 +164,7 @@ export const DEMO_ROUTE: Record<string, string> = {
 	stepper: '/app/stepper',
 	button: '/app/button',
 	badge: '/app/badge',
+	'stat-card': '/app/stat-card',
 	pill: '/app/pill',
 	avatar: '/app/avatar',
 	divider: '/app/divider',

@@ -145,9 +145,9 @@ whatever the model does not carry:
 | View | Shows |
 | --- | --- |
 | `ContentHeader` | name, dialect, `6 tables · 1 enum · 5 refs`, tabs (Overview, Diagram, Entities; pass `tabs` to add one) |
-| `OverviewView` | the dialect, a card per kind the design has, the schemas table |
+| `OverviewView` | the dialect, a `StatCard` per kind the design has, the schemas table; `counts={false}` leaves the cards to a host that shows them elsewhere |
 | `DiagramView` | `ErDiagram` over tables, refs and stubs, with its controls and schema legend |
-| `SchemaSidebar` | search, kind chips, the schemas as a `Tree`; `side="left" \| "right"` |
+| `SchemaSidebar` | search, kind chips, the schemas as a `Tree`; `side="left" \| "right"`; `home={false}` drops the design-name row when the host's page already heads it |
 | `TableView` / `ObjectView` / `EnumView` | one object's page; `pageFor(model, key)` says which |
 
 ```svelte

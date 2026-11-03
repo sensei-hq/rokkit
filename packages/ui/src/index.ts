@@ -52,6 +52,7 @@ export {
 	Divider,
 	Stack,
 	Badge,
+	StatCard,
 	Avatar,
 	Tooltip,
 	NavContent,

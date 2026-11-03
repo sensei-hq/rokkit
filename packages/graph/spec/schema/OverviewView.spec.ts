@@ -6,7 +6,7 @@ import { DESIGN, ER_ONLY } from './design-fixture.js'
 const cards = (root: HTMLElement) =>
 	[...root.querySelectorAll('[data-graph-design-card]')].map(
 		(c) =>
-			`${c.getAttribute('data-graph-design-card')}:${c.textContent?.replace(/\s+/g, ' ').trim()}`
+			`${c.getAttribute('data-graph-design-card')}:${c.querySelector('[data-stat-card-value]')?.textContent} ${c.querySelector('[data-stat-card-label]')?.textContent}`
 	)
 
 describe('OverviewView', () => {
@@ -33,13 +33,19 @@ describe('OverviewView', () => {
 		])
 	})
 
-	it('wears each kind its icon', () => {
+	it('draws each count as a stat card wearing its kind’s icon', () => {
 		const { container } = render(OverviewView, { model: DESIGN })
+		const view = container.querySelector('[data-graph-design-card="view"]')
 
-		expect(
-			container.querySelector('[data-graph-design-card="view"] [data-graph-design-card-icon]')
-				?.className
-		).toBe('i-glyph:split-view')
+		expect(view?.matches('[data-stat-card]')).toBe(true)
+		expect(view?.querySelector('[data-stat-card-icon]')?.className).toBe('i-glyph:split-view')
+	})
+
+	it('leaves the counts out when the host shows them elsewhere', () => {
+		const { container } = render(OverviewView, { model: DESIGN, counts: false })
+
+		expect(container.querySelector('[data-graph-section="counts"]')).toBeNull()
+		expect(container.querySelectorAll('[data-graph-design-schema-row]')).toHaveLength(2)
 	})
 
 	it('tables the schemas with their tables, enums and views & routines', () => {

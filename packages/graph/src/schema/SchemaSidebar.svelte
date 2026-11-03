@@ -23,6 +23,7 @@
 		model,
 		value = $bindable(null),
 		name = undefined,
+		home = true,
 		side = 'left',
 		onselect = undefined,
 		class: className = ''
@@ -32,6 +33,8 @@
 		value?: string | null
 		/** The design's name, heading the tree; `model.project.name` when not given. */
 		name?: string
+		/** Whether the tree is headed by the design's own row; off when the host's page already is. */
+		home?: boolean
 		/** The edge the host placed the sidebar on. */
 		side?: 'left' | 'right'
 		/** An object's key, or `null` for the design's own row. */
@@ -42,7 +45,7 @@
 	let query = $state('')
 	let hidden = $state<DesignKind[]>([])
 
-	const title = $derived(name ?? model.project?.name)
+	const title = $derived(home ? (name ?? model.project?.name) : undefined)
 	const kinds = $derived(kindCounts(model))
 	const items = $derived(sidebarTree(model, { query, hidden }))
 	const press = pressTo(() => (key) => {

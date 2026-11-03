@@ -635,7 +635,6 @@
 [data-style='zen-sumi'] [data-graph-design-row],
 [data-style='zen-sumi'] [data-graph-design-table] th,
 [data-style='zen-sumi'] [data-graph-design-table] td,
-[data-style='zen-sumi'] [data-graph-design-card],
 [data-style='zen-sumi'] [data-graph-design-badge],
 [data-style='zen-sumi'] [data-graph-design-stub],
 [data-style='zen-sumi'] [data-graph-design-chip],
@@ -652,8 +651,6 @@
 [data-style='zen-sumi'] [data-graph-design-verb],
 [data-style='zen-sumi'] [data-graph-design-ordinal],
 [data-style='zen-sumi'] [data-graph-design-row-icon],
-[data-style='zen-sumi'] [data-graph-design-card-icon],
-[data-style='zen-sumi'] [data-graph-design-card-label],
 [data-style='zen-sumi'] [data-graph-design-table] th,
 [data-style='zen-sumi'] [data-graph-design-chip] {
   color: var(--ink-mute);
@@ -662,7 +659,6 @@
 [data-style='zen-sumi'] [data-graph-design-row],
 [data-style='zen-sumi'] [data-graph-design-link],
 [data-style='zen-sumi'] [data-graph-design-strong],
-[data-style='zen-sumi'] [data-graph-design-card-count],
 [data-style='zen-sumi'] [data-graph-design-home] {
   color: var(--ink);
 }
@@ -671,7 +667,6 @@
   background-color: var(--paper-soft);
 }
 
-[data-style='zen-sumi'] [data-graph-design-card],
 [data-style='zen-sumi'] [data-graph-design-search] {
   background-color: var(--paper);
 }

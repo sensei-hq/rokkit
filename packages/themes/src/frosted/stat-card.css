@@ -1,0 +1,30 @@
+/* StatCard — frosted theme */
+
+[data-style='frosted'] [data-stat-card] {
+  border-color: var(--paper-edge);
+  background-color: var(--paper);
+}
+
+[data-style='frosted'] [data-stat-card-head] {
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-stat-card-value] {
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-stat-card][data-tone='danger'] [data-stat-card-value] {
+  color: var(--danger);
+}
+
+[data-style='frosted'] [data-stat-card][data-tone='warning'] [data-stat-card-value] {
+  color: var(--warning);
+}
+
+[data-style='frosted'] [data-stat-card][data-tone='success'] [data-stat-card-value] {
+  color: var(--success);
+}
+
+[data-style='frosted'] [data-stat-card][data-tone='muted'] [data-stat-card-value] {
+  color: var(--ink-mute);
+}

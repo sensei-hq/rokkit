@@ -626,7 +626,6 @@
 [data-style='minimal'] [data-graph-design-row],
 [data-style='minimal'] [data-graph-design-table] th,
 [data-style='minimal'] [data-graph-design-table] td,
-[data-style='minimal'] [data-graph-design-card],
 [data-style='minimal'] [data-graph-design-badge],
 [data-style='minimal'] [data-graph-design-stub],
 [data-style='minimal'] [data-graph-design-chip],
@@ -643,8 +642,6 @@
 [data-style='minimal'] [data-graph-design-verb],
 [data-style='minimal'] [data-graph-design-ordinal],
 [data-style='minimal'] [data-graph-design-row-icon],
-[data-style='minimal'] [data-graph-design-card-icon],
-[data-style='minimal'] [data-graph-design-card-label],
 [data-style='minimal'] [data-graph-design-table] th,
 [data-style='minimal'] [data-graph-design-chip] {
   color: var(--ink-mute);
@@ -653,7 +650,6 @@
 [data-style='minimal'] [data-graph-design-row],
 [data-style='minimal'] [data-graph-design-link],
 [data-style='minimal'] [data-graph-design-strong],
-[data-style='minimal'] [data-graph-design-card-count],
 [data-style='minimal'] [data-graph-design-home] {
   color: var(--ink);
 }
@@ -662,7 +658,6 @@
   background-color: var(--paper-soft);
 }
 
-[data-style='minimal'] [data-graph-design-card],
 [data-style='minimal'] [data-graph-design-search] {
   background-color: var(--paper);
 }

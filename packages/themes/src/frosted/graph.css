@@ -626,7 +626,6 @@
 [data-style='frosted'] [data-graph-design-row],
 [data-style='frosted'] [data-graph-design-table] th,
 [data-style='frosted'] [data-graph-design-table] td,
-[data-style='frosted'] [data-graph-design-card],
 [data-style='frosted'] [data-graph-design-badge],
 [data-style='frosted'] [data-graph-design-stub],
 [data-style='frosted'] [data-graph-design-chip],
@@ -643,8 +642,6 @@
 [data-style='frosted'] [data-graph-design-verb],
 [data-style='frosted'] [data-graph-design-ordinal],
 [data-style='frosted'] [data-graph-design-row-icon],
-[data-style='frosted'] [data-graph-design-card-icon],
-[data-style='frosted'] [data-graph-design-card-label],
 [data-style='frosted'] [data-graph-design-table] th,
 [data-style='frosted'] [data-graph-design-chip] {
   color: var(--ink-mute);
@@ -653,7 +650,6 @@
 [data-style='frosted'] [data-graph-design-row],
 [data-style='frosted'] [data-graph-design-link],
 [data-style='frosted'] [data-graph-design-strong],
-[data-style='frosted'] [data-graph-design-card-count],
 [data-style='frosted'] [data-graph-design-home] {
   color: var(--ink);
 }
@@ -662,7 +658,6 @@
   background-color: var(--paper-soft);
 }
 
-[data-style='frosted'] [data-graph-design-card],
 [data-style='frosted'] [data-graph-design-search] {
   background-color: var(--paper);
 }

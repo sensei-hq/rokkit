@@ -148,6 +148,13 @@ describe('SchemaSidebar', () => {
 		expect(container.querySelector('[data-graph-design-home]')).toBeNull()
 	})
 
+	it('has no home row when the host already heads the page with the design', () => {
+		const { container } = open({ home: false })
+
+		expect(container.querySelector('[data-graph-design-home]')).toBeNull()
+		expect(row(container, 'users')).toBeTruthy()
+	})
+
 	it('sits on either side — the host decides, the border follows', () => {
 		expect(
 			open().container.querySelector('[data-graph-design-sidebar]')?.getAttribute('data-side')

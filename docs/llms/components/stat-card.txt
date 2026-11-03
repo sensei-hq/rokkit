@@ -1,0 +1,46 @@
+# Rokkit StatCard Component
+
+> One number and what it counts: the icon and label on top, the value below them at the card's end.
+
+## Quick Start
+
+```svelte
+<script>
+  import { StatCard } from '@rokkit/ui'
+</script>
+
+<div data-stat-cards>
+  <StatCard label="Tables" value={198} icon="i-glyph:table" />
+  <StatCard label="Cycles" value={4} tone="warning" href="/diagrams/cycles" />
+</div>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | — | What the number counts |
+| `value` | `number \| string` | — | A number (grouped, en-US) or a value already written as text |
+| `icon` | `string` | — | Icon class drawn before the label |
+| `tone` | `'danger' \| 'warning' \| 'success' \| 'muted'` | — | The tone the value is read in; none is plain ink |
+| `href` | `string` | — | Makes the value a link |
+| `class` | `string` | — | Additional CSS classes |
+| `data-*` | `string` | — | Passed through to the root, for a host's own markers |
+
+## Data Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-stat-cards` | Optional wrapper: a wrapping grid of cards |
+| `data-stat-card` | Root element |
+| `data-tone` | The tone, when set |
+| `data-stat-card-head` | The icon and label line |
+| `data-stat-card-icon` | The icon |
+| `data-stat-card-label` | The label |
+| `data-stat-card-value` | The value (`<a>` when `href` is set) |
+
+## Behavior
+
+- The value is right-aligned under the head, so a row of cards reads as a column of numbers.
+- A long label is cut with an ellipsis rather than widening the card.
+- Colour comes from each theme's tokens (`paper`, `paper-edge`, `ink`, `ink-mute`, and the role tokens for tones).

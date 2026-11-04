@@ -15,6 +15,27 @@
   border-width: 1px;
   border-style: solid;
   border-radius: 0.5rem;
+  /* A plain card is a frame, nothing more: no pointer says it does something. */
+  cursor: default;
+  position: relative;
+  font: inherit;
+  text-align: start;
+}
+
+/* A card as a button keeps the card's box: no native chrome, the full width of its cell. */
+button[data-stat-card] {
+  appearance: none;
+  width: 100%;
+}
+
+/* An interactive card (a button, or a card whose value links) says so with the pointer. */
+[data-stat-card-interactive] {
+  cursor: pointer;
+}
+
+/* A card spans the columns it is given; the grid decides how wide a column is. */
+[data-stat-card][data-span] {
+  grid-column: span var(--stat-card-span);
 }
 
 [data-stat-card-head] {
@@ -28,6 +49,12 @@
 [data-stat-card-icon] {
   flex-shrink: 0;
   font-size: 1.125rem;
+}
+
+[data-stat-card-mark] {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1;
 }
 
 [data-stat-card-label] {
@@ -47,4 +74,23 @@
 
 a[data-stat-card-value]:hover {
   text-decoration: underline;
+}
+
+/* The link covers its card, so the whole card is the target, not the number alone. */
+a[data-stat-card-value]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* At most two lines; the space for two is kept, so a band's cards line up. */
+[data-stat-card-description] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  min-height: calc(2 * 1rem);
 }

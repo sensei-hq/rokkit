@@ -1,6 +1,6 @@
 # Rokkit StatCard Component
 
-> One number and what it counts: the icon and label on top, the value below them at the card's end.
+> One number and what it counts: the mark and label on top, the value below them at the card's end, an optional description under it. Plain, a link, or a pressed/unpressed toggle.
 
 ## Quick Start
 
@@ -12,6 +12,8 @@
 <div data-stat-cards>
   <StatCard label="Tables" value={198} icon="i-glyph:table" />
   <StatCard label="Cycles" value={4} tone="warning" href="/diagrams/cycles" />
+  <StatCard label="Failing" value={2} mark="難" tone="danger" description="Each says what to try"
+    onclick={() => (failing = !failing)} pressed={failing} span={2} />
 </div>
 ```
 
@@ -21,9 +23,15 @@
 |------|------|---------|-------------|
 | `label` | `string` | — | What the number counts |
 | `value` | `number \| string` | — | A number (grouped, en-US) or a value already written as text |
-| `icon` | `string` | — | Icon class drawn before the label |
-| `tone` | `'danger' \| 'warning' \| 'success' \| 'muted'` | — | The tone the value is read in; none is plain ink |
-| `href` | `string` | — | Makes the value a link |
+| `icon` | `string` | — | Icon class drawn before the label (wins over `mark`) |
+| `mark` | `string \| Snippet` | — | A text mark (e.g. a kanji) before the label, or a snippet that draws one |
+| `description` | `string` | — | A second line under the value, at most two lines |
+| `reserveDescription` | `boolean` | `false` | Keep the two-line description space without a description (so a band's cards line up) |
+| `tone` | `'ink' \| 'danger' \| 'warning' \| 'success' \| 'muted'` | — | The tone the value (and mark) is read in; none or `ink` is plain ink |
+| `href` | `string` | — | Makes the value a link; the link covers the card |
+| `onclick` | `(event: MouseEvent) => void` | — | Makes the card a `<button>` |
+| `pressed` | `boolean` | `false` | With `onclick`: `aria-pressed`, the active (pressed) look |
+| `span` | `number` | — | Grid columns the card spans (`data-span`, `--stat-card-span`) |
 | `class` | `string` | — | Additional CSS classes |
 | `data-*` | `string` | — | Passed through to the root, for a host's own markers |
 
@@ -35,12 +43,19 @@
 | `data-stat-card` | Root element |
 | `data-tone` | The tone, when set |
 | `data-stat-card-head` | The icon and label line |
+| `data-stat-card-interactive` | Present on a card with `onclick` or `href` |
+| `data-span` | The span, when set |
 | `data-stat-card-icon` | The icon |
+| `data-stat-card-mark` | The text mark |
 | `data-stat-card-label` | The label |
 | `data-stat-card-value` | The value (`<a>` when `href` is set) |
+| `data-stat-card-description` | The description (empty and `aria-hidden` when only reserved) |
 
 ## Behavior
 
 - The value is right-aligned under the head, so a row of cards reads as a column of numbers.
 - A long label is cut with an ellipsis rather than widening the card.
-- Colour comes from each theme's tokens (`paper`, `paper-edge`, `ink`, `ink-mute`, and the role tokens for tones).
+- Every card has the same frame, interactive or not; the frame is `ink-faint` mixed 75% into paper, ≥ 3:1 off the paper in every style, skin and mode (WCAG 1.4.11).
+- Only an interactive card has the pointer and a hover fill; a pressed card adds an inset ink ring (no width change).
+- A plain card (no `href`, no `onclick`) is a `<div>` with no pointer and no hover.
+- Colour comes from each theme's tokens (`paper`, `paper-soft`, `ink`, `ink-mute`, `ink-soft`, `ink-faint`, and the role tokens for tones).

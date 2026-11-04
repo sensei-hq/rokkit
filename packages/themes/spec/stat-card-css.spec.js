@@ -63,4 +63,41 @@ describe('stat card theme CSS', () => {
 			style
 		).toEqual([])
 	})
+
+	it('lets a card span the grid columns it is given, and keeps a plain card plain', () => {
+		const base = declarations('base/stat-card.css')
+		expect(
+			rulesFor('base/stat-card.css', '[data-stat-card][data-span]').some((r) =>
+				/grid-column:\s*span var\(--stat-card-span\)/.test(r)
+			)
+		).toBe(true)
+		expect(
+			rulesFor('base/stat-card.css', '[data-stat-card-interactive]').some((r) =>
+				/cursor:\s*pointer/.test(r)
+			)
+		).toBe(true)
+		expect(
+			rulesFor('base/stat-card.css', '[data-stat-card] {').some((r) => /cursor:\s*default/.test(r))
+		).toBe(true)
+		// A linked value covers its card, so the whole card is the link's target.
+		expect(base).toMatch(/a\[data-stat-card-value\]::after\s*\{[^}]*inset:\s*0/)
+	})
+
+	it('keeps the title on one line and the description to two, its space reserved', () => {
+		const description = rulesFor('base/stat-card.css', '[data-stat-card-description]').join('}')
+		expect(description).toMatch(/-webkit-line-clamp:\s*2/)
+		expect(description).toMatch(/min-height:\s*calc\(2 \* /)
+	})
+
+	it.each(STYLES)('%s colours the mark, the description, hover and the pressed state', (style) => {
+		const css = declarations(`${style}/stat-card.css`)
+		for (const hook of [
+			'[data-stat-card-mark]',
+			'[data-stat-card-description]',
+			'[data-stat-card-interactive]:hover',
+			"[data-stat-card][aria-pressed='true']"
+		]) {
+			expect(css, `${style} / ${hook}`).toContain(`[data-style='${style}'] ${hook}`)
+		}
+	})
 })

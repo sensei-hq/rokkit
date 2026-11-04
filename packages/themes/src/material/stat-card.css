@@ -1,7 +1,8 @@
 /* StatCard — material theme */
 
+/* The frame identifies the card, clickable or not: 3:1 off the paper (WCAG 1.4.11). */
 [data-style='material'] [data-stat-card] {
-  border-color: var(--paper-edge);
+  border-color: color-mix(in oklch, var(--ink-faint) 75%, var(--paper));
   background-color: var(--paper);
 }
 
@@ -27,4 +28,45 @@
 
 [data-style='material'] [data-stat-card][data-tone='muted'] [data-stat-card-value] {
   color: var(--ink-mute);
+}
+
+/* The mark reads in the card's tone; a plain card's mark is the accent. */
+[data-style='material'] [data-stat-card-mark] {
+  color: var(--accent);
+}
+
+[data-style='material'] [data-stat-card][data-tone='danger'] [data-stat-card-mark] {
+  color: var(--danger);
+}
+
+[data-style='material'] [data-stat-card][data-tone='warning'] [data-stat-card-mark] {
+  color: var(--warning);
+}
+
+[data-style='material'] [data-stat-card][data-tone='success'] [data-stat-card-mark] {
+  color: var(--success);
+}
+
+[data-style='material'] [data-stat-card][data-tone='muted'] [data-stat-card-mark] {
+  color: var(--ink-mute);
+}
+
+[data-style='material'] [data-stat-card-description] {
+  color: var(--ink-soft);
+}
+
+/* Only an interactive card answers the pointer; the fill shifts, the frame does not move. */
+[data-style='material'] [data-stat-card-interactive]:hover {
+  background-color: var(--paper-soft);
+}
+
+/* Pressed (an applied filter): a pressed fill and an inset ink ring — no width change. */
+[data-style='material'] [data-stat-card][aria-pressed='true'] {
+  background-color: var(--paper-soft);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+[data-style='material'] [data-stat-card-interactive]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }

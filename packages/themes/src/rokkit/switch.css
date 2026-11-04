@@ -1,11 +1,14 @@
 /**
  * Switch - Rokkit Theme Styles
+ *
+ * Off: a paper-mute well outlined in ink-faint, so its boundary stands 3:1 off every surface
+ * (WCAG 1.4.11); the ink-soft thumb reads against the well.
  */
 
 [data-style='rokkit'] [data-switch-track] {
   --switch-track-border: 1px;
   border-width: var(--switch-track-border);
-  @apply from-paper-mute to-paper-mute border-paper-edge bg-gradient-to-b;
+  @apply from-paper-mute to-paper-mute border-ink-faint bg-gradient-to-b;
 }
 
 [data-style='rokkit'] [data-switch] [data-switch-thumb] {

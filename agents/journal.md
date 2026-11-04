@@ -10985,3 +10985,23 @@ view whose data is absent says so rather than inventing it):
 - `EntityView` keeps its GraphState API (learn and sensei use it); dbd's table page is `TableView`.
 - Words in `messages.graph`; presses through `interactions`; colour per style from tokens
   (`graph-css.spec.js` guards both). Learn: View → Design viewer on the schema diagrams.
+
+## 2026-11-04 — Switch: the OFF state reads at 3:1 under every style (WCAG 1.4.11)
+
+- sensei (zen-sumi, dark): the off switch vanished on a settings card. zen-sumi painted the off
+  track `paper-edge`, which by night is the surface's 200 — the tone of paper-mute (track vs card
+  1.00:1, thumb vs track 1.19:1; light 1.39 / 1.51). The #173 claim that paper-edge "stands off
+  the page and the thumb in both modes" was false. Every other style failed too: rokkit and
+  material outlined/filled the track in paper tones, minimal shared zen-sumi's paper-edge, frosted
+  laid a white thumb on a near-white glass track.
+- Off tracks now take `ink-faint` (the quietest ink, held at AA on paper by every skin):
+  zen-sumi and minimal fill with it; rokkit outlines its paper-mute well with it; material gets
+  Material's outlined track (2px ink-faint, `--switch-track-border`); frosted is ink-faint glass
+  (85%) under a paper glass thumb — a white thumb cannot hold 3:1 over a track light enough to
+  leave a dark page. `paper-edge` itself is unchanged.
+- Spec: `packages/themes/browser/switch-contrast.browser.spec.ts` renders the BUILT css over the
+  token vars `rootPreflights` emits for the default skin and every palette family, in each mode
+  the skin paints, on paper / paper-soft / paper-mute, and reads screenshot pixels: track
+  boundary ≥ 3:1 off each surface, thumb ≥ 3:1 off the track. Worst case now 3.70 (frosted,
+  light, paper-mute) / thumb 3.54 (frosted, light); zen-sumi 5.01–6.18 / 5.47–6.18.
+- `spec/switch-css.spec.js` no longer pins `paper-edge`; it counts it as a near-page tone.

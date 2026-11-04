@@ -1,10 +1,11 @@
 /**
  * Switch - Minimal Theme Styles
  * Flat filled pill — no borders, no shadows, just color transitions.
+ * Off: an ink-faint track, 3:1 off every surface and under its paper-soft thumb (WCAG 1.4.11).
  */
 
 [data-style='minimal'] [data-switch-track] {
-  @apply bg-paper-edge border-0;
+  @apply bg-ink-faint border-0;
   background-image: none;
 }
 

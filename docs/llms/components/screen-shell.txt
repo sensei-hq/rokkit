@@ -1,6 +1,6 @@
 # Rokkit ScreenShell Component
 
-> One screen laid out from data: a title bar (mark, title, context, search, the screen's buttons and its band toggles), a description, info / stats / filters bands, a body and a sidebar that each scroll on their own, and a footer. Layout only — it persists nothing.
+> One screen laid out from data: a title bar (mark, title, context, the screen's buttons and its band toggles), a description, info / stats / filters bands (search leads the filters band), a body and a sidebar that each scroll on their own, and a footer. Layout only — it persists nothing.
 
 `ScreenShell` lives in `@rokkit/app`. It fills its container (`height: 100%; min-height: 0`) and clips; only the body and the sidebar overflow. Everything but the mark, the title and the body is optional: a band, its toolbar toggle, the sidebar and the footer appear only when the screen passes them.
 
@@ -58,7 +58,7 @@
 | `title` | `string` | — | The screen title (`<h1>`, required) |
 | `context` | `string` | — | A short qualifier after the title (e.g. `L0 · modules`) |
 | `description` | `string` | — | One line under the title |
-| `search` | `{ placeholder?: string; delay?: number } \| false` | `{}` | A search field first in the toolbar; writes `filter.values.q` after `delay` ms (250). `false` hides it |
+| `search` | `{ placeholder?: string; delay?: number } \| false` | `{}` | A search field, the first control in the filters band; writes `filter.values.q` after `delay` ms (250). With search on, the filters band (and its toggle) exists even without `filters`. `false` removes it |
 | `toolbar` | `ToolbarSpec` | default | `{ add?, remove? }` extends the default, or a full `ToolbarItem[]` |
 | `info` | `InfoSlot[]` (≤ 3) | — | The info band's columns: data or snippets |
 | `infoRole` | `'accent' \| 'primary' \| 'secondary' \| 'info' \| 'success' \| 'warning' \| 'danger'` | `'accent'` | The role whose wash tints the info band |
@@ -106,7 +106,7 @@ type FilterSchema = { schema: object; layout: object; actions?: ShellAction[] }
 ## Behavior
 
 ### Toolbar
-- **Search first**, then the screen's own buttons (`add`, in order), a separator, then one toggle per band the view has: `info · stats · filters · side`. A toggle never shows for a band the view does not pass.
+- The title bar holds only mark · title · context · toolbar. The toolbar is the screen's own buttons (`add`, in order), a separator, then one toggle per band the view has: `info · stats · filters · side`. A toggle never shows for a band the view does not pass (search counts as the filters band).
 - `remove` drops a default by id (e.g. `remove: ['side']` keeps the sidebar always open).
 - A full `ToolbarItem[]` is the escape hatch; a `toggle` item whose `value` is a band id still follows the band.
 - Rendered by `@rokkit/ui` `Toolbar` (keyboard navigation, `aria-pressed` on toggles).
@@ -122,6 +122,7 @@ type FilterSchema = { schema: object; layout: object; actions?: ShellAction[] }
 - A stat with `filter` is a toggle button: clicking sets `values[filter.key]` and `stat = id` (the card shows pressed); clicking again restores the value the key had before and clears `stat`. A stat with `href` links there. A stat with neither is a plain, non-interactive card.
 
 ### Filters
+- **Search is the band's first control** (left), then the screen's snippet or schema form. It writes `values.q` (debounced) and merges like any other key; a stat never sets `q`. A screen with search and no `filters` gets a search-only band; `search: false` removes the field (and the band, when there are no filters). Closing the band hides the search with it.
 - `values` is the one source of truth: search, stats and the band all write into it.
 - Changing the active stat's key by hand clears the stat (the new value stays); changing another key leaves it active.
 - While a stat is active the band shows a chip — "From a stat: **Failing** · Clear" — whose Clear is the same as clicking the stat again.
@@ -138,7 +139,8 @@ type FilterSchema = { schema: object; layout: object; actions?: ShellAction[] }
 | `data-screen-shell` (`data-view`) | Root |
 | `data-screen-header`, `data-screen-titlebar` | Fixed header, its first row |
 | `data-screen-mark`, `data-screen-title`, `data-screen-context`, `data-screen-description` | Title bar parts |
-| `data-screen-tools`, `data-screen-search` | Search + toolbar |
+| `data-screen-tools` | The title bar's toolbar |
+| `data-screen-search` | The search field (first in `data-screen-filters`) |
 | `data-screen-info` (`data-role`), `data-screen-info-column`, `-label`, `-mark`, `-title`, `-text`, `-steps`, `-step`, `-step-seal`, `-step-mark`, `-step-title`, `-step-text`, `-value`, `-total`, `-meter`, `-meter-fill` | Info band |
 | `data-screen-stats`, `data-screen-stats-reading` | Stats band |
 | `data-screen-filters`, `data-screen-filter-actions`, `data-screen-filter-chip` | Filters band |

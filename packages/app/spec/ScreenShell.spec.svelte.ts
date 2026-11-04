@@ -116,7 +116,7 @@ describe('ScreenShell — toolbar and panels', () => {
 	})
 
 	it('never shows a toggle for a band the view does not pass', () => {
-		const { container } = render(ScreenShellTest, { props: { ...base, info } })
+		const { container } = render(ScreenShellTest, { props: { ...base, info, search: false } })
 
 		expect(toggles(container).map((t) => t.label)).toEqual(['What it’s for'])
 	})
@@ -124,7 +124,7 @@ describe('ScreenShell — toolbar and panels', () => {
 	it('a toggle closes its band and writes the whole panel state, bound and emitted', async () => {
 		const onpanels = vi.fn()
 		const { container } = render(ScreenShellTest, {
-			props: { ...base, info, stats, withSidebar: true, onpanels }
+			props: { ...base, info, stats, search: false, withSidebar: true, onpanels }
 		})
 
 		await fireEvent.click(toggle(container, 'What it’s for'))
@@ -153,6 +153,7 @@ describe('ScreenShell — toolbar and panels', () => {
 		const onclick = vi.fn()
 		const { container } = render(ScreenShellTest, {
 			props: {
+				search: false,
 				...base,
 				info,
 				toolbar: { add: [{ id: 'sync', label: 'Sync now', icon: 'i-sync', onclick }] }
@@ -208,7 +209,7 @@ describe('ScreenShell — toolbar and panels', () => {
 
 	it('drops a default toggle the screen removes', () => {
 		const { container } = render(ScreenShellTest, {
-			props: { ...base, info, withSidebar: true, toolbar: { remove: ['side'] } }
+			props: { ...base, info, search: false, withSidebar: true, toolbar: { remove: ['side'] } }
 		})
 
 		expect(toggles(container).map((t) => t.label)).toEqual(['What it’s for'])
@@ -217,16 +218,62 @@ describe('ScreenShell — toolbar and panels', () => {
 })
 
 describe('ScreenShell — search', () => {
-	it('puts a search field first, with the screen’s placeholder', () => {
+	it('puts the search field first in the filters band, before the screen’s controls', () => {
 		const { container } = render(ScreenShellTest, {
-			props: { ...base, info, search: { placeholder: 'Search modules' } }
+			props: { ...base, info, withFilterSnippet: true, search: { placeholder: 'Search modules' } }
 		})
-		const tools = q(container, '[data-screen-tools]')!
-		const input = q(tools, '[data-screen-search] input') as HTMLInputElement
+		const band = q(container, '[data-screen-filters]')!
+		const input = q(band, '[data-screen-search] input') as HTMLInputElement
 
-		expect(tools.firstElementChild?.matches('[data-screen-search]')).toBe(true)
+		expect(band.firstElementChild?.matches('[data-screen-search]')).toBe(true)
+		expect(q(band, '[data-test-who]')).not.toBeNull()
 		expect(input.placeholder).toBe('Search modules')
 		expect(input.type).toBe('search')
+	})
+
+	it('keeps the title bar to mark, title, context and toolbar: no search there', () => {
+		const { container } = render(ScreenShellTest, {
+			props: { ...base, info, context: 'L0', withFilterSnippet: true }
+		})
+		const titlebar = q(container, '[data-screen-titlebar]')!
+
+		expect(q(titlebar, '[data-screen-search]')).toBeNull()
+		expect(q(titlebar, 'input')).toBeNull()
+		expect(q(container, '[data-screen-tools]')?.firstElementChild?.matches('[data-toolbar]')).toBe(
+			true
+		)
+	})
+
+	it('draws a search-only filters band, with its toggle, when the screen passes no filters', () => {
+		const { container } = render(ScreenShellTest, { props: { ...base, info } })
+		const band = q(container, '[data-screen-filters]')!
+
+		expect(q(band, '[data-screen-search] input')).not.toBeNull()
+		expect(toggles(container).map((t) => t.label)).toEqual(['What it’s for', 'Filters'])
+	})
+
+	it('hides the search with the filters band when it is closed', async () => {
+		const { container } = render(ScreenShellTest, { props: { ...base, withFilterSnippet: true } })
+
+		await fireEvent.click(toggle(container, 'Filters'))
+		expect(q(container, '[data-screen-filters]')).toBeNull()
+		expect(q(container, '[data-screen-search]')).toBeNull()
+	})
+
+	it('has no filters band at all with search off and no filters', () => {
+		const { container } = render(ScreenShellTest, { props: { ...base, info, search: false } })
+
+		expect(q(container, '[data-screen-filters]')).toBeNull()
+		expect(q(container, '[data-screen-search]')).toBeNull()
+	})
+
+	it('removes only the search with search off, keeping the screen’s filters', () => {
+		const { container } = render(ScreenShellTest, {
+			props: { ...base, withFilterSnippet: true, search: false }
+		})
+
+		expect(q(container, '[data-screen-filters] [data-test-who]')).not.toBeNull()
+		expect(q(container, '[data-screen-search]')).toBeNull()
 	})
 
 	it('writes its text into values.q after the debounce', async () => {
@@ -351,7 +398,9 @@ describe('ScreenShell — stats', () => {
 	})
 
 	it('says the stats are still being read when they are null', () => {
-		const { container } = render(ScreenShellTest, { props: { ...base, stats: null } })
+		const { container } = render(ScreenShellTest, {
+			props: { ...base, stats: null, search: false }
+		})
 
 		expect(q(container, '[data-screen-stats] [data-screen-stats-reading]')?.textContent).toBe(
 			'Reading…'

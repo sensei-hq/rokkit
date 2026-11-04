@@ -54,10 +54,6 @@
   border-color: var(--ink);
 }
 
-[data-style='rokkit'] [data-screen-search] + [data-toolbar] {
-  border-color: var(--paper-edge);
-}
-
 /* ─── Info band: a wash of the role over paper ─────────────────────────── */
 
 [data-style='rokkit'] [data-screen-info] {

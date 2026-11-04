@@ -1,8 +1,9 @@
 <script lang="ts">
 	/**
-	 * One screen, laid out from data: a title bar (mark, title, context, then search, the
-	 * screen's own buttons and the band toggles), a description, the info / stats / filters
-	 * bands, a body and a sidebar that each scroll on their own, and a footer. The shell fills
+	 * One screen, laid out from data: a title bar (mark, title, context, then the screen's own
+	 * buttons and the band toggles), a description, the info / stats / filters bands (search is
+	 * the filters band's first control), a body and a sidebar that each scroll on their own, and
+	 * a footer. The shell fills
 	 * its container; nothing but the body and the sidebar scrolls.
 	 *
 	 * Layout only, and it persists nothing: `panels` and `filter` are bindable (and emitted
@@ -81,7 +82,9 @@
 	const has = $derived<Record<PanelId, boolean>>({
 		info: Boolean(info?.length),
 		stats: stats !== undefined,
-		filters: Boolean(filters),
+		// Search lives in the filters band, so a screen with search has the band even when it
+		// passes no filters of its own.
+		filters: Boolean(filters) || search !== false,
 		side: Boolean(sidebar)
 	})
 	const present = $derived(presentPanels(has))
@@ -221,27 +224,9 @@
 			{@render glyph(mark.kanji, mark.icon)}
 			<h1 data-screen-title>{title}</h1>
 			{#if context}<span data-screen-context>{context}</span>{/if}
-			{#if searchOn || items.length}
+			{#if items.length}
 				<div data-screen-tools>
-					{#if searchOn}
-						<label data-screen-search>
-							<span
-								data-screen-search-icon
-								class={DEFAULT_STATE_ICONS.action.search}
-								aria-hidden="true"
-							></span>
-							<input
-								type="search"
-								bind:value={query}
-								oninput={onsearch}
-								{placeholder}
-								aria-label={placeholder}
-							/>
-						</label>
-					{/if}
-					{#if items.length}
-						<Toolbar {items} label={title} width="fit" showDividers={false} onclick={runItem} />
-					{/if}
+					<Toolbar {items} label={title} width="fit" showDividers={false} onclick={runItem} />
 				</div>
 			{/if}
 		</div>
@@ -276,8 +261,24 @@
 			</div>
 		{/if}
 
-		{#if filters && shown('filters')}
+		{#if shown('filters')}
 			<div data-screen-filters role="group" aria-label={text.filters}>
+				{#if searchOn}
+					<label data-screen-search>
+						<span
+							data-screen-search-icon
+							class={DEFAULT_STATE_ICONS.action.search}
+							aria-hidden="true"
+						></span>
+						<input
+							type="search"
+							bind:value={query}
+							oninput={onsearch}
+							{placeholder}
+							aria-label={placeholder}
+						/>
+					</label>
+				{/if}
 				{#if filterSnippet}
 					{@render filterSnippet(api)}
 				{:else if filterSchema}

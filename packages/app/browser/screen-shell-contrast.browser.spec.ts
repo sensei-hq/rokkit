@@ -16,7 +16,8 @@ import ShellHarness from './fixtures/ShellHarness.svelte'
  * The screen shell's info band is a WASH of its role over paper (the accent at 12% by day,
  * 18% by night) and its text stays ink, so it reads at WCAG AA (4.5:1) on that wash under every
  * style, skin and mode; its large mark (34px) and its meter are held to 3:1. A stat card's frame
- * — the same on every card, clickable or not — and the search field's frame identify a control,
+ * — the same on every card, clickable or not — and the search field's frame (in the filters
+ * band) identify a control,
  * so each stands 3:1 off the paper it sits on (WCAG 1.4.11).
  *
  * Measured, not inferred: the real ScreenShell, each style's BUILT css (themes/dist) over the
@@ -155,15 +156,20 @@ function measure(root: HTMLElement) {
 				[`frame of ${name} on its card`, contrast(frame, inside)]
 			] as Array<[string, number]>
 		}),
-		[
-			'search frame',
-			contrast(
-				paint(page, fillOf(one('[data-screen-header]')), edgeOf(one('[data-screen-search]'))),
-				paint(page, fillOf(one('[data-screen-header]')))
-			)
-		]
+		...searchFrame(page, one)
 	]
 	return { text, nonText }
+}
+
+/** The search field sits in the filters band: its frame stands off the band and its own fill. */
+function searchFrame(page: string, one: (sel: string) => HTMLElement): Array<[string, number]> {
+	const search = one('[data-screen-filters] [data-screen-search]')
+	const band = [page, fillOf(one('[data-screen-header]')), fillOf(one('[data-screen-filters]'))]
+	const frame = paint(...band, edgeOf(search))
+	return [
+		['search frame on the filters band', contrast(frame, paint(...band))],
+		['search frame on its field', contrast(frame, paint(...band, fillOf(search)))]
+	]
 }
 
 describe.each(Object.entries(STYLES))('%s screen shell', (style, css) => {

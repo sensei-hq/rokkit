@@ -65,18 +65,18 @@
 }
 
 [data-screen-search] input {
-  min-width: 10rem;
+  flex: 1 1 auto;
+  min-width: 0;
   border: 0;
   outline: none;
   font: inherit;
   font-size: 0.8125rem;
 }
 
-/* The separator between search and the toolbar: the search field's own end edge. */
-[data-screen-search] + [data-toolbar] {
-  padding-inline-start: 0.5rem;
-  border-inline-start-width: 1px;
-  border-inline-start-style: solid;
+/* Search is the filters band's first control: it leads the row and gives way when narrow. */
+[data-screen-filters] [data-screen-search] {
+  flex: 0 1 16rem;
+  min-width: 0;
 }
 
 [data-screen-description] {

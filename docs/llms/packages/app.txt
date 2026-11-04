@@ -245,8 +245,9 @@ Full reference: [SkinSwitcherToggle component doc](/llms/components/skin-switche
 
 ## ScreenShell
 
-One screen laid out from data: a title bar (mark, title, context, then search, the screen's own
-buttons and one toggle per band), a description, info / stats / filters bands, a body and a
+One screen laid out from data: a title bar (mark, title, context, then the screen's own buttons
+and one toggle per band), a description, info / stats / filters bands (search is the filters
+band's first control), a body and a
 sidebar that each scroll on their own, and a footer. It fills its container and only the body and
 the sidebar scroll. `panels` and `filter` are bindable and the shell persists nothing — the host
 stores them by `viewId`.

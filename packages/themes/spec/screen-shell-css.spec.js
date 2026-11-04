@@ -54,6 +54,13 @@ describe('screen shell theme CSS', () => {
 		).toBe(true)
 	})
 
+	it('sizes the search as the filters band’s first control, and draws no title-bar separator for it', () => {
+		const f = 'base/screen-shell.css'
+		expect(has(f, '[data-screen-filters] [data-screen-search]', /flex:\s*0 1 16rem/)).toBe(true)
+		for (const file of ['base', ...STYLES].map((x) => `${x}/screen-shell.css`))
+			expect(declarations(file), file).not.toContain('[data-screen-search] + [data-toolbar]')
+	})
+
 	it('maps each info role to its token', () => {
 		for (const role of ROLES)
 			expect(

@@ -11042,3 +11042,17 @@ sensei's D87 contract (coord/mockups/screen-shell/CONTRACT.md §8) builds upstre
   middle-click opens a tab, and the Tauri webview no longer reloads. A disabled one (or any item
   in a disabled toolbar) drops its `href` with `role="link"` + `aria-disabled`. The Navigator
   already leaves a click on `a[href]` native. `ScreenShell` no longer calls `location.assign`.
+
+## 2026-11-04 — ScreenShell: search moves into the filters band
+
+- User change: the title bar was too cramped. Search is now the first control in the filters band
+  (left), then the screen's snippet or FormRenderer schema; it still writes `values.q` with the
+  same debounce and merges with stat filters exactly as before. The title bar is mark · title ·
+  context · toolbar only.
+- Search counts as the filters band: a screen with search and no `filters` gets a search-only
+  band and its toggle; `search: false` removes the field (and the band when there are no
+  filters); closing the band hides the search.
+- CSS: the title-bar separator rule (`[data-screen-search] + [data-toolbar]`) is gone from base
+  and every style; base sizes the search as a band control (`flex: 0 1 16rem`).
+- The contrast browser spec measures the search frame on the filters band (paper-soft) and on
+  its own field: lowest 3.25:1 and 3.36:1 across every style, skin and mode.

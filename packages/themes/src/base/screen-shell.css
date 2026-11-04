@@ -1,0 +1,362 @@
+/* ScreenShell — base structural styles.
+ *
+ * The shell fills its container (height 100%, min-height 0) and clips: the header (title bar,
+ * description, info / stats / filters bands) and the footer stay put, and only the body and
+ * the sidebar scroll, each on its own. No colour here — each style paints the parts. */
+
+[data-screen-shell] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+[data-screen-header],
+[data-screen-footer] {
+  flex: none;
+}
+
+/* ─── Title bar ─────────────────────────────────────────────────────────── */
+
+[data-screen-titlebar] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem 1rem;
+  padding: 0.875rem 1.25rem 0.25rem;
+}
+
+[data-screen-mark] {
+  flex: none;
+  font-size: 1.625rem;
+  line-height: 1;
+}
+
+[data-screen-title] {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+[data-screen-context] {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+}
+
+[data-screen-tools] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+[data-screen-search] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.25rem;
+  padding-inline: 0.625rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.5rem;
+}
+
+[data-screen-search] input {
+  min-width: 10rem;
+  border: 0;
+  outline: none;
+  font: inherit;
+  font-size: 0.8125rem;
+}
+
+/* The separator between search and the toolbar: the search field's own end edge. */
+[data-screen-search] + [data-toolbar] {
+  padding-inline-start: 0.5rem;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+}
+
+[data-screen-description] {
+  margin: 0;
+  padding: 0 1.25rem 0.875rem 3.875rem;
+  font-size: 0.8125rem;
+}
+
+/* ─── Info band ─────────────────────────────────────────────────────────── */
+
+[data-screen-info] {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 2rem 3rem;
+  padding: 1.5rem 3rem;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+/* Which role washes the band; each style decides how strong the wash is. */
+[data-screen-info][data-role='accent'] { --screen-role: var(--accent); }
+[data-screen-info][data-role='primary'] { --screen-role: var(--primary); }
+[data-screen-info][data-role='secondary'] { --screen-role: var(--secondary); }
+[data-screen-info][data-role='info'] { --screen-role: var(--info); }
+[data-screen-info][data-role='success'] { --screen-role: var(--success); }
+[data-screen-info][data-role='warning'] { --screen-role: var(--warning); }
+[data-screen-info][data-role='danger'] { --screen-role: var(--danger); }
+
+[data-screen-info-column] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+[data-screen-info-column]:nth-child(3) {
+  padding-inline-start: 2rem;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+}
+
+[data-screen-info-label] {
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+[data-screen-info-heading] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+[data-screen-info-mark] {
+  flex: none;
+  font-size: 2.125rem;
+  line-height: 1;
+}
+
+[data-screen-info-title] {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+[data-screen-info-text] {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+[data-screen-info-steps] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-screen-info-step] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+[data-screen-info-step-seal] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+}
+
+[data-screen-info-step-mark] {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+[data-screen-info-step-body] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+[data-screen-info-step-title] {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+[data-screen-info-step-text] {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+[data-screen-info-figure] {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+[data-screen-info-value] {
+  font-family: var(--font-display, inherit);
+  font-size: 2.125rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-screen-info-total] {
+  font-size: 0.9375rem;
+}
+
+[data-screen-info-meter] {
+  height: 0.25rem;
+  border-radius: 0.125rem;
+  overflow: hidden;
+}
+
+[data-screen-info-meter-fill] {
+  display: block;
+  height: 100%;
+}
+
+/* ─── Stats band ────────────────────────────────────────────────────────── */
+
+[data-screen-stats] {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+[data-screen-stats] [data-stat-card-label] {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.6875rem;
+}
+
+[data-screen-stats-reading] {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+/* ─── Filters band ──────────────────────────────────────────────────────── */
+
+[data-screen-filters] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1.25rem;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+[data-screen-filter-actions] {
+  margin-inline-start: auto;
+}
+
+[data-screen-filter-chip] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.125rem;
+  padding: 0 0.25rem 0 0.625rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+[data-screen-filter-chip] button {
+  min-height: 1.75rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* ─── Body, sidebar, footer ─────────────────────────────────────────────── */
+
+[data-screen-main] {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+[data-screen-body] {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: auto;
+}
+
+[data-screen-sidebar] {
+  flex: 0 0 17.5rem;
+  min-width: 0;
+  overflow: auto;
+}
+
+[data-screen-sidebar][data-side='right'] {
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+}
+
+[data-screen-sidebar][data-side='left'] {
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
+}
+
+[data-screen-footer] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  padding: 0.625rem 1.25rem;
+  border-top-width: 1px;
+  border-top-style: solid;
+  font-size: 0.75rem;
+}
+
+[data-screen-footer] [data-part='mid'] {
+  font-family: var(--font-mono, monospace);
+}
+
+[data-screen-footer] [data-part='right'] {
+  margin-inline-start: auto;
+}
+
+/* ─── Narrow screens ────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  [data-screen-info] {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.25rem;
+  }
+
+  [data-screen-info-column]:nth-child(3) {
+    padding-inline-start: 0;
+    border-inline-start-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  [data-screen-stats] [data-stat-card] {
+    grid-column: span 6;
+  }
+}

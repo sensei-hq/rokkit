@@ -1,0 +1,155 @@
+# Rokkit ScreenShell Component
+
+> One screen laid out from data: a title bar (mark, title, context, search, the screen's buttons and its band toggles), a description, info / stats / filters bands, a body and a sidebar that each scroll on their own, and a footer. Layout only — it persists nothing.
+
+`ScreenShell` lives in `@rokkit/app`. It fills its container (`height: 100%; min-height: 0`) and clips; only the body and the sidebar overflow. Everything but the mark, the title and the body is optional: a band, its toolbar toggle, the sidebar and the footer appear only when the screen passes them.
+
+## Quick Start
+
+```svelte
+<script>
+  import { ScreenShell } from '@rokkit/app'
+
+  let panels = $state({})                       // the host persists it (by viewId)
+  let filter = $state({ values: {}, stat: null })
+
+  const stats = [
+    { id: 'failing', title: 'Failing', kanji: '難', value: 2, tone: 'danger',
+      description: 'Each says what to try', filter: { key: 'who', value: 'failing' } },
+    { id: 'dojos', title: 'Dōjōs', kanji: '場', value: 3 }
+  ]
+  const info = [
+    { label: 'Use it to', text: 'See whether your repositories reach your dōjōs.' },
+    { label: 'How to read it', text: 'Muted means a decision; red means something broke.' },
+    { label: 'What to do', text: 'Start with Needs you.' }
+  ]
+</script>
+
+<div class="h-full">
+  <ScreenShell
+    viewId="dojo.sync"
+    mark={{ kanji: '結', icon: 'i-glyph:refresh' }}
+    title="Dōjō sync"
+    context="@jerrythomas"
+    description="Is my work reaching my dōjō?"
+    search={{ placeholder: 'Search repositories' }}
+    toolbar={{ add: [{ id: 'sync', label: 'Sync now', icon: 'i-glyph:refresh', onclick: sync }] }}
+    {info}
+    {stats}
+    bind:panels
+    bind:filter
+    footer={{ left: '157 repositories scanned', mid: 'last sync 4 min ago', right: 'Sync activity' }}
+  >
+    {#snippet filters(api)}
+      <MyFilterControls values={api.values} onchange={(k, v) => api.set(k, v)} />
+    {/snippet}
+    {#snippet sidebar()}<MyTree />{/snippet}
+    <MyRows filter={filter.values} />
+  </ScreenShell>
+</div>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `viewId` | `string` | — | `<surface>.<area>[.<view>]`; written as `data-view`. The host keys stored panels by it. |
+| `mark` | `{ kanji: string; icon?: string }` | — | The screen's mark (required) |
+| `title` | `string` | — | The screen title (`<h1>`, required) |
+| `context` | `string` | — | A short qualifier after the title (e.g. `L0 · modules`) |
+| `description` | `string` | — | One line under the title |
+| `search` | `{ placeholder?: string; delay?: number } \| false` | `{}` | A search field first in the toolbar; writes `filter.values.q` after `delay` ms (250). `false` hides it |
+| `toolbar` | `ToolbarSpec` | default | `{ add?, remove? }` extends the default, or a full `ToolbarItem[]` |
+| `info` | `InfoSlot[]` (≤ 3) | — | The info band's columns: data or snippets |
+| `infoRole` | `'accent' \| 'primary' \| 'secondary' \| 'info' \| 'success' \| 'warning' \| 'danger'` | `'accent'` | The role whose wash tints the info band |
+| `stats` | `ShellStat[] \| null` | — | The stats band; `null` = still reading (the band says so) |
+| `filters` | `Snippet<[FilterApi]> \| FilterSchema` | — | The filters band: a snippet, or a schema `FormRenderer` draws |
+| `sidebar` | `Snippet` | — | The sidebar (scrolls on its own) |
+| `sidebarSide` | `'left' \| 'right'` | `'right'` | Which side it sits on |
+| `footer` | `Snippet \| { left?, mid?, right? }` | — | The footer |
+| `children` | `Snippet` | — | The body (scrolls on its own, required) |
+| `panels` | `PanelState` | `{}` | **Bindable.** Which bands are open; a missing key is open |
+| `onpanels` | `(next: PanelState) => void` | — | Called with the whole state when a toggle flips |
+| `filter` | `FilterState` | `{ values: {}, stat: null }` | **Bindable.** The filter values and the active stat |
+| `onfilter` | `(next: FilterState) => void` | — | Called on every filter change |
+| `glyphs` | `'text' \| 'icon'` | `'text'` | Marks draw the kanji, or their icon when they have one |
+| `icons` | `Partial<Record<PanelId, string>>` | built-in | Toggle icon classes |
+| `labels` | `Partial<ScreenShellLabels>` | `messages.screen` | String overrides |
+| `class` | `string` | — | Classes on the root |
+
+## Types
+
+```ts
+type PanelId = 'info' | 'stats' | 'filters' | 'side'
+type PanelState = Partial<Record<PanelId, boolean>>          // missing = open
+
+interface ShellAction { id: string; label: string; icon: string; onclick?: () => void
+  href?: string; busy?: boolean; disabled?: string | boolean } // a disabled string is the reason
+type ToolbarSpec = { add?: Array<ShellAction | ToolbarItem>; remove?: string[] } | ToolbarItem[]
+
+interface InfoColumn { label: string; text?: string          // eyebrow + lead (the minimum)
+  kanji?: string; icon?: string; title?: string              // framing: large mark + display title
+  steps?: { kanji: string; icon?: string; title: string; text?: string }[]
+  value?: string | number; total?: string | number; progress?: number }  // stat column (0–1 meter)
+type InfoSlot = InfoColumn | Snippet
+
+interface ShellStat { id: string; title: string; kanji?: string; icon?: string
+  value: string | number; tone?: 'ink' | 'danger' | 'warning' | 'success' | 'muted'
+  description?: string; span?: number
+  filter?: { key: string; value: unknown }; href?: string }
+
+interface FilterState { values: Record<string, unknown>; stat?: string | null }
+interface FilterApi { values: Record<string, unknown>; set(key: string, value: unknown): void; clear(): void }
+type FilterSchema = { schema: object; layout: object; actions?: ShellAction[] }
+```
+
+## Behavior
+
+### Toolbar
+- **Search first**, then the screen's own buttons (`add`, in order), a separator, then one toggle per band the view has: `info · stats · filters · side`. A toggle never shows for a band the view does not pass.
+- `remove` drops a default by id (e.g. `remove: ['side']` keeps the sidebar always open).
+- A full `ToolbarItem[]` is the escape hatch; a `toggle` item whose `value` is a band id still follows the band.
+- Rendered by `@rokkit/ui` `Toolbar` (keyboard navigation, `aria-pressed` on toggles).
+
+### Panels
+- A missing key is open, so a first visit opens everything. A toggle writes the **whole** state for the bands the view has (never a band it lacks) to `panels` and `onpanels`.
+- The shell stores nothing — no localStorage, no cookie. The host persists `panels` by `viewId`.
+
+### Stats
+- A 12-column grid whose rows share one height. A card takes 1, 2 or 3 columns from its content (no description and a title ≤ 11 characters → 1; a longer title, a value over 6 characters or a short description → 2; a description over 32 characters → 3), or the stat's own `span`. Under 640px every card spans 6.
+- When any card has a description, every card keeps the two-line space, so the cards line up.
+- A stat with `filter` is a toggle button: clicking sets `values[filter.key]` and `stat = id` (the card shows pressed); clicking again restores the value the key had before and clears `stat`. A stat with `href` links there. A stat with neither is a plain, non-interactive card.
+
+### Filters
+- `values` is the one source of truth: search, stats and the band all write into it.
+- Changing the active stat's key by hand clears the stat (the new value stays); changing another key leaves it active.
+- While a stat is active the band shows a chip — "From a stat: **Failing** · Clear" — whose Clear is the same as clicking the stat again.
+- A snippet band receives `FilterApi` (`set(key, value)`; `clear()` empties every value). A schema band is `@rokkit/forms` `FormRenderer` with `data = values`; its `actions` render as a toolbar.
+
+### Info band
+- Up to three columns on a **wash** of the role over paper (12% by day, 18% by night in every style) — not an opaque tint. Text stays ink; eyebrows and step marks are the role mixed toward ink (≥ 4.5:1 on the wash, every skin and mode); the large mark and the meter ≥ 3:1. The third column sits after a hairline.
+- `ScreenInfo` is exported on its own for an info band outside the shell.
+
+## Data Attributes
+
+| Attribute | Element |
+|-----------|---------|
+| `data-screen-shell` (`data-view`) | Root |
+| `data-screen-header`, `data-screen-titlebar` | Fixed header, its first row |
+| `data-screen-mark`, `data-screen-title`, `data-screen-context`, `data-screen-description` | Title bar parts |
+| `data-screen-tools`, `data-screen-search` | Search + toolbar |
+| `data-screen-info` (`data-role`), `data-screen-info-column`, `-label`, `-mark`, `-title`, `-text`, `-steps`, `-step`, `-step-seal`, `-step-mark`, `-step-title`, `-step-text`, `-value`, `-total`, `-meter`, `-meter-fill` | Info band |
+| `data-screen-stats`, `data-screen-stats-reading` | Stats band |
+| `data-screen-filters`, `data-screen-filter-actions`, `data-screen-filter-chip` | Filters band |
+| `data-screen-main`, `data-screen-body`, `data-screen-sidebar` (`data-side`) | Scroll regions |
+| `data-screen-footer` (`data-part`) | Footer |
+
+## Helpers
+
+`PANEL_IDS`, `isOpen`, `presentPanels`, `togglePanel`, `resolveToolbar`, `statSpan`, `applyStat`, `clearStat`, `setFilterValue`, `changedKeys` — the pure rules the shell runs, exported for hosts and tests.
+
+## Related
+
+- [StatCard](/llms/components/stat-card.txt) — the stat card
+- [Toolbar](/llms/components/toolbar.txt) — the toolbar
+- [Form](/llms/components/form.txt) — `FormRenderer` for schema filter bands

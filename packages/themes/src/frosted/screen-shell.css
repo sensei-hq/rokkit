@@ -1,0 +1,191 @@
+/**
+ * ScreenShell — frosted theme
+ *
+ * Frosted: the info band a wash of its role over paper, like every style, so its text reads.
+ *
+ * Text on the wash stays ink (ink / ink-soft / ink-mute); the eyebrows and step marks are the
+ * role mixed toward ink, so they hold 4.5:1 on the wash in both modes; the large mark and the
+ * meter are the role mixed less toward ink (3:1, large text and a graphic).
+ * Measured by packages/app/browser/screen-shell-contrast.browser.spec.ts.
+ */
+
+[data-style='frosted'] [data-screen-shell] {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-header] {
+  background-color: var(--paper);
+}
+
+[data-style='frosted'] [data-screen-mark] {
+  color: var(--accent);
+}
+
+[data-style='frosted'] [data-screen-title] {
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-context] {
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-screen-description] {
+  color: var(--ink-soft);
+}
+
+/* A field's frame identifies it: 3:1 off the paper, like a stat card's. */
+[data-style='frosted'] [data-screen-search] {
+  border-color: color-mix(in oklch, var(--ink-faint) 75%, var(--paper));
+  background-color: var(--paper);
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-screen-search] input {
+  background-color: transparent;
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-search] input::placeholder {
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-screen-search]:focus-within {
+  border-color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-search] + [data-toolbar] {
+  border-color: var(--paper-edge);
+}
+
+/* ─── Info band: a wash of the role over paper ─────────────────────────── */
+
+[data-style='frosted'] [data-screen-info] {
+  --screen-wash: 12%;
+  background-color: color-mix(in oklch, var(--screen-role) var(--screen-wash), var(--paper));
+  border-color: var(--paper-edge);
+  color: var(--ink-soft);
+}
+
+[data-mode='dark'] [data-style='frosted'] [data-screen-info],
+[data-style='frosted'][data-mode='dark'] [data-screen-info] {
+  --screen-wash: 18%;
+}
+
+[data-style='frosted'] [data-screen-info-column]:nth-child(3) {
+  border-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-info-label] {
+  color: color-mix(in oklch, var(--screen-role) 60%, var(--ink));
+}
+
+[data-style='frosted'] [data-screen-info-mark] {
+  color: color-mix(in oklch, var(--screen-role) 80%, var(--ink));
+}
+
+[data-style='frosted'] [data-screen-info-title] {
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-info-text] {
+  color: var(--ink-soft);
+}
+
+[data-style='frosted'] [data-screen-info-step-seal] {
+  background-color: var(--paper);
+  border-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-info-step-mark] {
+  color: color-mix(in oklch, var(--screen-role) 60%, var(--ink));
+}
+
+[data-style='frosted'] [data-screen-info-step-title] {
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-info-step-text] {
+  color: var(--ink-soft);
+}
+
+[data-style='frosted'] [data-screen-info-value] {
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-info-total] {
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-screen-info-meter] {
+  background-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-info-meter-fill] {
+  background-color: color-mix(in oklch, var(--screen-role) 80%, var(--ink));
+}
+
+/* ─── Stats & filters ──────────────────────────────────────────────────── */
+
+[data-style='frosted'] [data-screen-stats] {
+  background-color: var(--paper);
+  border-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-stats-reading] {
+  color: var(--ink-mute);
+}
+
+[data-style='frosted'] [data-screen-filters] {
+  background-color: var(--paper-soft);
+  border-color: var(--paper-edge);
+  color: var(--ink-soft);
+}
+
+[data-style='frosted'] [data-screen-filter-chip] {
+  background-color: var(--paper);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* On a paper-mute fill the text is ink, never ink-mute (4.07:1 by night). */
+[data-style='frosted'] [data-screen-filter-chip] button {
+  background-color: var(--paper-mute);
+  color: var(--ink);
+}
+
+[data-style='frosted'] [data-screen-filter-chip] button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+/* ─── Body, sidebar, footer ────────────────────────────────────────────── */
+
+[data-style='frosted'] [data-screen-main] {
+  border-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-body] {
+  background-color: var(--paper);
+}
+
+[data-style='frosted'] [data-screen-sidebar] {
+  background-color: var(--paper-soft);
+  border-color: var(--paper-edge);
+}
+
+[data-style='frosted'] [data-screen-body]:focus-visible,
+[data-style='frosted'] [data-screen-sidebar]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+[data-style='frosted'] [data-screen-footer] {
+  background-color: var(--paper-soft);
+  border-color: var(--paper-edge);
+  color: var(--ink-soft);
+}
+
+[data-style='frosted'] [data-screen-footer] [data-part='mid'] {
+  color: var(--ink-mute);
+}

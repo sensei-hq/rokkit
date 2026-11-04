@@ -76,6 +76,27 @@ describe('MessagesStore', () => {
 			for (const value of Object.values(messages.graph)) expect(typeof value).toBe('string')
 		})
 
+		it('has a screen namespace for the screen shell’s band toggles and filter band', () => {
+			expect(messages.screen).toEqual({
+				info: 'What it’s for',
+				stats: 'Numbers',
+				filters: 'Filters',
+				side: 'Side panel',
+				search: 'Search',
+				fromStat: 'From a stat',
+				clear: 'Clear',
+				reading: 'Reading…',
+				busy: 'working…'
+			})
+		})
+
+		it('overrides one screen string and keeps the rest', () => {
+			messages.register('de', { screen: { search: 'Suchen' } })
+			messages.setLocale('de')
+			expect(messages.screen.search).toBe('Suchen')
+			expect(messages.screen.clear).toBe('Clear')
+		})
+
 		it('overrides one graph string and keeps the rest', () => {
 			messages.register('de', { graph: { zoomIn: 'Vergrößern' } })
 			messages.setLocale('de')

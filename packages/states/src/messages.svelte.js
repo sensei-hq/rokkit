@@ -53,6 +53,17 @@ const defaultMessages = {
 		noResults: 'No commands found',
 		label: 'Command palette'
 	},
+	screen: {
+		info: 'What it’s for',
+		stats: 'Numbers',
+		filters: 'Filters',
+		side: 'Side panel',
+		search: 'Search',
+		fromStat: 'From a stat',
+		clear: 'Clear',
+		reading: 'Reading…',
+		busy: 'working…'
+	},
 	graph: {
 		// The canvas and its state
 		diagram: 'Diagram of {nodes} and {edges}',
@@ -290,6 +301,7 @@ class MessagesStore {
 	floatingNav = $state({ ...defaultMessages.floatingNav })
 	mode = $state({ ...defaultMessages.mode })
 	command = $state({ ...defaultMessages.command })
+	screen = $state({ ...defaultMessages.screen })
 	graph = $state({ ...defaultMessages.graph })
 
 	// ─── Active locale ─────────────────────────────────────────────────────────

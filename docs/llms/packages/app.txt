@@ -1,8 +1,8 @@
 # Rokkit App Package (@rokkit/app)
 
-> Application-level components for SvelteKit apps: theme switching and on-page navigation.
+> Application-level components for SvelteKit apps: theme switching, on-page navigation and the screen shell.
 
-The `@rokkit/app` package provides higher-level components that sit above the core UI library. It exports `ThemeSwitcherToggle`, `SkinSwitcherToggle`, and `TableOfContents`. They integrate with `@rokkit/states` (the `vibe` store) and `@rokkit/actions`, and are designed to be dropped directly into SvelteKit layouts.
+The `@rokkit/app` package provides higher-level components that sit above the core UI library. It exports `ThemeSwitcherToggle`, `SkinSwitcherToggle`, `TableOfContents`, `ScreenShell` and `ScreenInfo`. They integrate with `@rokkit/states` (the `vibe` store) and `@rokkit/actions`, and are designed to be dropped directly into SvelteKit layouts.
 
 ## Install
 
@@ -14,6 +14,7 @@ npm install @rokkit/app
 
 ```javascript
 import { ThemeSwitcherToggle, SkinSwitcherToggle, TableOfContents } from '@rokkit/app'
+import { ScreenShell, ScreenInfo } from '@rokkit/app'
 import { ColorModeManager, resolveMode } from '@rokkit/app'
 ```
 
@@ -242,10 +243,34 @@ Full reference: [SkinSwitcherToggle component doc](/llms/components/skin-switche
 
 ---
 
+## ScreenShell
+
+One screen laid out from data: a title bar (mark, title, context, then search, the screen's own
+buttons and one toggle per band), a description, info / stats / filters bands, a body and a
+sidebar that each scroll on their own, and a footer. It fills its container and only the body and
+the sidebar scroll. `panels` and `filter` are bindable and the shell persists nothing — the host
+stores them by `viewId`.
+
+```svelte
+<ScreenShell mark={{ kanji: '構' }} title="Structure" {info} {stats} bind:panels bind:filter>
+  {#snippet filters(api)}<MyControls {api} />{/snippet}
+  {#snippet sidebar()}<Inspector />{/snippet}
+  <CodeMap />
+</ScreenShell>
+```
+
+- Stats are data (`{ id, title, kanji/icon, value, tone?, description?, span?, filter? | href? }`); a stat with a `filter` toggles it into `filter.values` and shows pressed.
+- Filters band: a snippet (receives `{ values, set, clear }`) or `{ schema, layout, actions? }` drawn by `@rokkit/forms` `FormRenderer`.
+- Info band: up to three columns (`{ label, text?, kanji?, title?, steps?, value?, total?, progress? }` or snippets) on a wash of `infoRole` (default accent). `ScreenInfo` renders it on its own.
+
+Full reference: [ScreenShell component doc](/llms/components/screen-shell.txt).
+
+---
+
 ## Import
 
 ```javascript
-import { ThemeSwitcherToggle, SkinSwitcherToggle, TableOfContents } from '@rokkit/app'
+import { ThemeSwitcherToggle, SkinSwitcherToggle, TableOfContents, ScreenShell, ScreenInfo } from '@rokkit/app'
 ```
 
 ## Related

@@ -126,7 +126,7 @@ Verify that `<body>` is on its own line in `src/app.html`. The script is injecte
 | `@rokkit/data` | Data manipulation utilities |
 | `@rokkit/themes` | CSS themes (rokkit, minimal, material, frosted, zen-sumi) |
 | `@rokkit/unocss` | UnoCSS preset (`presetRokkit`) |
-| `@rokkit/app` | App-level UI chrome (ThemeSwitcherToggle, SkinSwitcherToggle, TableOfContents) |
+| `@rokkit/app` | App-level UI chrome (ThemeSwitcherToggle, SkinSwitcherToggle, TableOfContents, ScreenShell, ScreenInfo) |
 | `@rokkit/icons` | Icon system with Iconify integration |
 
 Package reference: [packages/](/llms/packages/)
@@ -408,7 +408,8 @@ Long-form prose covering framework concepts. Mirrors what users see at `/guides/
 - [Pill](/llms/components/pill.txt) — inline label/tag/badge with optional dismiss
 - [Avatar](/llms/components/avatar.txt) — user avatar with image, initials fallback, status indicator
 - [Badge](/llms/components/badge.txt) — numeric badge or dot indicator overlay
-- [StatCard](/llms/components/stat-card.txt) — one number and what it counts: icon and label on top, value below at the end
+- [StatCard](/llms/components/stat-card.txt) — one number and what it counts: mark and label on top, value below at the end; plain, a link, or a pressed toggle
+- [ScreenShell](/llms/components/screen-shell.txt) — `@rokkit/app`: a data-driven screen — title bar + toolbar, info / stats / filters bands, scrolling body and sidebar, footer
 - [Connector](/llms/components/connector.txt) — tree-style connector lines for hierarchical views
 
 ### Content & Feedback

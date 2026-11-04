@@ -104,6 +104,7 @@
       "dependencies": {
         "@rokkit/actions": "workspace:*",
         "@rokkit/core": "workspace:*",
+        "@rokkit/forms": "workspace:*",
         "@rokkit/states": "workspace:*",
         "@rokkit/ui": "workspace:*",
       },

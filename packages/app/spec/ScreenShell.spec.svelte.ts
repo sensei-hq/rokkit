@@ -168,6 +168,44 @@ describe('ScreenShell — toolbar and panels', () => {
 		expect(onclick).toHaveBeenCalledTimes(1)
 	})
 
+	it('renders an href action as a real link with its label as the accessible name', () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				toolbar: {
+					add: [{ id: 'cfg', label: 'Connection settings', icon: 'i-cog', href: '/settings/dojo' }]
+				}
+			}
+		})
+		const link = q(container, '[data-screen-tools] a[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link).not.toBeNull()
+		expect(link.getAttribute('href')).toBe('/settings/dojo')
+		expect(link.getAttribute('aria-label')).toBe('Connection settings')
+	})
+
+	it('renders a disabled or busy href action as a link that cannot navigate', () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				toolbar: {
+					add: [
+						{ id: 'a', label: 'Open', icon: 'i-a', href: '/a', disabled: 'Sign in first' },
+						{ id: 'b', label: 'Copy', icon: 'i-b', href: '/b', busy: true }
+					]
+				}
+			}
+		})
+		const links = qa(container, '[data-screen-tools] a[data-toolbar-item]')
+
+		expect(links).toHaveLength(2)
+		for (const link of links) {
+			expect(link.hasAttribute('href')).toBe(false)
+			expect(link.getAttribute('aria-disabled')).toBe('true')
+		}
+		expect(links[0].getAttribute('aria-label')).toBe('Open — Sign in first')
+	})
+
 	it('drops a default toggle the screen removes', () => {
 		const { container } = render(ScreenShellTest, {
 			props: { ...base, info, withSidebar: true, toolbar: { remove: ['side'] } }

@@ -121,6 +121,12 @@
   outline: none;
 }
 
+/* An item with an href is a real link (client routing, open-in-new); it looks like the rest. */
+a[data-toolbar-item] {
+  color: inherit;
+  text-decoration: none;
+}
+
 [data-toolbar-item][data-disabled='true'],
 [data-toolbar-item]:disabled {
   pointer-events: none;

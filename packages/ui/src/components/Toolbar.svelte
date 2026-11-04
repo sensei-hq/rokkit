@@ -112,6 +112,33 @@
 	const isHorizontal = $derived(position === 'top' || position === 'bottom')
 </script>
 
+{#snippet itemFace(proxy: ProxyItem)}
+	{#if proxy.get('icon')}
+		<span data-toolbar-icon class={proxy.get('icon')} aria-hidden="true"></span>
+	{/if}
+	{#if proxy.label && !proxy.get('icon')}
+		<span data-toolbar-label>{proxy.label}</span>
+	{/if}
+{/snippet}
+
+{#snippet linkItem(proxy: ProxyItem, pathKey: string | undefined)}
+	{@const inert = proxy.disabled || disabled}
+	<!-- A link that cannot navigate drops its href (and says so), so no click, middle-click or
+	     Enter can follow it; a live one is a real anchor for client routing and open-in-new. -->
+	<a
+		data-toolbar-item
+		data-path={pathKey}
+		data-disabled={inert || undefined}
+		href={inert ? undefined : String(proxy.get('href'))}
+		role={inert ? 'link' : undefined}
+		aria-disabled={inert || undefined}
+		aria-label={proxy.label}
+		title={proxy.get('shortcut') ? `${proxy.label} (${proxy.get('shortcut')})` : proxy.label}
+	>
+		{@render itemFace(proxy)}
+	</a>
+{/snippet}
+
 {#snippet defaultItem(proxy: ProxyItem, pathKey: string | undefined)}
 	<button
 		type="button"
@@ -124,12 +151,7 @@
 		aria-pressed={proxy.get('active')}
 		title={proxy.get('shortcut') ? `${proxy.label} (${proxy.get('shortcut')})` : proxy.label}
 	>
-		{#if proxy.get('icon')}
-			<span data-toolbar-icon class={proxy.get('icon')} aria-hidden="true"></span>
-		{/if}
-		{#if proxy.label && !proxy.get('icon')}
-			<span data-toolbar-label>{proxy.label}</span>
-		{/if}
+		{@render itemFace(proxy)}
 	</button>
 {/snippet}
 
@@ -167,6 +189,8 @@
 				{/snippet}
 			</svelte:boundary>
 		</div>
+	{:else if proxy.get('href')}
+		{@render linkItem(proxy, pathKey)}
 	{:else}
 		{@render defaultItem(proxy, pathKey)}
 	{/if}

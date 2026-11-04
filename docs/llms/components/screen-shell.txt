@@ -110,6 +110,7 @@ type FilterSchema = { schema: object; layout: object; actions?: ShellAction[] }
 - `remove` drops a default by id (e.g. `remove: ['side']` keeps the sidebar always open).
 - A full `ToolbarItem[]` is the escape hatch; a `toggle` item whose `value` is a band id still follows the band.
 - Rendered by `@rokkit/ui` `Toolbar` (keyboard navigation, `aria-pressed` on toggles).
+- An action with `href` is a real link (`<a href>`), so the host's router handles it; a disabled or busy one renders without its `href` (`aria-disabled`). A `disabled` string is the reason, appended to the label (tooltip and accessible name).
 
 ### Panels
 - A missing key is open, so a first visit opens everything. A toggle writes the **whole** state for the bands the view has (never a band it lacks) to `panels` and `onpanels`.

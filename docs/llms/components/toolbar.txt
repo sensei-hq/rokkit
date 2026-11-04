@@ -156,6 +156,17 @@ Set `snippet: 'myWidget'` on an item and pass a matching snippet:
 - `aria-pressed` on toggle items
 - `aria-disabled` when disabled
 
+## Link Items
+
+An item with an `href` renders as a real `<a data-toolbar-item href>` (client-side routing,
+preloading, middle-click / open in new tab, the `link` role), with the label as its accessible
+name. A disabled link item (or any item in a disabled toolbar) drops its `href` and carries
+`role="link"` + `aria-disabled="true"`, so nothing can follow it.
+
+```svelte
+<Toolbar items={[{ label: 'Settings', value: 'settings', icon: 'i-cog', href: '/settings' }]} />
+```
+
 ## Data Attributes
 
 | Attribute | Description |

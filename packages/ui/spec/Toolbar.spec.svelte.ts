@@ -425,3 +425,39 @@ describe('Toolbar', () => {
 		})
 	})
 })
+
+describe('Toolbar — link items', () => {
+	it('renders an item with an href as an anchor with that href and its accessible name', () => {
+		const { container } = render(Toolbar, {
+			items: [{ label: 'Open settings', value: 'settings', icon: 'i-cog', href: '/settings' }]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.getAttribute('href')).toBe('/settings')
+		expect(link.getAttribute('aria-label')).toBe('Open settings')
+		expect(link.hasAttribute('aria-pressed')).toBe(false)
+		expect(link.querySelector('[data-toolbar-icon]')?.classList.contains('i-cog')).toBe(true)
+	})
+
+	it('renders a disabled link item without an href, so it cannot navigate', () => {
+		const { container } = render(Toolbar, {
+			items: [{ label: 'Open', value: 'open', icon: 'i-x', href: '/x', disabled: true }]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.hasAttribute('href')).toBe(false)
+		expect(link.getAttribute('aria-disabled')).toBe('true')
+		expect(link.getAttribute('role')).toBe('link')
+	})
+
+	it('renders every link item without an href when the whole toolbar is disabled', () => {
+		const { container } = render(Toolbar, {
+			disabled: true,
+			items: [{ label: 'Open', value: 'open', icon: 'i-x', href: '/x' }]
+		})
+
+		expect(container.querySelector('[data-toolbar-item]')?.hasAttribute('href')).toBe(false)
+	})
+})

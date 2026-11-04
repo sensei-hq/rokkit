@@ -11037,3 +11037,8 @@ sensei's D87 contract (coord/mockups/screen-shell/CONTRACT.md §8) builds upstre
   card and search frames lowest 3.36 (zen-sumi light), zen-sumi dark 3.73.
   screen-shell-layout.browser.spec.ts proves only body and sidebar scroll (mutation: dropping
   `min-height: 0` on `[data-screen-main]` fails all five).
+- (L0 review) An `href` action is a real link: `Toolbar` now renders any item with an `href` as
+  `<a data-toolbar-item href>` (label = accessible name), so SvelteKit routes and preloads it,
+  middle-click opens a tab, and the Tauri webview no longer reloads. A disabled one (or any item
+  in a disabled toolbar) drops its `href` with `role="link"` + `aria-disabled`. The Navigator
+  already leaves a click on `a[href]` native. `ScreenShell` no longer calls `location.assign`.

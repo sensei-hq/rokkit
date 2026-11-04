@@ -109,7 +109,6 @@
 		if (item.type === 'toggle' && PANEL_IDS.includes(value as PanelId))
 			return flip(value as PanelId)
 		;(item.onclick as (() => void) | undefined)?.()
-		if (typeof item.href === 'string') window.location.assign(item.href)
 	}
 
 	// ─── Filter ────────────────────────────────────────────────────

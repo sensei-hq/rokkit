@@ -11005,3 +11005,35 @@ view whose data is absent says so rather than inventing it):
   boundary ≥ 3:1 off each surface, thumb ≥ 3:1 off the track. Worst case now 3.70 (frosted,
   light, paper-mute) / thumb 3.54 (frosted, light); zen-sumi 5.01–6.18 / 5.47–6.18.
 - `spec/switch-css.spec.js` no longer pins `paper-edge`; it counts it as a near-page tone.
+
+## 2026-11-04 — ScreenShell (D87): one screen shell, driven by data
+
+sensei's D87 contract (coord/mockups/screen-shell/CONTRACT.md §8) builds upstream here; sensei's
+`@sensei/ui` wraps it (glyph mode → `glyphs`, `viewId` → its own panel store).
+
+- `@rokkit/app` `ScreenShell` (fa71ba425 StatCard, 06055d2e0 shell): title bar (mark, title,
+  context, search → `values.q`, the screen's buttons, band toggles via `Toolbar`), description,
+  info / stats / filters bands, body + sidebar each scrolling on their own, footer. Fills its
+  container; only body and sidebar overflow. `panels` / `filter` bindable; persists nothing.
+- Toolbar: `{ add, remove }` over the default (one toggle per band the view has, in
+  info · stats · filters · side order), or a full `ToolbarItem[]`. One data-driven `Toolbar`
+  with a separator item, not two `ToolbarGroup`s — Toolbar is either data-driven or slot-based,
+  and the data path keeps its keyboard navigation. Search sits before it, outside the toolbar,
+  so the arrow keys edit text instead of moving toolbar focus.
+- Stats: the merge rule lives in pure helpers (`applyStat`/`clearStat`/`setFilterValue`) with a
+  `StatMemory` tied to the stat id, so a filter replaced from outside never restores the wrong
+  key. Span 1–3 from the contract's character thresholds (the mockup's stand-in for measuring).
+- Info band (`ScreenInfo`): the "Your first session" look — a WASH of the role over paper
+  (`color-mix(in oklch, var(--screen-role) 12%|18%, var(--paper))`), not the opaque `-soft` tint.
+  Raw accent text failed on it (zen-sumi light 3.9:1, default skin's mark 2.39:1), so eyebrows
+  and step marks are the role mixed 60% toward ink, the large mark and meter 80%.
+- StatCard: `description`, `mark` (text or snippet), `onclick` + `pressed` (button,
+  aria-pressed), plain look without href/onclick, `span`, `tone: 'ink'`. The frame went from
+  paper-edge (1.5:1) to ink-faint mixed 75% into paper — 70% measured 3.04:1 on sea-glass,
+  too thin a margin.
+- Measured (packages/app/browser/screen-shell-contrast.browser.spec.ts, 5 styles × default +
+  5 families × modes): info text lowest 5.28:1 (default skin eyebrow), zen-sumi light/dark
+  eyebrow 7.24/7.23, lead 5.60/6.43; large mark and meter lowest 3.50 (zen-sumi 5.52/5.68);
+  card and search frames lowest 3.36 (zen-sumi light), zen-sumi dark 3.73.
+  screen-shell-layout.browser.spec.ts proves only body and sidebar scroll (mutation: dropping
+  `min-height: 0` on `[data-screen-main]` fails all five).

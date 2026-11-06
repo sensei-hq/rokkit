@@ -629,6 +629,40 @@ describe('ScreenShell — attribute passthrough', () => {
 		expect(q(container, '[data-screen-footer]')?.getAttribute('data-testid')).toBe('band-footer')
 	})
 
+	it("renders an added action's attrs on its toolbar button, and an href action's on its link", () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				search: false,
+				toolbar: {
+					add: [
+						{ id: 'sync', label: 'Sync now', icon: 'i-sync', attrs: { 'data-testid': 'sync-action' } },
+						{
+							id: 'settings',
+							label: 'Settings',
+							icon: 'i-cog',
+							href: '/settings',
+							attrs: { 'data-testid': 'settings-action' }
+						}
+					]
+				}
+			}
+		})
+		const button = q(container, '[data-screen-tools] [data-toolbar-item][aria-label="Sync now"]')!
+
+		expect(button.tagName).toBe('BUTTON')
+		expect(button.getAttribute('data-testid')).toBe('sync-action')
+
+		const link = q(
+			container,
+			'[data-screen-tools] [data-toolbar-item][aria-label="Settings"]'
+		) as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.getAttribute('href')).toBe('/settings')
+		expect(link.getAttribute('data-testid')).toBe('settings-action')
+	})
+
 	it("renders a stat's attrs on its card, without leaking the stat's own fields", () => {
 		const { container } = render(ScreenShellTest, {
 			props: {

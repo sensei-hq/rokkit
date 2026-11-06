@@ -9,6 +9,7 @@ import type {
 	PanelLabels,
 	ToolbarSpec,
 	ShellAction,
+	ShellAttrs,
 	ShellStat,
 	FilterState,
 	StatMemory
@@ -58,6 +59,8 @@ interface ToolbarContext {
 	icons: PanelLabels
 	/** Appended to a busy action's label. */
 	busy?: string
+	/** Attributes per band toggle, rendered on its toolbar button. */
+	toggleAttrs?: Partial<Record<PanelId, ShellAttrs>>
 }
 
 const SEPARATOR: ToolbarItem = { type: 'separator' }
@@ -81,16 +84,25 @@ function toToolbarItem(item: ShellAction | ToolbarItem, busy = ''): ToolbarItem 
 	}
 }
 
+/** A panel toggle with the band's attrs under its own (its own keys win). */
+function withToggleAttrs(item: ToolbarItem, band: ShellAttrs | undefined): ToolbarItem {
+	if (!band && item.attrs === undefined) return item
+	return { ...item, attrs: { ...band, ...((item.attrs ?? {}) as ShellAttrs) } }
+}
+
 /** One toggle per band, pressed while the band is open. */
 function panelToggle(id: PanelId, ctx: ToolbarContext): ToolbarItem {
-	return {
-		id,
-		value: id,
-		type: 'toggle',
-		icon: ctx.icons[id],
-		label: ctx.labels[id],
-		active: isOpen(ctx.panels, id)
-	}
+	return withToggleAttrs(
+		{
+			id,
+			value: id,
+			type: 'toggle',
+			icon: ctx.icons[id],
+			label: ctx.labels[id],
+			active: isOpen(ctx.panels, id)
+		},
+		ctx.toggleAttrs?.[id]
+	)
 }
 
 /** A full list: kept as is, except a band toggle follows the band (dropped when it is absent). */
@@ -101,7 +113,10 @@ function resolveFullList(spec: ToolbarItem[], ctx: ToolbarContext): ToolbarItem[
 		)
 		.map((item) =>
 			item.type === 'toggle' && isPanelId(item.value)
-				? { ...item, active: isOpen(ctx.panels, item.value) }
+				? {
+						...withToggleAttrs(item, ctx.toggleAttrs?.[item.value]),
+						active: isOpen(ctx.panels, item.value)
+					}
 				: item.type === 'separator' || item.type === 'spacer'
 					? item
 					: toToolbarItem(item, ctx.busy)

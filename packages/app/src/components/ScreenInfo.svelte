@@ -7,16 +7,24 @@
 	 * the role.
 	 */
 	import type { Snippet } from 'svelte'
+	import type { HTMLAttributes } from 'svelte/elements'
 	import type { GlyphMode, InfoColumn, InfoRole, InfoSlot } from '../types/screen-shell.js'
 
-	interface Props {
+	// `role` is the band's wash, not the ARIA role, so it stays out of the passthrough.
+	interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'role'> {
 		columns: InfoSlot[]
 		role?: InfoRole
 		glyphs?: GlyphMode
 		class?: string
 	}
 
-	const { columns, role = 'accent', glyphs = 'text', class: className = '' }: Props = $props()
+	const {
+		columns,
+		role = 'accent',
+		glyphs = 'text',
+		class: className = '',
+		...rest
+	}: Props = $props()
 
 	const isSnippet = (slot: InfoSlot): slot is Snippet => typeof slot === 'function'
 	const percent = (progress: number) => `${Math.round(Math.max(0, Math.min(1, progress)) * 100)}%`
@@ -72,7 +80,7 @@
 	{#if info.text}<p data-screen-info-text>{info.text}</p>{/if}
 {/snippet}
 
-<div data-screen-info data-role={role} class={className || undefined}>
+<div {...rest} data-screen-info data-role={role} class={className || undefined}>
 	{#each columns.slice(0, 3) as slot, index (index)}
 		<div data-screen-info-column>
 			{#if isSnippet(slot)}

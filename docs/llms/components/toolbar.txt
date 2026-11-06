@@ -156,6 +156,18 @@ Set `snippet: 'myWidget'` on an item and pass a matching snippet:
 - `aria-pressed` on toggle items
 - `aria-disabled` when disabled
 
+## Per-Item Attrs
+
+An item may carry `attrs` — a `Record<string, string>` rendered on its button or link —
+for the host's own hooks (`data-testid`) or extra semantics. The toolbar's own attributes
+always win: an `attrs` key naming one (e.g. `aria-label`) is ignored.
+
+```svelte
+const items = [
+  { label: 'Sync now', value: 'sync', icon: 'i-sync', attrs: { 'data-testid': 'sync-button' } }
+]
+```
+
 ## Link Items
 
 An item with an `href` renders as a real `<a data-toolbar-item href>` (client-side routing,

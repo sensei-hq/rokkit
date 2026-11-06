@@ -62,7 +62,8 @@ export const defaultToolbarFields: Required<ToolbarFields> = {
 // =============================================================================
 
 /**
- * Generic toolbar item - can be any object with mapped fields
+ * Generic toolbar item - can be any object with mapped fields. An item may carry `attrs`
+ * (`Record<string, string>`), rendered on its button or link for the host's own hooks.
  */
 export type ToolbarItem = Record<string, unknown>
 

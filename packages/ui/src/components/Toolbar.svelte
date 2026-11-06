@@ -123,9 +123,12 @@
 
 {#snippet linkItem(proxy: ProxyItem, pathKey: string | undefined)}
 	{@const inert = proxy.disabled || disabled}
+	{@const itemAttrs = proxy.get('attrs') as Record<string, string> | undefined}
 	<!-- A link that cannot navigate drops its href (and says so), so no click, middle-click or
-	     Enter can follow it; a live one is a real anchor for client routing and open-in-new. -->
+	     Enter can follow it; a live one is a real anchor for client routing and open-in-new.
+	     The item's own attrs spread first, so the toolbar's attributes always win. -->
 	<a
+		{...itemAttrs}
 		data-toolbar-item
 		data-path={pathKey}
 		data-disabled={inert || undefined}
@@ -140,7 +143,9 @@
 {/snippet}
 
 {#snippet defaultItem(proxy: ProxyItem, pathKey: string | undefined)}
+	{@const itemAttrs = proxy.get('attrs') as Record<string, string> | undefined}
 	<button
+		{...itemAttrs}
 		type="button"
 		data-toolbar-item
 		data-path={pathKey}

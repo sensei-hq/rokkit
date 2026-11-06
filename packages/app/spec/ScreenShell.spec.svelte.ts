@@ -553,6 +553,100 @@ describe('ScreenShell — layout parts', () => {
 	})
 })
 
+describe('ScreenShell — attribute passthrough', () => {
+	it('passes rest attributes to its root, with the class beside them', () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				search: false,
+				id: 'activity-logs',
+				'data-screen': 'activity-logs',
+				'aria-label': 'Activity logs',
+				class: 'h-full'
+			}
+		})
+		const root = q(container, '[data-screen-shell]')!
+
+		expect(root.getAttribute('id')).toBe('activity-logs')
+		expect(root.getAttribute('data-screen')).toBe('activity-logs')
+		expect(root.getAttribute('aria-label')).toBe('Activity logs')
+		expect(root.classList.contains('h-full')).toBe(true)
+	})
+
+	it('never duplicates its known props as attributes on the root', () => {
+		const { container } = render(ScreenShellTest, {
+			props: { ...base, viewId: 'surface.area', context: 'ctx', search: false }
+		})
+		const root = q(container, '[data-screen-shell]')!
+
+		expect(root.getAttribute('data-view')).toBe('surface.area')
+		expect(root.getAttribute('title')).toBeNull()
+		expect(root.getAttribute('viewId')).toBeNull()
+		expect(root.getAttribute('context')).toBeNull()
+	})
+
+	it('hangs per-band attrs on the panel toggles', () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				info,
+				stats,
+				toggleAttrs: { stats: { 'data-testid': 'diagram-stats-toggle' } }
+			}
+		})
+
+		expect(toggle(container, 'Numbers').getAttribute('data-testid')).toBe(
+			'diagram-stats-toggle'
+		)
+		expect(toggle(container, 'What it’s for').hasAttribute('data-testid')).toBe(false)
+	})
+
+	it('hangs per-band attrs on the info, stats, filters, sidebar and footer bands', () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				info,
+				stats,
+				withSidebar: true,
+				withFilterSnippet: true,
+				footer: { left: 'L', mid: 'M', right: 'R' },
+				bandAttrs: {
+					info: { 'data-testid': 'band-info' },
+					stats: { 'data-testid': 'band-stats' },
+					filters: { 'data-testid': 'band-filters' },
+					side: { 'data-testid': 'band-side' },
+					footer: { 'data-testid': 'band-footer' }
+				}
+			}
+		})
+
+		expect(q(container, '[data-screen-info]')?.getAttribute('data-testid')).toBe('band-info')
+		expect(q(container, '[data-screen-stats]')?.getAttribute('data-testid')).toBe('band-stats')
+		expect(q(container, '[data-screen-filters]')?.getAttribute('data-testid')).toBe(
+			'band-filters'
+		)
+		expect(q(container, '[data-screen-sidebar]')?.getAttribute('data-testid')).toBe('band-side')
+		expect(q(container, '[data-screen-footer]')?.getAttribute('data-testid')).toBe('band-footer')
+	})
+
+	it("renders a stat's attrs on its card, without leaking the stat's own fields", () => {
+		const { container } = render(ScreenShellTest, {
+			props: {
+				...base,
+				stats: [
+					...stats,
+					{ id: 'hooked', title: 'Hooked', kanji: '鉤', value: 9, attrs: { 'data-testid': 'stat-hooked' } }
+				]
+			}
+		})
+		const hooked = card(container, 'Hooked')
+
+		expect(hooked.getAttribute('data-testid')).toBe('stat-hooked')
+		expect(hooked.getAttribute('data-stat')).toBe('hooked')
+		expect(card(container, 'Failing').hasAttribute('data-testid')).toBe(false)
+	})
+})
+
 describe('ScreenShell — persists nothing', () => {
 	it('writes no storage and no cookie while panels, stats, search and filters change', async () => {
 		vi.useFakeTimers()

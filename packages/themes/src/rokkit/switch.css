@@ -8,7 +8,10 @@
 [data-style='rokkit'] [data-switch-track] {
   --switch-track-border: 1px;
   border-width: var(--switch-track-border);
-  @apply from-paper-mute to-paper-mute border-ink-faint bg-gradient-to-b;
+  /* A solid fill, not a gradient: from-/to- stops read only --color-* vars, which the
+     paper/ink tones never emit, so `from-paper-mute to-paper-mute` compiled to no stops
+     and the track was transparent. Same-color ends are a flat fill anyway. */
+  @apply bg-paper-mute border-ink-faint;
 }
 
 [data-style='rokkit'] [data-switch] [data-switch-thumb] {

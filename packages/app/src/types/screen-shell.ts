@@ -7,7 +7,19 @@
  * `filter` are bindable and the host stores them.
  */
 import type { Snippet } from 'svelte'
+import type { HTMLAttributes } from 'svelte/elements'
 import type { ToolbarItem } from '@rokkit/ui'
+
+// =============================================================================
+// Attribute passthrough
+// =============================================================================
+
+/**
+ * Attributes a host hangs on a shell part for its own hooks (`data-testid`) or extra
+ * semantics (`aria-*`): components take them as rest props, data (actions, stats, toolbar
+ * items) carries them in an `attrs` field, rendered on the element.
+ */
+export type ShellAttrs = Record<string, string>
 
 // =============================================================================
 // Panels
@@ -51,6 +63,8 @@ export interface ShellAction {
 	href?: string
 	busy?: boolean
 	disabled?: string | boolean
+	/** Attributes rendered on the action's button or link (e.g. `data-testid`). */
+	attrs?: ShellAttrs
 	[key: string]: unknown
 }
 
@@ -125,6 +139,8 @@ export interface ShellStat {
 	span?: number
 	filter?: { key: string; value: unknown }
 	href?: string
+	/** Attributes rendered on the stat's card (e.g. `data-testid`). */
+	attrs?: ShellAttrs
 }
 
 // =============================================================================
@@ -182,7 +198,7 @@ export interface ScreenShellLabels extends PanelLabels {
 // Props
 // =============================================================================
 
-export interface ScreenShellProps {
+export interface ScreenShellProps extends HTMLAttributes<HTMLDivElement> {
 	/** `<surface>.<area>[.<view>]` — the host keys its stored panels by it. */
 	viewId?: string
 	mark: ShellMark
@@ -214,4 +230,8 @@ export interface ScreenShellProps {
 	/** String overrides; defaults come from `messages.screen`. */
 	labels?: Partial<ScreenShellLabels>
 	class?: string
+	/** Attributes per band toggle, rendered on its toolbar button (e.g. `data-testid`). */
+	toggleAttrs?: Partial<Record<PanelId, ShellAttrs>>
+	/** Attributes per band, rendered on the band's element (e.g. `data-testid`). */
+	bandAttrs?: Partial<Record<PanelId | 'footer', ShellAttrs>>
 }

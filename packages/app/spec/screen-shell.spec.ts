@@ -125,6 +125,27 @@ describe('resolveToolbar', () => {
 		expect(items.map((i) => i.id ?? i.type)).toEqual(['side', 'separator', 'go'])
 		expect(items[0].active).toBe(false)
 	})
+
+	it('hangs per-band attrs on the default panel toggles, and none where none are given', () => {
+		const items = resolveToolbar(undefined, {
+			...ctx,
+			present: ['stats', 'side'],
+			toggleAttrs: { stats: { 'data-testid': 'diagram-stats-toggle' } }
+		})
+
+		expect(items[0]).toMatchObject({ id: 'stats', attrs: { 'data-testid': 'diagram-stats-toggle' } })
+		expect(items[1]).toMatchObject({ id: 'side' })
+		expect('attrs' in items[1]).toBe(false)
+	})
+
+	it('merges per-band attrs under a full-list toggle’s own attrs', () => {
+		const items = resolveToolbar(
+			[{ id: 'stats', value: 'stats', type: 'toggle', icon: 'y', label: 'Stats', attrs: { 'data-testid': 'own' } }],
+			{ ...ctx, present: ['stats'], toggleAttrs: { stats: { 'data-testid': 'band', 'data-band': 'stats' } } }
+		)
+
+		expect(items[0].attrs).toEqual({ 'data-testid': 'own', 'data-band': 'stats' })
+	})
 })
 
 describe('statSpan', () => {

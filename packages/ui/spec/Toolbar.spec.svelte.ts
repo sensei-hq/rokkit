@@ -461,3 +461,60 @@ describe('Toolbar — link items', () => {
 		expect(container.querySelector('[data-toolbar-item]')?.hasAttribute('href')).toBe(false)
 	})
 })
+
+describe('Toolbar — per-item attrs', () => {
+	it("renders an item's attrs on its button, so a host can hang test hooks on it", () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Sync now',
+					value: 'sync',
+					icon: 'i-sync',
+					attrs: { 'data-testid': 'sync-button', 'data-band': 'filters' }
+				},
+				{ label: 'Plain', value: 'plain', icon: 'i-plain' }
+			]
+		})
+		const buttons = container.querySelectorAll('[data-toolbar-item]')
+
+		expect(buttons[0]?.getAttribute('data-testid')).toBe('sync-button')
+		expect(buttons[0]?.getAttribute('data-band')).toBe('filters')
+		expect(buttons[1]?.hasAttribute('data-testid')).toBe(false)
+	})
+
+	it("renders an item's attrs on its link", () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Open settings',
+					value: 'settings',
+					icon: 'i-cog',
+					href: '/settings',
+					attrs: { 'data-testid': 'settings-link' }
+				}
+			]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.getAttribute('href')).toBe('/settings')
+		expect(link.getAttribute('data-testid')).toBe('settings-link')
+	})
+
+	it('keeps its own attributes when attrs name them: the label stays the accessible name', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Sync now',
+					value: 'sync',
+					icon: 'i-sync',
+					attrs: { 'aria-label': 'Sneaky', 'data-toolbar-item': 'no' }
+				}
+			]
+		})
+		const button = container.querySelector('button')!
+
+		expect(button.getAttribute('aria-label')).toBe('Sync now')
+		expect(button.hasAttribute('data-toolbar-item')).toBe(true)
+	})
+})

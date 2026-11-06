@@ -76,6 +76,14 @@
 | `icons` | `Partial<Record<PanelId, string>>` | built-in | Toggle icon classes |
 | `labels` | `Partial<ScreenShellLabels>` | `messages.screen` | String overrides |
 | `class` | `string` | — | Classes on the root |
+| `toggleAttrs` | `Partial<Record<PanelId, ShellAttrs>>` | — | Attributes per band toggle, on its toolbar button |
+| `bandAttrs` | `Partial<Record<PanelId \| 'footer', ShellAttrs>>` | — | Attributes per band, on the band's element |
+
+Any other attribute (`data-*`, `aria-*`, `id`, …) passes through to the root element,
+beside the shell's own `data-screen-shell` / `data-view` / `class` — e.g.
+`data-screen="activity-logs"` needs no wrapper div. A stat's `attrs` render on its card;
+an action's `attrs` on its toolbar button or link. The shell's own attributes always win
+over passed-through ones.
 
 ## Types
 
@@ -83,8 +91,11 @@
 type PanelId = 'info' | 'stats' | 'filters' | 'side'
 type PanelState = Partial<Record<PanelId, boolean>>          // missing = open
 
+type ShellAttrs = Record<string, string>   // attrs rendered on the element (e.g. data-testid)
+
 interface ShellAction { id: string; label: string; icon: string; onclick?: () => void
-  href?: string; busy?: boolean; disabled?: string | boolean } // a disabled string is the reason
+  href?: string; busy?: boolean; disabled?: string | boolean; attrs?: ShellAttrs }
+// a disabled string is the reason
 type ToolbarSpec = { add?: Array<ShellAction | ToolbarItem>; remove?: string[] } | ToolbarItem[]
 
 interface InfoColumn { label: string; text?: string          // eyebrow + lead (the minimum)
@@ -95,7 +106,7 @@ type InfoSlot = InfoColumn | Snippet
 
 interface ShellStat { id: string; title: string; kanji?: string; icon?: string
   value: string | number; tone?: 'ink' | 'danger' | 'warning' | 'success' | 'muted'
-  description?: string; span?: number
+  description?: string; span?: number; attrs?: ShellAttrs
   filter?: { key: string; value: unknown }; href?: string }
 
 interface FilterState { values: Record<string, unknown>; stat?: string | null }

@@ -11056,3 +11056,35 @@ sensei's D87 contract (coord/mockups/screen-shell/CONTRACT.md §8) builds upstre
   and every style; base sizes the search as a band control (`flex: 0 1 16rem`).
 - The contrast browser spec measures the search frame on the filters band (paper-soft) and on
   its own field: lowest 3.25:1 and 3.36:1 across every style, skin and mode.
+
+## 2026-11-05 — ScreenShell attribute passthrough + rokkit switch fill (L7, sensei-hq coord)
+
+Sensei screens on `ScreenShell` lost their e2e hooks (`data-testid`), so the shell and its
+toolbar now pass attributes through instead of dropping them. Convention: **components
+take rest props, data carries `attrs`** (`ShellAttrs = Record<string, string>`, rendered
+on the element; the component's own attributes always win).
+
+- `ScreenShell` root: rest attributes (`data-*`, `aria-*`, `id`, …) spread on
+  `[data-screen-shell]` beside `data-view`/`class` (`ScreenShellProps` extends
+  `HTMLAttributes<HTMLDivElement>`); known props never duplicated as attributes.
+- `Toolbar` items: an item's `attrs` (read via `proxy.get`, so remappable through
+  `fields`) renders on its button or link. Chose explicit `attrs` over bare `data-*`
+  keys: enumerable, field-mappable, matches chart's `resolveMarkAttrs` naming.
+- `ScreenShell` props: `toggleAttrs` (per-band, onto the toolbar toggles — merged under
+  a full-list toggle's own attrs by `resolveToolbar`) and `bandAttrs` (per band incl.
+  `footer`, onto the band elements); `ShellStat.attrs` renders on the `StatCard`
+  (already rest-spreads), `ShellAction.attrs` flows through `toToolbarItem`.
+- `ScreenInfo` takes rest props too (its `role` wash stays out via `Omit`).
+- Style fix: the `rokkit` off track's `from-paper-mute to-paper-mute` gradient compiled
+  to NO stops — gradient stops read only `--color-*` vars, which paper/ink tones never
+  emit — so the track was transparent. Replaced with solid `bg-paper-mute` (same-color
+  ends are flat anyway); border and thumb untouched. The 55-case switch-contrast spec
+  stays green; new `switch-fill.browser.spec.ts` pins the opaque fill (computed alpha 1
+  + pixel differs from the surface).
+- Note for L0: the same transparent-gradient pattern is everywhere else in the `rokkit`
+  style (`from-paper-*`/`to-paper-*` in toolbar, list, card, menu, … compile to no
+  stops either) — paper-on-paper, so invisible except on the switch. Follow-up, not
+  this patch.
+- Tests first (red → green in one commit): 3 Toolbar, 2 resolveToolbar, 5 ScreenShell,
+  1 browser fill. Gates: `bun run check` (9046 passed) + `bun run test:browser` (183).
+- Branch `fix/shell-passthrough` (L0 releases as 1.15.2).

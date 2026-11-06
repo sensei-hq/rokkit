@@ -70,7 +70,10 @@
 		glyphs = 'text',
 		icons,
 		labels,
-		class: className = ''
+		class: className = '',
+		toggleAttrs,
+		bandAttrs,
+		...rest
 	}: ScreenShellProps = $props()
 
 	const text = $derived({ ...messages.screen, ...labels })
@@ -104,7 +107,8 @@
 			panels,
 			labels: text,
 			icons: { ...DEFAULT_ICONS, ...icons },
-			busy: text.busy
+			busy: text.busy,
+			toggleAttrs
 		})
 	)
 
@@ -212,13 +216,13 @@
 
 {#snippet side()}
 	{#if sidebar && shown('side')}
-		<aside data-screen-sidebar data-side={sidebarSide} aria-label={text.side}>
+		<aside {...bandAttrs?.side} data-screen-sidebar data-side={sidebarSide} aria-label={text.side}>
 			{@render sidebar()}
 		</aside>
 	{/if}
 {/snippet}
 
-<div data-screen-shell data-view={viewId} class={className || undefined}>
+<div {...rest} data-screen-shell data-view={viewId} class={className || undefined}>
 	<header data-screen-header>
 		<div data-screen-titlebar>
 			{@render glyph(mark.kanji, mark.icon)}
@@ -233,16 +237,17 @@
 		{#if description}<p data-screen-description>{description}</p>{/if}
 
 		{#if info?.length && shown('info')}
-			<ScreenInfo columns={info} role={infoRole} {glyphs} />
+			<ScreenInfo columns={info} role={infoRole} {glyphs} {...bandAttrs?.info} />
 		{/if}
 
 		{#if stats !== undefined && shown('stats')}
-			<div data-screen-stats aria-label={text.stats} role="group">
+			<div {...bandAttrs?.stats} data-screen-stats aria-label={text.stats} role="group">
 				{#if stats === null}
 					<p data-screen-stats-reading>{text.reading}</p>
 				{:else}
 					{#each stats as stat (stat.id)}
 						<StatCard
+							{...stat.attrs}
 							label={stat.title}
 							value={stat.value}
 							tone={stat.tone}
@@ -262,7 +267,7 @@
 		{/if}
 
 		{#if shown('filters')}
-			<div data-screen-filters role="group" aria-label={text.filters}>
+			<div {...bandAttrs?.filters} data-screen-filters role="group" aria-label={text.filters}>
 				{#if searchOn}
 					<label data-screen-search>
 						<span
@@ -313,9 +318,9 @@
 	</div>
 
 	{#if footerSnippet}
-		<footer data-screen-footer>{@render footerSnippet()}</footer>
+		<footer {...bandAttrs?.footer} data-screen-footer>{@render footerSnippet()}</footer>
 	{:else if footerParts}
-		<footer data-screen-footer>
+		<footer {...bandAttrs?.footer} data-screen-footer>
 			{#each FOOTER_PARTS as part (part)}
 				{#if footerParts[part]}<span data-part={part}>{footerParts[part]}</span>{/if}
 			{/each}

@@ -45,10 +45,10 @@
 		class?: string
 	} = $props()
 
-	let tab = $state('details')
+	let tab = $state('diagram')
 	$effect(() => {
 		void entityKey
-		tab = 'details'
+		tab = 'diagram'
 	})
 
 	const detail = $derived(tableDetail(model, entityKey))
@@ -57,8 +57,8 @@
 	const press = pressTo(() => onselect as ((key: string | null) => void) | undefined)
 
 	const tabs = $derived([
-		{ value: 'details', label: say('tabDetails'), icon: DEFAULT_ICONS.table },
-		{ value: 'diagram', label: say('tabDiagram'), icon: DEFAULT_ICONS.schema }
+		{ value: 'diagram', label: say('tabDiagram'), icon: DEFAULT_ICONS.schema },
+		{ value: 'details', label: say('tabDetails'), icon: DEFAULT_ICONS.table }
 	])
 
 	const BADGES: Record<FieldBadge, GraphMessageKey> = {

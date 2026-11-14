@@ -7,6 +7,7 @@
 		items = [],
 		fields: userFields,
 		icons: userIcons,
+		marker,
 		class: className = '',
 		content
 	}: TimelineProps = $props()
@@ -15,7 +16,7 @@
 	const icons = $derived({ ...defaultTimelineIcons, ...userIcons })
 </script>
 
-<div data-timeline class={className || undefined} role="list">
+<div data-timeline data-marker={marker} class={className || undefined} role="list">
 	{#each items as item, index (index)}
 		{@const proxy = new ProxyItem(item, fields)}
 		{@const text = proxy.label}
@@ -23,16 +24,20 @@
 		{@const description = proxy.get('subtext')}
 		{@const completed = Boolean(item.completed)}
 		{@const active = Boolean(item.active)}
+		{@const tone = proxy.get('tone')}
 
 		<div
 			data-timeline-item
 			data-completed={completed || undefined}
 			data-active={active || undefined}
+			data-tone={tone || undefined}
 			role="listitem"
 		>
 			<div data-timeline-marker aria-hidden="true">
 				<div data-timeline-circle>
-					{#if completed}
+					{#if marker === 'dot'}
+						<!-- a plain dot: no number or icon -->
+					{:else if completed}
 						<span class={icons.completed}></span>
 					{:else if icon}
 						<span class={icon}></span>

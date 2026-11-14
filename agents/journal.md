@@ -11115,3 +11115,17 @@ fixed here, not patched per screen. Branch `fix/zen-sumi-shell-parity`.
 - Gotcha: `@rokkit/app`'s svelte-check reads `@rokkit/ui` types from ui's BUILT dist;
   a type change in ui needs `bun run build` in packages/ui before `bun run check`.
 - Red → green as separate commits. Gates: `bun run check` (9069 passed) + browser (183).
+
+## 2026-11-14 — Timeline: a tone per item and a dot marker, for sensei's task history (sensei-hq)
+
+Sensei's relay task history drew its own timeline (a bordered column, absolutely placed
+dots that sat off the line). Catalogue rule (user, 2026-11-14): rokkit first, the missing
+prop goes into rokkit. Branch `feat/timeline-tone-dot`.
+
+- Field `tone` (default key `tone`, PillTone set) → `data-tone` on the item; every style
+  rings the node in that token (neutral = `--ink-faint`, not sensei's `--paper-edge-strong`,
+  which rokkit does not define).
+- Prop `marker: 'dot'` → `data-marker` on the root: a 12px plain dot, paper-filled, centred
+  on a 12px column; the connector is absolute from this dot's centre to the next one's,
+  through the gap. `--timeline-gap` (default 1.5rem) and `--timeline-dot-top` (0.375rem).
+- Red → green as separate commits. Gates: `bun run check` (9092 passed) + browser (183).

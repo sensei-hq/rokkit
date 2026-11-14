@@ -11129,3 +11129,9 @@ prop goes into rokkit. Branch `feat/timeline-tone-dot`.
   on a 12px column; the connector is absolute from this dot's centre to the next one's,
   through the gap. `--timeline-gap` (default 1.5rem) and `--timeline-dot-top` (0.375rem).
 - Red → green as separate commits. Gates: `bun run check` (9092 passed) + browser (183).
+
+## 2026-11-14 — Pill title (sensei-hq)
+
+Sensei's relay lane row carries a short host tag ("in Cursor"); its hover text names the
+host in full. Pill takes `title` → the `title` attribute. Pill llms doc gained the
+`tone` / `variant` / `size` rows #181 left out. Branch `feat/pill-title`, red → green.

@@ -14,6 +14,7 @@
 		tone,
 		variant,
 		size,
+		title,
 		class: className = ''
 	}: PillProps = $props()
 
@@ -42,6 +43,7 @@
 	data-tone={tone}
 	data-variant={variant}
 	data-size={size}
+	{title}
 	data-pill-disabled={disabled || undefined}
 	class={className || undefined}
 	role={removable && !disabled ? 'button' : undefined}

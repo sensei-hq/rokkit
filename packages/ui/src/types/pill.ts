@@ -47,6 +47,8 @@ export interface PillProps {
 	variant?: 'outline'
 	/** `sm`: the compact chip a row carries beside its text. */
 	size?: 'sm'
+	/** Hover text: what a short chip stands for (e.g. "in Cursor" → the host in full). */
+	title?: string
 	/** Additional CSS class. */
 	class?: string
 }

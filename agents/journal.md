@@ -11088,3 +11088,30 @@ on the element; the component's own attributes always win).
 - Tests first (red → green in one commit): 3 Toolbar, 2 resolveToolbar, 5 ScreenShell,
   1 browser fill. Gates: `bun run check` (9046 passed) + `bun run test:browser` (183).
 - Branch `fix/shell-passthrough` (L0 releases as 1.15.2).
+
+## 2026-11-14 — Shell parity with the sensei Relay mockup; font roles that resolve (sensei-hq)
+
+Sensei's Relay screen carried two local overrides of the shell (relay-toolbar.css,
+relay-filters.css) and its stat cards differed from the mockup. User ruling: one shell,
+fixed here, not patched per screen. Branch `fix/zen-sumi-shell-parity`.
+
+- Font utilities: `font-display` and `font-ui` generated NOTHING, and `font-sans` /
+  `font-mono` resolved to the wind preset's system stacks (preset `theme.fontFamily`
+  loses to the nested wind preset). Each is now a rule on the role variable:
+  display·heading → `--font-display`, ui·sans·body → `--font-ui`, mono → `--font-mono`.
+  Convention (user, 2026-11-14): markup uses the utility, CSS files use the variable,
+  never a face name. graph.css read an undefined `--font-body` → `--font-ui`.
+- StatCard (base): value in `var(--font-display)` 1.5rem/500; card pad 10/12, radius 10,
+  gap 4; mark and icon 13px; the description reserves ONE line (two left a gap under a
+  one-line card). Every style: an `accent` tone, and the icon read in the card's tone
+  like the mark. zen-sumi: frame = `--paper-edge`, pressed fill = `--paper-mute`.
+- Decision (user, 2026-11-14): the zen-sumi stat frame is the edge hairline, not 3:1 —
+  the card is told by its label and value, pressed by the inset ink ring. The contrast
+  browser spec holds zen-sumi cards to the edge token instead.
+- Toolbar: items take `kind` (view | toggle → `data-kind`) and `count` (a badge, and
+  "Queue · 7" as name and title). zen-sumi's title bar draws 36px framed icon buttons;
+  a pressed view's icon is accent, a pressed toggle's ink.
+- Filters band: a FormRenderer lays out as a wrapping row (closes #178).
+- Gotcha: `@rokkit/app`'s svelte-check reads `@rokkit/ui` types from ui's BUILT dist;
+  a type change in ui needs `bun run build` in packages/ui before `bun run check`.
+- Red → green as separate commits. Gates: `bun run check` (9069 passed) + browser (183).

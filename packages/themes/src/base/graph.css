@@ -892,7 +892,7 @@
 
 [data-graph-design-table] [data-cell='notes'] {
   min-width: 14rem;
-  font-family: var(--font-body, inherit);
+  font-family: var(--font-ui, inherit);
 }
 
 [data-graph-design-table] [data-graph-column-badges] {

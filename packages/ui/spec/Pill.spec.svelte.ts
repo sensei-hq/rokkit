@@ -187,4 +187,11 @@ describe('Pill', () => {
 		expect(pill.hasAttribute('tabindex')).toBe(false)
 		expect(container.querySelector('[data-pill-remove]')).toBeNull()
 	})
+
+	it('carries a title for its hover text; none when not given', () => {
+		const { container } = render(Pill, { value: 'in Cursor', size: 'sm', title: 'Running in Cursor on this machine' })
+		expect(container.querySelector('[data-pill]')?.getAttribute('title')).toBe('Running in Cursor on this machine')
+		const plain = render(Pill, { value: 'idle' }).container.querySelector('[data-pill]') as HTMLElement
+		expect(plain.hasAttribute('title')).toBe(false)
+	})
 })

@@ -13,6 +13,9 @@ export interface PillIcons {
 	remove?: string
 }
 
+/** A status chip's tone: the colour it is read in. */
+export type PillTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger'
+
 /**
  * Props for the Pill component.
  */
@@ -38,6 +41,12 @@ export interface PillProps {
 	/** Custom content snippet — receives the pill's `ProxyItem`. */
 	content?: Snippet<[ProxyItem]>
 
+	/** The tone a status chip is read in; none is the plain chip. */
+	tone?: PillTone
+	/** `outline`: a frame and no fill (a quieter chip, e.g. a model name). */
+	variant?: 'outline'
+	/** `sm`: the compact chip a row carries beside its text. */
+	size?: 'sm'
 	/** Additional CSS class. */
 	class?: string
 }

@@ -11,6 +11,9 @@
 		icons: userIcons = {} as PillIcons,
 		onremove,
 		content,
+		tone,
+		variant,
+		size,
 		class: className = ''
 	}: PillProps = $props()
 
@@ -36,6 +39,9 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <span
 	data-pill
+	data-tone={tone}
+	data-variant={variant}
+	data-size={size}
 	data-pill-disabled={disabled || undefined}
 	class={className || undefined}
 	role={removable && !disabled ? 'button' : undefined}

@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, fireEvent } from '@testing-library/svelte'
 import { createRawSnippet } from 'svelte'
 import StatCardTest from './StatCardTest.svelte'
+import type { StatCardTone } from '../src/types/stat-card.js'
+import type { ShellStatTone } from '../../app/src/types/screen-shell.js'
 
 const part = (root: HTMLElement, name: string) => root.querySelector(`[data-stat-card-${name}]`)
 
@@ -167,5 +169,13 @@ describe('StatCard — marks, descriptions and states', () => {
 		const { container } = render(StatCardTest, { props: { label: 'Edges', value: 3, tone: 'ink' } })
 
 		expect(container.querySelector('[data-stat-card]')?.getAttribute('data-tone')).toBe('ink')
+	})
+
+	it('reads the accent tone, the one a working count is drawn in', () => {
+		const accent: StatCardTone = 'accent'
+		const shell: ShellStatTone = 'accent'
+		const { container } = render(StatCardTest, { props: { label: 'Working', value: 2, tone: accent } })
+
+		expect(container.querySelector('[data-stat-card]')?.getAttribute('data-tone')).toBe(shell)
 	})
 })

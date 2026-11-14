@@ -104,6 +104,19 @@
 		return itemSnippet ?? null
 	}
 
+	/** An item's count, when it has one above zero. */
+	const countOf = (proxy: ProxyItem): number => {
+		const n = Number(proxy.get('count') ?? 0)
+		return Number.isFinite(n) && n > 0 ? n : 0
+	}
+	/** The accessible name: the label, with the count when there is one ("Queue · 7"). */
+	const nameOf = (proxy: ProxyItem): string => {
+		const n = countOf(proxy)
+		return n > 0 ? `${proxy.label} · ${n}` : proxy.label
+	}
+	const titleOf = (proxy: ProxyItem): string =>
+		proxy.get('shortcut') ? `${nameOf(proxy)} (${proxy.get('shortcut')})` : nameOf(proxy)
+
 	// Check if we have data-driven items or slot-based content
 	const hasItems = $derived(items.length > 0)
 	const hasSlots = $derived(start || center || end || children)
@@ -119,6 +132,10 @@
 	{#if proxy.label && !proxy.get('icon')}
 		<span data-toolbar-label>{proxy.label}</span>
 	{/if}
+	{#if countOf(proxy) > 0}
+		<!-- The count is in the item's name already; the badge only shows it. -->
+		<span data-toolbar-count aria-hidden="true">{countOf(proxy)}</span>
+	{/if}
 {/snippet}
 
 {#snippet linkItem(proxy: ProxyItem, pathKey: string | undefined)}
@@ -131,12 +148,13 @@
 		{...itemAttrs}
 		data-toolbar-item
 		data-path={pathKey}
+		data-kind={proxy.get('kind') || undefined}
 		data-disabled={inert || undefined}
 		href={inert ? undefined : String(proxy.get('href'))}
 		role={inert ? 'link' : undefined}
 		aria-disabled={inert || undefined}
-		aria-label={proxy.label}
-		title={proxy.get('shortcut') ? `${proxy.label} (${proxy.get('shortcut')})` : proxy.label}
+		aria-label={nameOf(proxy)}
+		title={titleOf(proxy)}
 	>
 		{@render itemFace(proxy)}
 	</a>
@@ -149,12 +167,13 @@
 		type="button"
 		data-toolbar-item
 		data-path={pathKey}
+		data-kind={proxy.get('kind') || undefined}
 		data-active={proxy.get('active') || undefined}
 		data-disabled={proxy.disabled || undefined}
 		disabled={proxy.disabled || disabled}
-		aria-label={proxy.label}
+		aria-label={nameOf(proxy)}
 		aria-pressed={proxy.get('active')}
-		title={proxy.get('shortcut') ? `${proxy.label} (${proxy.get('shortcut')})` : proxy.label}
+		title={titleOf(proxy)}
 	>
 		{@render itemFace(proxy)}
 	</button>

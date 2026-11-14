@@ -1,8 +1,9 @@
 /* StatCard — zen-sumi theme */
 
-/* The frame identifies the card, clickable or not: 3:1 off the paper (WCAG 1.4.11). */
+/* The frame is the edge hairline (user, 2026-11-14): the card is told by its label and value,
+   and its pressed state by the inset ink ring, so the frame need not reach 3:1. */
 [data-style='zen-sumi'] [data-stat-card] {
-  border-color: color-mix(in oklch, var(--ink-faint) 75%, var(--paper));
+  border-color: var(--paper-edge);
   background-color: var(--paper);
 }
 
@@ -12,6 +13,10 @@
 
 [data-style='zen-sumi'] [data-stat-card-value] {
   color: var(--ink);
+}
+
+[data-style='zen-sumi'] [data-stat-card][data-tone='accent'] [data-stat-card-value] {
+  color: var(--accent);
 }
 
 [data-style='zen-sumi'] [data-stat-card][data-tone='danger'] [data-stat-card-value] {
@@ -30,24 +35,40 @@
   color: var(--ink-mute);
 }
 
-/* The mark reads in the card's tone; a plain card's mark is the accent. */
+/* The mark and the icon read in the card's tone, as its value does; a plain card's mark is
+   the accent, its icon the head's own colour. */
+
 [data-style='zen-sumi'] [data-stat-card-mark] {
   color: var(--accent);
 }
 
-[data-style='zen-sumi'] [data-stat-card][data-tone='danger'] [data-stat-card-mark] {
+[data-style='zen-sumi'] [data-stat-card][data-tone='accent'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='accent'] [data-stat-card-icon] {
+  color: var(--accent);
+}
+
+[data-style='zen-sumi'] [data-stat-card][data-tone='ink'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='ink'] [data-stat-card-icon] {
+  color: var(--ink);
+}
+
+[data-style='zen-sumi'] [data-stat-card][data-tone='danger'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='danger'] [data-stat-card-icon] {
   color: var(--danger);
 }
 
-[data-style='zen-sumi'] [data-stat-card][data-tone='warning'] [data-stat-card-mark] {
+[data-style='zen-sumi'] [data-stat-card][data-tone='warning'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='warning'] [data-stat-card-icon] {
   color: var(--warning);
 }
 
-[data-style='zen-sumi'] [data-stat-card][data-tone='success'] [data-stat-card-mark] {
+[data-style='zen-sumi'] [data-stat-card][data-tone='success'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='success'] [data-stat-card-icon] {
   color: var(--success);
 }
 
-[data-style='zen-sumi'] [data-stat-card][data-tone='muted'] [data-stat-card-mark] {
+[data-style='zen-sumi'] [data-stat-card][data-tone='muted'] [data-stat-card-mark],
+[data-style='zen-sumi'] [data-stat-card][data-tone='muted'] [data-stat-card-icon] {
   color: var(--ink-mute);
 }
 
@@ -62,7 +83,7 @@
 
 /* Pressed (an applied filter): a pressed fill and an inset ink ring — no width change. */
 [data-style='zen-sumi'] [data-stat-card][aria-pressed='true'] {
-  background-color: var(--paper-soft);
+  background-color: var(--paper-mute);
   box-shadow: inset 0 0 0 1px var(--ink);
 }
 

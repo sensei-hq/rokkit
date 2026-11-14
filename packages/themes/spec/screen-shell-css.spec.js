@@ -146,4 +146,43 @@ describe('screen shell theme CSS', () => {
 			)
 		}
 	)
+
+	// ─── The title bar's toolbar and the filters band (sensei-hq Relay, rokkit#178) ──
+
+	it('zen-sumi draws the title bar’s items as 36px framed icon buttons, pressed onto the mute fill', () => {
+		const f = 'zen-sumi/screen-shell.css'
+		const item = "[data-style='zen-sumi'] [data-screen-tools] [data-toolbar-item] {"
+		expect(has(f, item, /width:\s*2\.25rem/)).toBe(true)
+		expect(has(f, item, /height:\s*2\.25rem/)).toBe(true)
+		expect(has(f, item, /border:\s*1px solid var\(--paper-edge\)/)).toBe(true)
+		expect(has(f, item, /border-radius:\s*0\.5rem/)).toBe(true)
+		expect(
+			has(f, "[data-screen-tools] [data-toolbar-item][data-active='true']", /background-color:\s*var\(--paper-mute\)/)
+		).toBe(true)
+		expect(
+			has(f, "[data-screen-tools] [data-toolbar-item][data-active='true']", /border-color:\s*var\(--paper-edge-strong\)/)
+		).toBe(true)
+	})
+
+	it('zen-sumi reads a pressed view in the accent and a pressed toggle in ink', () => {
+		const f = 'zen-sumi/screen-shell.css'
+		expect(
+			has(f, "[data-toolbar-item][data-kind='view'][data-active='true'] [data-toolbar-icon]", /color:\s*var\(--accent\)/)
+		).toBe(true)
+		expect(has(f, '[data-screen-tools] [data-toolbar-item] [data-toolbar-icon]', /color:\s*var\(--ink\)/)).toBe(true)
+	})
+
+	it('hangs the count badge at the item’s corner in base, ink on paper in each style', () => {
+		expect(has('base/toolbar.css', '[data-toolbar-count]', /position:\s*absolute/)).toBe(true)
+		expect(has('base/toolbar.css', '[data-toolbar-item] {', /position:\s*relative/)).toBe(true)
+		for (const style of STYLES)
+			expect(declarations(`${style}/toolbar.css`), style).toContain(`[data-style='${style}'] [data-toolbar-count]`)
+	})
+
+	it('lays a filter form out as a row in the filters band', () => {
+		const f = 'base/screen-shell.css'
+		expect(has(f, '[data-screen-filters] [data-form-root]', /flex-direction:\s*row/)).toBe(true)
+		expect(has(f, '[data-screen-filters] [data-form-root]', /flex-wrap:\s*wrap/)).toBe(true)
+		expect(has(f, '[data-screen-filters] [data-form-root]', /align-items:\s*flex-end/)).toBe(true)
+	})
 })

@@ -18,7 +18,9 @@ import ShellHarness from './fixtures/ShellHarness.svelte'
  * style, skin and mode; its large mark (34px) and its meter are held to 3:1. A stat card's frame
  * — the same on every card, clickable or not — and the search field's frame (in the filters
  * band) identify a control,
- * so each stands 3:1 off the paper it sits on (WCAG 1.4.11).
+ * so each stands 3:1 off the paper it sits on (WCAG 1.4.11). zen-sumi is the exception for the
+ * stat card (user, 2026-11-14): its frame is the edge hairline, the card being told by its label
+ * and value; so zen-sumi's cards are held to that hairline, not to 3:1.
  *
  * Measured, not inferred: the real ScreenShell, each style's BUILT css (themes/dist) over the
  * token vars `rootPreflights` emits for the default skin and every palette family, in each mode
@@ -104,7 +106,7 @@ const fillOf = (el: Element) => getComputedStyle(el).backgroundColor
 const edgeOf = (el: Element) => getComputedStyle(el).borderTopColor
 
 /** Every ratio the spec holds, read from the rendered shell. */
-function measure(root: HTMLElement) {
+function measure(root: HTMLElement, style: string) {
 	const one = (sel: string) => root.querySelector(sel) as HTMLElement
 	const all = (sel: string) => [...root.querySelectorAll(sel)] as HTMLElement[]
 	const page = fillOf(one('[data-screen-shell]'))
@@ -148,6 +150,7 @@ function measure(root: HTMLElement) {
 			contrast(paint(...washLayers, fillOf(one('[data-screen-info-meter-fill]'))), wash)
 		],
 		...cards.flatMap((card) => {
+			if (style === 'zen-sumi') return []
 			const name = card.querySelector('[data-stat-card-label]')?.textContent
 			const frame = paint(page, fillOf(one('[data-screen-stats]')), edgeOf(card))
 			const inside = paint(page, fillOf(one('[data-screen-stats]')), fillOf(card))
@@ -180,13 +183,23 @@ describe.each(Object.entries(STYLES))('%s screen shell', (style, css) => {
 			document.body.dataset.mode = mode
 			sheet.textContent = `${PREFLIGHT}\n${tokens}\n${base}\n${css}`
 			const { container } = render(ShellHarness, { height: 800, rows: 3, sideRows: 3 })
-			const { text, nonText } = measure(container as HTMLElement)
+			const { text, nonText } = measure(container as HTMLElement, style)
 
 			const problems = [
 				...text.filter(([, r]) => r < TEXT).map(([n, r]) => `${n} ${fmt(r)}`),
 				...nonText.filter(([, r]) => r < NON_TEXT).map(([n, r]) => `${n} ${fmt(r)}`)
 			]
 			expect(problems).toEqual([])
+			if (style === 'zen-sumi') {
+				const card = container.querySelector('[data-stat-card]') as HTMLElement
+				const edge = getComputedStyle(document.body).getPropertyValue('--paper-edge').trim()
+				expect(edge).not.toBe('')
+				const probe = document.createElement('i')
+				probe.style.color = `var(--paper-edge)`
+				document.body.append(probe)
+				expect(getComputedStyle(card).borderTopColor).toBe(getComputedStyle(probe).color)
+				probe.remove()
+			}
 		}
 	)
 })

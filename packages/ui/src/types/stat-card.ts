@@ -4,7 +4,7 @@
 import type { Snippet } from 'svelte'
 
 /** The tone a number is read in; none (or `ink`) is the plain ink. */
-export type StatCardTone = 'ink' | 'danger' | 'warning' | 'success' | 'muted'
+export type StatCardTone = 'ink' | 'accent' | 'danger' | 'warning' | 'success' | 'muted'
 
 /** Props for the StatCard component. */
 export interface StatCardProps {

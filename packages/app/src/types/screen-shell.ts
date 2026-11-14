@@ -123,7 +123,7 @@ export type InfoRole =
 // Stats
 // =============================================================================
 
-export type ShellStatTone = 'ink' | 'danger' | 'warning' | 'success' | 'muted'
+export type ShellStatTone = 'ink' | 'accent' | 'danger' | 'warning' | 'success' | 'muted'
 
 /** One stat card. With `filter` it is a toggle that sets the filter; with `href` a link. */
 export interface ShellStat {

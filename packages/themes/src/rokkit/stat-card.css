@@ -14,6 +14,10 @@
   color: var(--ink);
 }
 
+[data-style='rokkit'] [data-stat-card][data-tone='accent'] [data-stat-card-value] {
+  color: var(--accent);
+}
+
 [data-style='rokkit'] [data-stat-card][data-tone='danger'] [data-stat-card-value] {
   color: var(--danger);
 }
@@ -30,24 +34,40 @@
   color: var(--ink-mute);
 }
 
-/* The mark reads in the card's tone; a plain card's mark is the accent. */
+/* The mark and the icon read in the card's tone, as its value does; a plain card's mark is
+   the accent, its icon the head's own colour. */
+
 [data-style='rokkit'] [data-stat-card-mark] {
   color: var(--accent);
 }
 
-[data-style='rokkit'] [data-stat-card][data-tone='danger'] [data-stat-card-mark] {
+[data-style='rokkit'] [data-stat-card][data-tone='accent'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='accent'] [data-stat-card-icon] {
+  color: var(--accent);
+}
+
+[data-style='rokkit'] [data-stat-card][data-tone='ink'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='ink'] [data-stat-card-icon] {
+  color: var(--ink);
+}
+
+[data-style='rokkit'] [data-stat-card][data-tone='danger'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='danger'] [data-stat-card-icon] {
   color: var(--danger);
 }
 
-[data-style='rokkit'] [data-stat-card][data-tone='warning'] [data-stat-card-mark] {
+[data-style='rokkit'] [data-stat-card][data-tone='warning'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='warning'] [data-stat-card-icon] {
   color: var(--warning);
 }
 
-[data-style='rokkit'] [data-stat-card][data-tone='success'] [data-stat-card-mark] {
+[data-style='rokkit'] [data-stat-card][data-tone='success'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='success'] [data-stat-card-icon] {
   color: var(--success);
 }
 
-[data-style='rokkit'] [data-stat-card][data-tone='muted'] [data-stat-card-mark] {
+[data-style='rokkit'] [data-stat-card][data-tone='muted'] [data-stat-card-mark],
+[data-style='rokkit'] [data-stat-card][data-tone='muted'] [data-stat-card-icon] {
   color: var(--ink-mute);
 }
 

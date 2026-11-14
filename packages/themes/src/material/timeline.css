@@ -44,3 +44,32 @@
 [data-style='material'] [data-timeline-description] {
   @apply text-ink-soft;
 }
+
+/* =============================================================================
+   Tone — the node ringed in the item's tone; a dot is filled with the paper so
+   the line does not show through it
+   ============================================================================= */
+
+[data-style='material'] [data-timeline][data-marker='dot'] [data-timeline-circle] {
+  background-color: var(--paper);
+}
+
+[data-style='material'] [data-timeline-item][data-tone='accent'] [data-timeline-circle] {
+  border-color: var(--accent);
+}
+
+[data-style='material'] [data-timeline-item][data-tone='success'] [data-timeline-circle] {
+  border-color: var(--success);
+}
+
+[data-style='material'] [data-timeline-item][data-tone='warning'] [data-timeline-circle] {
+  border-color: var(--warning);
+}
+
+[data-style='material'] [data-timeline-item][data-tone='danger'] [data-timeline-circle] {
+  border-color: var(--danger);
+}
+
+[data-style='material'] [data-timeline-item][data-tone='neutral'] [data-timeline-circle] {
+  border-color: var(--ink-faint);
+}

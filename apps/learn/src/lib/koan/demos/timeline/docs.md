@@ -32,6 +32,8 @@ Default fields:
 - `icon` — replace the numbered circle (e.g. `i-glyph:check`).
 - `completed` / `active` — boolean flags driving `data-completed`
   and `data-active` on the row.
+- `tone` — `neutral`, `accent`, `success`, `warning` or `danger`:
+  the node is ringed in that colour.
 
 Use the `fields` prop to remap any of these to your data's keys.
 
@@ -50,6 +52,21 @@ arbitrary markup per step.
   {/snippet}
 </Timeline>
 ```
+
+## A history: dot markers
+
+`marker="dot"` draws each item as a small plain dot on one continuous
+line — for a history or a log, where the items are events, not
+numbered steps. Pair it with `tone` and the `content` snippet:
+
+```svelte
+<Timeline items={events} marker="dot" class="[--timeline-gap:0.75rem]">
+  {#snippet content(item)}<p>{item.note}</p>{/snippet}
+</Timeline>
+```
+
+`--timeline-gap` sets the space under each item and
+`--timeline-dot-top` lines the dot up with the content's first line.
 
 ## Stepper vs Timeline
 

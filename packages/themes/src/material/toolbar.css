@@ -83,3 +83,9 @@
 [data-style='material'] [data-toolbar-divider] {
   @apply bg-paper-mute bg-none;
 }
+
+/* The count badge: ink on paper. */
+[data-style='material'] [data-toolbar-count] {
+  background-color: var(--ink);
+  color: var(--paper);
+}

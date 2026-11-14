@@ -92,3 +92,9 @@
 [data-style='zen-sumi'] [data-toolbar-divider] {
   @apply bg-paper-mute bg-none;
 }
+
+/* The count badge: ink on paper. */
+[data-style='zen-sumi'] [data-toolbar-count] {
+  background-color: var(--ink);
+  color: var(--paper);
+}

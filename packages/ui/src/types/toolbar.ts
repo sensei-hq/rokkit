@@ -40,6 +40,12 @@ export interface ToolbarFields {
 
 	/** Field for keyboard shortcut display - default: 'shortcut' */
 	shortcut?: string
+
+	/** Field for what the item is — 'view' (a place) or 'toggle' (a switch) - default: 'kind' */
+	kind?: string
+
+	/** Field for a count drawn as a badge and read in the name ("Queue · 7") - default: 'count' */
+	count?: string
 }
 
 /**
@@ -54,7 +60,9 @@ export const defaultToolbarFields: Required<ToolbarFields> = {
 	type: 'type',
 	snippet: 'snippet',
 	label: 'label',
-	shortcut: 'shortcut'
+	shortcut: 'shortcut',
+	kind: 'kind',
+	count: 'count'
 }
 
 // =============================================================================

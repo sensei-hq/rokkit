@@ -517,4 +517,36 @@ describe('Toolbar — per-item attrs', () => {
 		expect(button.getAttribute('aria-label')).toBe('Sync now')
 		expect(button.hasAttribute('data-toolbar-item')).toBe(true)
 	})
+
+	// ─── Kind and count (the shell header's view buttons, sensei-hq Relay) ──
+
+	it('says what an item is: a view (a place) or a toggle (a switch)', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{ label: 'Queue', value: 'queue', icon: 'i-q', kind: 'view', active: true },
+				{ label: 'Info', value: 'info', icon: 'i-i', kind: 'toggle' },
+				{ label: 'Plain', value: 'plain', icon: 'i-p' }
+			]
+		})
+		const kinds = [...container.querySelectorAll('[data-toolbar-item]')].map((b) =>
+			b.getAttribute('data-kind')
+		)
+		expect(kinds).toEqual(['view', 'toggle', null])
+	})
+
+	it('hangs a count badge on an item and names it with the count', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{ label: 'Queue', value: 'queue', icon: 'i-q', count: 7 },
+				{ label: 'Crew', value: 'crew', icon: 'i-c', count: 0 }
+			]
+		})
+		const [queue, crew] = [...container.querySelectorAll('[data-toolbar-item]')] as HTMLElement[]
+		expect(queue.querySelector('[data-toolbar-count]')?.textContent).toBe('7')
+		expect(queue.querySelector('[data-toolbar-count]')?.getAttribute('aria-hidden')).toBe('true')
+		expect(queue.getAttribute('aria-label')).toBe('Queue · 7')
+		expect(queue.getAttribute('title')).toBe('Queue · 7')
+		expect(crew.querySelector('[data-toolbar-count]')).toBeNull()
+		expect(crew.getAttribute('aria-label')).toBe('Crew')
+	})
 })

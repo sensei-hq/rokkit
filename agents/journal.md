@@ -1,5 +1,19 @@
 # Project Journal
 
+## 2026-11-15 — List: display-only rows (`selectable={false}`) and `variant="card"`
+
+**Motivation:** sensei's relay screen (lanes, completed today) and the dōjō's list sections draw
+cards of rows that are links or plain rows, never choices. List always rendered a non-link row as
+a `<button>` and highlighted the current value, so these screens hand-rolled `<ul>` cards.
+
+**Design:** `selectable={false}` passes through to `Wrapper` (`options.selectable`): a leaf with no
+`href` is static — excluded from `#navigable`, and `select()` on it is a no-op (focus does not move
+there either). List renders it as `<div data-list-item data-static>` and marks no row active.
+`variant="card"` sets `data-variant="card"`; base owns the frame and the row hairline (structure),
+each style colours them (paper, `paper-edge` frame, `paper-mute` hairline) and squares + pads the
+rows (10px 14px) — in the style file, after its own item metrics, because a style's item rules
+outrank base's. A static row gets no hover wash in every style.
+
 ## 2026-08-20 — Chart: Spark — sparklines compose real geoms, not a parallel path
 
 **Motivation:** `Sparkline.svelte` had grown into a 312-line parallel render path — recomputing

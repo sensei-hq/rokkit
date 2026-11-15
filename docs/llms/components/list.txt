@@ -59,12 +59,27 @@ All of these are data-driven. You do **not** need a snippet to show an icon, a b
 | `size` | `'sm'\|'md'\|'lg'` | `'md'` | Size variant |
 | `disabled` | `boolean` | `false` | Disable all items |
 | `collapsible` | `boolean` | `false` | Allow groups to be expanded/collapsed |
+| `selectable` | `boolean` | `true` | `false` makes a display-only list: a row with an `href` stays a link, a row without one renders as a plain `<div data-list-item data-static>` that keys skip and clicks ignore, and no row is marked current |
+| `variant` | `'card'` | — | `'card'` frames the list (paper, edge border, rounded) and splits its rows with a hairline; rows go square and edge to edge (`data-variant="card"` on the root) |
 | `multiselect` | `boolean` | `false` | Select several rows: click selects one, ctrl/⌘-click toggles, shift-click extends a range |
 | `values` | `unknown[]` | `[]` | The selected values when `multiselect`. **Two-way** — `bind:values`; matched by identity |
 | `icons` | `{ opened?, closed? }` | — | Override expand/collapse icons |
 | `class` | `string` | `''` | Additional CSS classes on the root `<nav>` |
 | `onselect` | `(value, proxy) => void` | — | Called when an item is selected. Notification only — `value` is already updated when it runs, and assigning your own value here overrides it |
 | `onchange` | `(values) => void` | — | Called once per real change of a `multiselect` selection, with the new set. `values` is already updated; an outside change to `values` is not reported back |
+
+## Display-only lists (selectable=false) and the card variant
+
+For a list that shows rows rather than offering choices — a status board, a feed of finished
+work — pass `selectable={false}`. Rows with an `href` stay links (keyboard-reachable, native
+navigation); rows without one are plain rows, not buttons. Nothing is highlighted as current.
+Pair it with `variant="card"` for a framed card of rows; `itemContent` lays out each row.
+
+```svelte
+<List items={lanes} selectable={false} variant="card" label="Lanes">
+  {#snippet itemContent(proxy)}<LaneParts lane={proxy.original} />{/snippet}
+</List>
+```
 
 ## Multi-select
 

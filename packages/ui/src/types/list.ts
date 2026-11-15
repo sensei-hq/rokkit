@@ -124,6 +124,16 @@ export interface ListProps extends ItemSnippets {
 	/** Whether groups can be collapsed */
 	collapsible?: boolean
 
+	/**
+	 * `false` makes a display-only list: a row with a link stays a link, a row with none
+	 * renders as a plain row (`<div data-static>`) that keys skip and clicks ignore, and no
+	 * row is marked current. Default `true`.
+	 */
+	selectable?: boolean
+
+	/** `'card'` frames the list and splits its rows with a hairline (`data-variant="card"`). */
+	variant?: 'card'
+
 	/** Accessible name for the list */
 	label?: string
 

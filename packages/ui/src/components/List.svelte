@@ -28,6 +28,8 @@
 	 *   data-selected          — "true" on every row in the selection, multiselect only
 	 *   data-multiselect       — "true" on the root when multiselect (base CSS: no text selection)
 	 *   data-disabled          — disabled state
+	 *   data-static            — a row with no link in a display-only list (selectable=false)
+	 *   data-variant           — "card" on the root: framed, rows split by a hairline
 	 */
 	import type { ProxyItem } from '@rokkit/states'
 	import { Wrapper, ProxyTree, messages } from '@rokkit/states'
@@ -45,6 +47,8 @@
 		size = 'md',
 		disabled = false,
 		collapsible = false,
+		selectable = true,
+		variant,
 		label = messages.list.label,
 		icons: userIcons = {} as ListStateIcons,
 		onselect,
@@ -117,7 +121,8 @@
 			onselect: handleSelect,
 			onselectionchange: handleSelectionChange,
 			collapsible,
-			multiselect
+			multiselect,
+			selectable
 		})
 	)
 
@@ -198,12 +203,13 @@
 	data-disabled={disabled || undefined}
 	data-collapsible={collapsible || undefined}
 	data-multiselect={multiselect || undefined}
+	data-variant={variant}
 	class={className || undefined}
 	aria-label={label}
 >
 	{#each wrapper.flatView as node (node.key)}
 		{@const proxy = node.proxy}
-		{@const isActive = proxy.value === value}
+		{@const isActive = selectable && proxy.value === value}
 		{@const isSelected = multiselect && wrapper.selectedKeys.has(node.key)}
 		{@const content = resolveSnippet(
 			snippetBag,
@@ -264,6 +270,21 @@
 					<ItemContent {proxy} />
 				{/if}
 			</a>
+		{:else if !selectable}
+			<!-- A display-only row: shown, not a control. Keys skip it; clicks select nothing. -->
+			<div
+				title={proxy.get('tooltip')}
+				data-list-item
+				data-static
+				data-path={node.key}
+				data-level={node.level}
+			>
+				{#if content}
+					{@render content(proxy)}
+				{:else}
+					<ItemContent {proxy} />
+				{/if}
+			</div>
 		{:else}
 			<!--
 				Button item — Navigator calls wrapper.select(path) on click/Enter/Space.

@@ -23,11 +23,10 @@ describe('list theme CSS: the card variant', () => {
 		expect(has('base/list.css', CARD, /overflow:\s*hidden/)).toBe(true)
 	})
 
-	it('base splits the rows with a hairline and squares them', () => {
+	it('base splits the rows with a hairline', () => {
 		const row = `${CARD} [data-list-item] + [data-list-item]`
 		expect(has('base/list.css', row, /border-top-width:\s*1px/)).toBe(true)
 		expect(has('base/list.css', row, /border-top-style:\s*solid/)).toBe(true)
-		expect(has('base/list.css', `${CARD} [data-list-item]`, /border-radius:\s*0/)).toBe(true)
 	})
 
 	it('base gives a display-only row no pointer', () => {
@@ -46,6 +45,20 @@ describe('list theme CSS: the card variant', () => {
 			const f = `${style}/list.css`
 			expect(has(f, CARD, /border-color|@apply[^;]*border-/)).toBe(true)
 			expect(has(f, `${CARD} [data-list-item] + [data-list-item]`, /border-top-color|@apply[^;]*border-/)).toBe(true)
+		})
+
+		it(`${style} squares and pads the card's rows, after its own item metrics`, () => {
+			const f = `${style}/list.css`
+			const sel = `[data-style='${style}'] ${CARD} [data-list-item] {`
+			const css = declarations(f)
+			const at = css.lastIndexOf(sel)
+			expect(at).toBeGreaterThan(-1)
+			const body = css.slice(at, css.indexOf('}', at))
+			expect(body).toMatch(/border-radius:\s*0/)
+			expect(body).toMatch(/padding:\s*0\.625rem 0\.875rem/)
+			// Later than every plain item-metrics rule of the same weight, so it wins.
+			const sizeRule = css.lastIndexOf('[data-list-item] {', at - 1)
+			expect(at).toBeGreaterThan(sizeRule)
 		})
 
 		it(`${style} leaves a display-only row unlit on hover`, () => {

@@ -186,3 +186,29 @@ button[data-list-item] {
 [data-list-spacer] {
   height: 0.5rem;
 }
+
+/* =============================================================================
+   Card variant — a framed list, rows split by a hairline (data-variant="card")
+   Each style colours the frame and the hairline, and squares and pads the rows
+   (its own item rules outrank base, so the card's row metrics live beside them).
+   ============================================================================= */
+
+[data-list][data-variant='card'] {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--radius-xl, 0.75rem);
+  overflow: hidden;
+}
+
+[data-list][data-variant='card'] [data-list-item] + [data-list-item] {
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+/* =============================================================================
+   Display-only row — a row with no link in a list with selectable=false
+   ============================================================================= */
+
+[data-list-item][data-static] {
+  cursor: default;
+}

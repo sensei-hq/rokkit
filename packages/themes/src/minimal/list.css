@@ -166,3 +166,26 @@
 [data-style='minimal'] [data-list] [data-list-item][data-selected='true'] [data-item-icon] {
   @apply text-accent;
 }
+
+/* =============================================================================
+   Card variant — paper card, edge frame, mute hairline between rows
+   ============================================================================= */
+
+[data-style='minimal'] [data-list][data-variant='card'] {
+  @apply bg-paper border-paper-edge;
+}
+
+/* Rows fill the card edge to edge: square, padded 10px 14px */
+[data-style='minimal'] [data-list][data-variant='card'] [data-list-item] {
+  border-radius: 0;
+  padding: 0.625rem 0.875rem;
+}
+
+[data-style='minimal'] [data-list][data-variant='card'] [data-list-item] + [data-list-item] {
+  @apply border-paper-mute;
+}
+
+/* A display-only row is not a control: no wash on hover */
+[data-style='minimal'] [data-list] [data-list-item][data-static]:hover:not(:disabled):not([data-disabled='true']) {
+  background: transparent;
+}

@@ -520,3 +520,48 @@ describe('List — multiselect', () => {
 		expect(container.querySelector('[data-list-group][data-selected]')).toBeNull()
 	})
 })
+
+describe('List — display-only rows and the card variant', () => {
+	const rowsItems = [
+		{ label: 'Linked', value: 'a', href: '/a' },
+		{ label: 'Idle', value: 'b' }
+	]
+
+	it('a row with no link in a display-only list is no control', () => {
+		const { container } = render(List, { items: rowsItems, selectable: false })
+		const idle = container.querySelectorAll('[data-list-item]')[1]
+		expect(idle.tagName).toBe('DIV')
+		expect(idle.hasAttribute('data-static')).toBe(true)
+		expect(idle.hasAttribute('tabindex')).toBe(false)
+		expect(container.querySelector('button[data-list-item]')).toBeNull()
+	})
+
+	it('a row with a link stays a link', () => {
+		const { container } = render(List, { items: rowsItems, selectable: false })
+		expect(container.querySelector('a[data-list-item]')?.getAttribute('href')).toBe('/a')
+	})
+
+	it('marks no row current and selects nothing on click', async () => {
+		const onselect = vi.fn()
+		const { container } = render(List, { items: rowsItems, selectable: false, value: 'a', onselect })
+		expect(container.querySelector('[data-active]')).toBeNull()
+		expect(container.querySelector('[aria-current]')).toBeNull()
+		await fireEvent.click(container.querySelectorAll('[data-list-item]')[1])
+		expect(onselect).not.toHaveBeenCalled()
+	})
+
+	it('a selectable list keeps a row with no link as a button', () => {
+		const { container } = render(List, { items: rowsItems })
+		expect(container.querySelectorAll('[data-list-item]')[1].tagName).toBe('BUTTON')
+	})
+
+	it('variant card marks the root', () => {
+		const { container } = render(List, { items: rowsItems, variant: 'card' })
+		expect(container.querySelector('nav[data-list]')?.getAttribute('data-variant')).toBe('card')
+	})
+
+	it('no variant leaves the root unmarked', () => {
+		const { container } = render(List, { items: rowsItems })
+		expect(container.querySelector('nav[data-list]')?.hasAttribute('data-variant')).toBe(false)
+	})
+})

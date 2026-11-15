@@ -1076,3 +1076,38 @@ describe('Wrapper — multiselect: a range keeps leaves only', () => {
 		expect(w.selectedKeys.has('1')).toBe(false)
 	})
 })
+
+// ─── Display-only lists (selectable: false) ──────────────────────────────────
+// A list that only shows rows: a row with a link is still reachable, a row with
+// none is not a control, so keys skip it and a click on it selects nothing.
+
+describe('Wrapper — selectable: false', () => {
+	const mixed = [
+		{ label: 'Linked', value: 'a', href: '/a' },
+		{ label: 'Idle', value: 'b' },
+		{ label: 'Linked too', value: 'c', href: '/c' }
+	]
+
+	it('moves past a row with no link', () => {
+		const w = new Wrapper(new ProxyTree(mixed), { selectable: false })
+		w.first()
+		expect(w.focusedKey).toBe('0')
+		w.next()
+		expect(w.focusedKey).toBe('2')
+	})
+
+	it('selects nothing when a row with no link is clicked', () => {
+		const onselect = vi.fn()
+		const w = new Wrapper(new ProxyTree(mixed), { selectable: false, onselect })
+		w.select('1')
+		expect(onselect).not.toHaveBeenCalled()
+		expect(w.focusedKey).not.toBe('1')
+	})
+
+	it('a selectable list still reaches every row', () => {
+		const w = new Wrapper(new ProxyTree(mixed))
+		w.first()
+		w.next()
+		expect(w.focusedKey).toBe('1')
+	})
+})

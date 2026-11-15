@@ -1,6 +1,6 @@
 {
 	"name": "@rokkit/graph",
-	"version": "1.15.5",
+	"version": "1.15.6",
 	"description": "Node-link diagram components \u2014 pluggable layouts, ER/schema views",
 	"repository": {
 		"type": "git",

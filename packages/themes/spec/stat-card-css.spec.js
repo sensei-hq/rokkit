@@ -39,6 +39,13 @@ describe('stat card theme CSS', () => {
 		).toBe(true)
 	})
 
+	it('lets a label wrap rather than cut it short (sensei #420: "Completed to…" on a phone)', () => {
+		const label = rulesFor('base/stat-card.css', '[data-stat-card-label]').join('}')
+		expect(label).not.toMatch(/white-space:\s*nowrap/)
+		expect(label).not.toMatch(/text-overflow:\s*ellipsis/)
+		expect(label).toMatch(/overflow-wrap:\s*anywhere/)
+	})
+
 	it('puts no colour in base — colour is each style’s', () => {
 		const offenders = declarations('base/stat-card.css')
 			.split('}')

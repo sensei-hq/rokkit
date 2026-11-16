@@ -35,23 +35,46 @@ describe('screen shell theme CSS', () => {
 		expect(scrolling.sort()).toEqual(['[data-screen-body]', '[data-screen-sidebar]'])
 	})
 
-	it('lays the stats on a 12-column grid whose rows share one height, two per row when narrow', () => {
+	// Mobile-first (sensei #420): the unprefixed rules are the phone layout; min-width
+	// queries step up. A max-width query is desktop-first and is not used.
+	const outsideMedia = (f) => declarations(f).replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '')
+	const mediaBlock = (f, query) => {
+		const css = declarations(f)
+		const at = css.indexOf(`@media ${query}`)
+		if (at < 0) return ''
+		let depth = 0
+		for (let i = css.indexOf('{', at); i < css.length; i++) {
+			if (css[i] === '{') depth++
+			else if (css[i] === '}' && --depth === 0) return css.slice(at, i + 1)
+		}
+		return ''
+	}
+
+	it('uses no max-width query: it steps up from the phone', () => {
+		expect(declarations('base/screen-shell.css')).not.toMatch(/@media \(max-width/)
+	})
+
+	it('lays the stats on a 12-column grid whose rows share one height, two per row on a phone', () => {
 		const f = 'base/screen-shell.css'
 		expect(
 			has(f, '[data-screen-stats] {', /grid-template-columns:\s*repeat\(12, minmax\(0, 1fr\)\)/)
 		).toBe(true)
 		expect(has(f, '[data-screen-stats] {', /grid-auto-rows:\s*1fr/)).toBe(true)
-		expect(declarations(f)).toMatch(
-			/@media \(max-width: 640px\)[\s\S]*?\[data-screen-stats\] \[data-stat-card\][\s\S]*?grid-column:\s*span 6/
+		// Phone first: two per row; from 640px a card takes the span it is given.
+		expect(outsideMedia(f)).toMatch(/\[data-screen-stats\] \[data-stat-card\]\s*\{[^}]*grid-column:\s*span 6/)
+		expect(mediaBlock(f, '(min-width: 640px)')).toMatch(
+			/\[data-screen-stats\] \[data-stat-card\]\[data-span\]\s*\{[^}]*grid-column:\s*span var\(--stat-card-span\)/
 		)
 	})
 
-	it('lays the info band out in three columns, the third after a hairline', () => {
+	it('lays the info band out in one column on a phone, three from 900px, the third after a hairline', () => {
 		const f = 'base/screen-shell.css'
-		expect(has(f, '[data-screen-info] {', /grid-template-columns:/)).toBe(true)
-		expect(
-			has(f, '[data-screen-info-column]:nth-child(3)', /border-inline-start-width:\s*1px/)
-		).toBe(true)
+		expect(outsideMedia(f)).toMatch(/\[data-screen-info\]\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/)
+		const wide = mediaBlock(f, '(min-width: 900px)')
+		expect(wide).toMatch(/\[data-screen-info\]\s*\{[^}]*grid-template-columns:\s*minmax\(0, 4fr\) minmax\(0, 5fr\) minmax\(0, 3fr\)/)
+		expect(wide).toMatch(/\[data-screen-info-column\]:nth-child\(3\)\s*\{[^}]*border-inline-start-width:\s*1px/)
+		// On a phone the third column sits under the others, with no hairline beside it.
+		expect(outsideMedia(f)).not.toMatch(/\[data-screen-info-column\]:nth-child\(3\)\s*\{[^}]*border-inline-start-width:\s*1px/)
 	})
 
 	it('sizes the search as the filters band’s first control, and draws no title-bar separator for it', () => {

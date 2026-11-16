@@ -57,10 +57,10 @@ button[data-stat-card] {
   line-height: 1;
 }
 
+/* A label wraps rather than being cut short (a phone's two-up cards are narrow). */
 [data-stat-card-label] {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* The number is display type: the theme's display font role, so a change of face follows. */

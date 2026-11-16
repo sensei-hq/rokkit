@@ -87,12 +87,13 @@
 
 /* ─── Info band ─────────────────────────────────────────────────────────── */
 
+/* Phone first: one column; from 900px, three (below, after the stats band). */
 [data-screen-info] {
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: 2rem 3rem;
-  padding: 1.5rem 3rem;
+  gap: 1.25rem;
+  padding: 1.25rem;
   border-top-width: 1px;
   border-top-style: solid;
 }
@@ -113,11 +114,6 @@
   min-width: 0;
 }
 
-[data-screen-info-column]:nth-child(3) {
-  padding-inline-start: 2rem;
-  border-inline-start-width: 1px;
-  border-inline-start-style: solid;
-}
 
 [data-screen-info-label] {
   font-size: 0.6875rem;
@@ -247,6 +243,11 @@
   font-size: 0.6875rem;
 }
 
+/* Phone first: two cards per row; from 640px a card takes the span it is given. */
+[data-screen-stats] [data-stat-card] {
+  grid-column: span 6;
+}
+
 [data-screen-stats-reading] {
   grid-column: 1 / -1;
   margin: 0;
@@ -351,22 +352,30 @@
   margin-inline-start: auto;
 }
 
-/* ─── Narrow screens ────────────────────────────────────────────────────── */
+/* ─── Wider screens: each step up from the phone ──────────────────────── */
 
-@media (max-width: 900px) {
-  [data-screen-info] {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 1.25rem;
-  }
-
-  [data-screen-info-column]:nth-child(3) {
-    padding-inline-start: 0;
-    border-inline-start-width: 0;
-  }
-}
-
-@media (max-width: 640px) {
+@media (min-width: 640px) {
   [data-screen-stats] [data-stat-card] {
-    grid-column: span 6;
+    grid-column: auto;
+  }
+
+  [data-screen-stats] [data-stat-card][data-span] {
+    grid-column: span var(--stat-card-span);
   }
 }
+
+@media (min-width: 900px) {
+  [data-screen-info] {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+    gap: 2rem 3rem;
+    padding: 1.5rem 3rem;
+  }
+
+  /* The third column sits after a hairline once it sits beside the others. */
+  [data-screen-info-column]:nth-child(3) {
+    padding-inline-start: 2rem;
+    border-inline-start-width: 1px;
+    border-inline-start-style: solid;
+  }
+}
+

@@ -1,5 +1,15 @@
 # Project Journal
 
+## 2026-11-16 — ScreenShell lays out for a phone first; a stat label wraps
+
+**Motivation:** sensei #420 (phone support). At 430px the shell's info band kept three
+columns until a `max-width: 900px` query and its stats twelve until `max-width: 640px`, and a
+stat label was `nowrap` + ellipsis ("Completed to…"): the Relay screen's header bands took ~1100px
+before its body. **Change:** mobile-first — the unprefixed rules are the phone layout (info band
+one column, compact padding; stats two per row) and `min-width` queries step up (640px: a card's
+own span; 900px: three info columns, the third after its hairline). No `max-width` query remains.
+`[data-stat-card-label]` wraps (`overflow-wrap: anywhere`). Desktop renders as before.
+
 ## 2026-11-15 — List: display-only rows (`selectable={false}`) and `variant="card"`
 
 **Motivation:** sensei's relay screen (lanes, completed today) and the dōjō's list sections draw

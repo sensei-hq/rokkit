@@ -1,6 +1,6 @@
 {
   "name": "@rokkit/actions",
-  "version": "1.15.6",
+  "version": "1.15.7",
   "description": "Contains generic actions that can be used in various components.",
   "repository": {
     "type": "git",

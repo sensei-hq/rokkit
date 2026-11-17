@@ -15,3 +15,40 @@
 [data-style='material'] [data-pill-remove]:hover:not(:disabled) {
   @apply text-ink;
 }
+
+/* A toned chip: the tone at 16% over the paper, its frame at 35% — the tint darkens with the
+   page in dark mode, where the -soft tokens stay light. Neutral is the mute surface. */
+[data-style='material'] [data-pill][data-tone='accent'] {
+  background-color: color-mix(in oklab, var(--accent) 16%, var(--paper));
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--paper));
+  color: var(--ink);
+}
+
+[data-style='material'] [data-pill][data-tone='success'] {
+  background-color: color-mix(in oklab, var(--success) 16%, var(--paper));
+  border-color: color-mix(in oklab, var(--success) 35%, var(--paper));
+  color: var(--ink);
+}
+
+[data-style='material'] [data-pill][data-tone='warning'] {
+  background-color: color-mix(in oklab, var(--warning) 16%, var(--paper));
+  border-color: color-mix(in oklab, var(--warning) 35%, var(--paper));
+  color: var(--ink);
+}
+
+[data-style='material'] [data-pill][data-tone='danger'] {
+  background-color: color-mix(in oklab, var(--danger) 16%, var(--paper));
+  border-color: color-mix(in oklab, var(--danger) 35%, var(--paper));
+  color: var(--ink);
+}
+
+[data-style='material'] [data-pill][data-tone='neutral'] {
+  background-color: var(--paper-mute);
+  border-color: var(--paper-edge);
+  color: var(--ink);
+}
+
+[data-style='material'] [data-pill][data-variant='outline'] {
+  border-color: var(--paper-edge);
+  color: var(--ink-soft);
+}

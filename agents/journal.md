@@ -1,5 +1,60 @@
 # Project Journal
 
+## 2026-11-17 — Pinned bun to 1.4.4 everywhere; fixed the Cloudflare frozen-lockfile deploy failure
+
+**Symptom:** the Cloudflare Workers Builds deploy failed at install with
+`incorrect peer dependency vite@7.3.6` / `@sveltejs/vite-plugin-svelte@6.2.4`
+warnings followed by `lockfile had changes, but lockfile is frozen`.
+
+**Diagnosis (skew, not repo corruption):** the committed `bun.lock` is valid —
+`bun install --frozen-lockfile` passes under local bun 1.4.4 on BOTH `develop`
+and `main` (main checked in a detached worktree, then removed), and GHA `Check`
+runs the same frozen install on latest bun (= 1.4.4, the current release) and is
+green on the same commit. Only the Cloudflare builder disagrees: Workers Builds
+runs `bun install --frozen-lockfile` itself when `bun.lock` is present, using its
+own default bun, which lags the bun that wrote the lockfile — hence both the
+peer warnings (neither 1.4.4 nor GHA emits them) and the rewrite demand.
+
+**Fix:** root `package.json` gained `"packageManager": "bun@1.4.4"`, which
+Workers Builds reads for the toolchain version (per its build-image docs — no
+dashboard change needed); GHA `setup-bun` is pinned to `1.4.4` in `check.yml`
+(both jobs), `coverage.yml`, and `publish.yml` (`latest` → `1.4.4`), so local,
+CI, and deploy resolve identically. Upgrade path is in the `check.yml` comment:
+bump local bun, `bun install`, commit `bun.lock`, bump the pins. If the
+Cloudflare project ever sets a `BUN_VERSION` dashboard var, it must match (or be
+removed so `packageManager` wins).
+
+**Verified:** frozen install green after the edit; `actionlint` clean on all
+three workflows; clean `apps/learn` build with the Cloudflare adapter
+(`CF_PAGES=1`, real exit 0, `.svelte-kit/cloudflare/_worker.js` emitted).
+Uncommitted — needs a commit + push (or dashboard Retry) for Cloudflare to pick
+up the pin. (Also noted: `| tail` masks the build's exit code — re-ran with output
+to a file to confirm the real 0.)
+
+## 2026-11-16 — ScreenShell lays out for a phone first; a stat label wraps
+
+**Motivation:** sensei #420 (phone support). At 430px the shell's info band kept three
+columns until a `max-width: 900px` query and its stats twelve until `max-width: 640px`, and a
+stat label was `nowrap` + ellipsis ("Completed to…"): the Relay screen's header bands took ~1100px
+before its body. **Change:** mobile-first — the unprefixed rules are the phone layout (info band
+one column, compact padding; stats two per row) and `min-width` queries step up (640px: a card's
+own span; 900px: three info columns, the third after its hairline). No `max-width` query remains.
+`[data-stat-card-label]` wraps (`overflow-wrap: anywhere`). Desktop renders as before.
+
+## 2026-11-15 — List: display-only rows (`selectable={false}`) and `variant="card"`
+
+**Motivation:** sensei's relay screen (lanes, completed today) and the dōjō's list sections draw
+cards of rows that are links or plain rows, never choices. List always rendered a non-link row as
+a `<button>` and highlighted the current value, so these screens hand-rolled `<ul>` cards.
+
+**Design:** `selectable={false}` passes through to `Wrapper` (`options.selectable`): a leaf with no
+`href` is static — excluded from `#navigable`, and `select()` on it is a no-op (focus does not move
+there either). List renders it as `<div data-list-item data-static>` and marks no row active.
+`variant="card"` sets `data-variant="card"`; base owns the frame and the row hairline (structure),
+each style colours them (paper, `paper-edge` frame, `paper-mute` hairline) and squares + pads the
+rows (10px 14px) — in the style file, after its own item metrics, because a style's item rules
+outrank base's. A static row gets no hover wash in every style.
+
 ## 2026-08-20 — Chart: Spark — sparklines compose real geoms, not a parallel path
 
 **Motivation:** `Sparkline.svelte` had grown into a 312-line parallel render path — recomputing
@@ -10927,3 +10982,211 @@ visitor's own Ollama.
 - Spec `palette-families.spec.js`: ink ramp AA, distinct primary/status (OKLab ΔE ≥ 0.07),
   on-primary ≥ 4.5, status text ≥ 4.5 on paper and paper-soft, both modes.
 - Commits: 2f4287ccc, da5519a48, 03596079c, 17f4e0d9a, e79235a78, f189d4fa8, + docs.
+
+## 2026-10-28 — primary and accent read as text by day; on-primary follows the painted fill
+
+- Found by sensei's axe run: `text-primary`/`text-accent` in shu 500 on kami paper read 3.38:1
+  (AA is 4.5), and vermillion buttons carried near-black labels. Every family failed the same way
+  in light mode (2.3–3.5:1); dark mode passed.
+- Families now override primary and accent per mode: zen-sumi shu 600 by day (4.79:1 on paper,
+  near-white label 4.94:1), the other four at 700; 500 by night, unchanged.
+- `--on-primary` is now derived like every `--on-{role}`: from the fill the skin paints in that
+  mode (it used to measure the 500 even when a skin moved primary). A skin's own `on-{role}`
+  override is kept.
+- Spec: family primary/accent text ≥ 4.5 on paper and paper-soft, on-primary measured on the
+  painted fill, both modes; on-colour follows a moved primary; an explicit on-primary wins
+  (mutation-probed).
+- zen-sumi List: resting items take ink-mute in dark mode (sumi 800, L 0.78, was ink 0.94) — a
+  near-white rail glared on sumi. Hover/focus/current keep their colours (the rule precedes them
+  at equal or lower specificity). Spec `list-css.spec.js`; measured on learn /guides in both modes.
+- `text-on-{role}-soft` (core `contrastShortcuts`): text for a role's `-soft` tint, which stays
+  light in both modes — `color-mix(in oklch, var(--role) 55%, black)`, base/message.css's status
+  copy tone. Family spec: ≥ 4.5 on accent and every status tint, both modes, all five families.
+  Apps had been writing `bg-accent-soft text-accent` (2.9:1); docs/llms recommended
+  `bg-success-soft text-success` — corrected.
+
+## 2026-10-28 — palette families etch their dark-mode edge
+
+- sensei (dark mode): dividers were ten lightness points brighter after adopting zen-sumi. Its own
+  palette had pinned `paper-edge` dark to `sumi.300` ("etched, not lifted"); the family left it
+  at the surface's 400 (L 0.42 vs 0.32). Every family now overrides `paper-edge` to the dark
+  surface's 300 (warm sumi, cool yoru); light stays 400. Spec in palette-families.spec.js.
+- graph: ctrl/⌘-wheel and pinch zoom in proportion to the wheel travel (`wheelFactor`:
+  2^(−px × 0.01), lines/pages as pixels, capped at one ZOOM_STEP per event; `zoomBy`). Each
+  wheel event was a full 1.25× notch, so a trackpad pinch — dozens of small events — leapt
+  several steps (sensei layers, 2026-10-28). `canvasNavigation`'s onzoom now reports a factor.
+- cli: `bundleFolders`/`convertFolders` return `Promise.all` and the `bundle`/`build` commands
+  return it. They fired each folder's work and forgot it, so the specs slept 200 ms; under a full
+  `test:ci` a conversion outlived the sleep, its write landed after the cleanup, and the unhandled
+  rejection failed `bun run bump` (2026-10-28). A failing folder now rejects (spec).
+- (2026-10-29) Families' dark `paper-edge` → the surface's 200 (L 0.25 on warm sumi), one step above
+  paper-soft: at 300 sensei still read every divider as prominent. Light stays 400.
+
+## 2026-11-02 — graph/schema: dbd's database-design viewer
+
+dbd's site and sensei's app (Diagrams · Database · ER, sidebar on the right) now compose the same
+viewer from `@rokkit/graph/schema`. Ported from dbd `site/src/lib/design`, duck-typed to its
+`SchemaModel` as `DesignModel` (only `tables` + `refs` required; every other half optional, and a
+view whose data is absent says so rather than inventing it):
+
+- Views: `ContentHeader` (name, dialect, counts line, Overview | Diagram | Entities — a host
+  passes `tabs` to add a changelog later), `OverviewView`, `DiagramView` (ErDiagram over tables,
+  refs and stubs, with its controls and legend), `SchemaSidebar` (search, kind chips via
+  `choices`, the schemas as a rokkit `Tree`, `side="left|right"`), `TableView` (dbd's table page:
+  fields table with PK/FK/NN/UNIQUE/ENUM/IDENTITY/GENERATED, default, references, notes; refs
+  in/out; dependents; indexes; checks; Details | Diagram), `ObjectView`, `EnumView`.
+- Pure helpers with specs: `entities.ts` (`allEntities`, `entityAt`, `kindCounts`, `pageFor`),
+  `overview.ts`, `sidebar.ts`, `details.ts`, `splitLead`.
+- `EntityView` keeps its GraphState API (learn and sensei use it); dbd's table page is `TableView`.
+- Words in `messages.graph`; presses through `interactions`; colour per style from tokens
+  (`graph-css.spec.js` guards both). Learn: View → Design viewer on the schema diagrams.
+
+## 2026-11-04 — Switch: the OFF state reads at 3:1 under every style (WCAG 1.4.11)
+
+- sensei (zen-sumi, dark): the off switch vanished on a settings card. zen-sumi painted the off
+  track `paper-edge`, which by night is the surface's 200 — the tone of paper-mute (track vs card
+  1.00:1, thumb vs track 1.19:1; light 1.39 / 1.51). The #173 claim that paper-edge "stands off
+  the page and the thumb in both modes" was false. Every other style failed too: rokkit and
+  material outlined/filled the track in paper tones, minimal shared zen-sumi's paper-edge, frosted
+  laid a white thumb on a near-white glass track.
+- Off tracks now take `ink-faint` (the quietest ink, held at AA on paper by every skin):
+  zen-sumi and minimal fill with it; rokkit outlines its paper-mute well with it; material gets
+  Material's outlined track (2px ink-faint, `--switch-track-border`); frosted is ink-faint glass
+  (85%) under a paper glass thumb — a white thumb cannot hold 3:1 over a track light enough to
+  leave a dark page. `paper-edge` itself is unchanged.
+- Spec: `packages/themes/browser/switch-contrast.browser.spec.ts` renders the BUILT css over the
+  token vars `rootPreflights` emits for the default skin and every palette family, in each mode
+  the skin paints, on paper / paper-soft / paper-mute, and reads screenshot pixels: track
+  boundary ≥ 3:1 off each surface, thumb ≥ 3:1 off the track. Worst case now 3.70 (frosted,
+  light, paper-mute) / thumb 3.54 (frosted, light); zen-sumi 5.01–6.18 / 5.47–6.18.
+- `spec/switch-css.spec.js` no longer pins `paper-edge`; it counts it as a near-page tone.
+
+## 2026-11-04 — ScreenShell (D87): one screen shell, driven by data
+
+sensei's D87 contract (coord/mockups/screen-shell/CONTRACT.md §8) builds upstream here; sensei's
+`@sensei/ui` wraps it (glyph mode → `glyphs`, `viewId` → its own panel store).
+
+- `@rokkit/app` `ScreenShell` (fa71ba425 StatCard, 06055d2e0 shell): title bar (mark, title,
+  context, search → `values.q`, the screen's buttons, band toggles via `Toolbar`), description,
+  info / stats / filters bands, body + sidebar each scrolling on their own, footer. Fills its
+  container; only body and sidebar overflow. `panels` / `filter` bindable; persists nothing.
+- Toolbar: `{ add, remove }` over the default (one toggle per band the view has, in
+  info · stats · filters · side order), or a full `ToolbarItem[]`. One data-driven `Toolbar`
+  with a separator item, not two `ToolbarGroup`s — Toolbar is either data-driven or slot-based,
+  and the data path keeps its keyboard navigation. Search sits before it, outside the toolbar,
+  so the arrow keys edit text instead of moving toolbar focus.
+- Stats: the merge rule lives in pure helpers (`applyStat`/`clearStat`/`setFilterValue`) with a
+  `StatMemory` tied to the stat id, so a filter replaced from outside never restores the wrong
+  key. Span 1–3 from the contract's character thresholds (the mockup's stand-in for measuring).
+- Info band (`ScreenInfo`): the "Your first session" look — a WASH of the role over paper
+  (`color-mix(in oklch, var(--screen-role) 12%|18%, var(--paper))`), not the opaque `-soft` tint.
+  Raw accent text failed on it (zen-sumi light 3.9:1, default skin's mark 2.39:1), so eyebrows
+  and step marks are the role mixed 60% toward ink, the large mark and meter 80%.
+- StatCard: `description`, `mark` (text or snippet), `onclick` + `pressed` (button,
+  aria-pressed), plain look without href/onclick, `span`, `tone: 'ink'`. The frame went from
+  paper-edge (1.5:1) to ink-faint mixed 75% into paper — 70% measured 3.04:1 on sea-glass,
+  too thin a margin.
+- Measured (packages/app/browser/screen-shell-contrast.browser.spec.ts, 5 styles × default +
+  5 families × modes): info text lowest 5.28:1 (default skin eyebrow), zen-sumi light/dark
+  eyebrow 7.24/7.23, lead 5.60/6.43; large mark and meter lowest 3.50 (zen-sumi 5.52/5.68);
+  card and search frames lowest 3.36 (zen-sumi light), zen-sumi dark 3.73.
+  screen-shell-layout.browser.spec.ts proves only body and sidebar scroll (mutation: dropping
+  `min-height: 0` on `[data-screen-main]` fails all five).
+- (L0 review) An `href` action is a real link: `Toolbar` now renders any item with an `href` as
+  `<a data-toolbar-item href>` (label = accessible name), so SvelteKit routes and preloads it,
+  middle-click opens a tab, and the Tauri webview no longer reloads. A disabled one (or any item
+  in a disabled toolbar) drops its `href` with `role="link"` + `aria-disabled`. The Navigator
+  already leaves a click on `a[href]` native. `ScreenShell` no longer calls `location.assign`.
+
+## 2026-11-04 — ScreenShell: search moves into the filters band
+
+- User change: the title bar was too cramped. Search is now the first control in the filters band
+  (left), then the screen's snippet or FormRenderer schema; it still writes `values.q` with the
+  same debounce and merges with stat filters exactly as before. The title bar is mark · title ·
+  context · toolbar only.
+- Search counts as the filters band: a screen with search and no `filters` gets a search-only
+  band and its toggle; `search: false` removes the field (and the band when there are no
+  filters); closing the band hides the search.
+- CSS: the title-bar separator rule (`[data-screen-search] + [data-toolbar]`) is gone from base
+  and every style; base sizes the search as a band control (`flex: 0 1 16rem`).
+- The contrast browser spec measures the search frame on the filters band (paper-soft) and on
+  its own field: lowest 3.25:1 and 3.36:1 across every style, skin and mode.
+
+## 2026-11-05 — ScreenShell attribute passthrough + rokkit switch fill (L7, sensei-hq coord)
+
+Sensei screens on `ScreenShell` lost their e2e hooks (`data-testid`), so the shell and its
+toolbar now pass attributes through instead of dropping them. Convention: **components
+take rest props, data carries `attrs`** (`ShellAttrs = Record<string, string>`, rendered
+on the element; the component's own attributes always win).
+
+- `ScreenShell` root: rest attributes (`data-*`, `aria-*`, `id`, …) spread on
+  `[data-screen-shell]` beside `data-view`/`class` (`ScreenShellProps` extends
+  `HTMLAttributes<HTMLDivElement>`); known props never duplicated as attributes.
+- `Toolbar` items: an item's `attrs` (read via `proxy.get`, so remappable through
+  `fields`) renders on its button or link. Chose explicit `attrs` over bare `data-*`
+  keys: enumerable, field-mappable, matches chart's `resolveMarkAttrs` naming.
+- `ScreenShell` props: `toggleAttrs` (per-band, onto the toolbar toggles — merged under
+  a full-list toggle's own attrs by `resolveToolbar`) and `bandAttrs` (per band incl.
+  `footer`, onto the band elements); `ShellStat.attrs` renders on the `StatCard`
+  (already rest-spreads), `ShellAction.attrs` flows through `toToolbarItem`.
+- `ScreenInfo` takes rest props too (its `role` wash stays out via `Omit`).
+- Style fix: the `rokkit` off track's `from-paper-mute to-paper-mute` gradient compiled
+  to NO stops — gradient stops read only `--color-*` vars, which paper/ink tones never
+  emit — so the track was transparent. Replaced with solid `bg-paper-mute` (same-color
+  ends are flat anyway); border and thumb untouched. The 55-case switch-contrast spec
+  stays green; new `switch-fill.browser.spec.ts` pins the opaque fill (computed alpha 1
+  + pixel differs from the surface).
+- Note for L0: the same transparent-gradient pattern is everywhere else in the `rokkit`
+  style (`from-paper-*`/`to-paper-*` in toolbar, list, card, menu, … compile to no
+  stops either) — paper-on-paper, so invisible except on the switch. Follow-up, not
+  this patch.
+- Tests first (red → green in one commit): 3 Toolbar, 2 resolveToolbar, 5 ScreenShell,
+  1 browser fill. Gates: `bun run check` (9046 passed) + `bun run test:browser` (183).
+- Branch `fix/shell-passthrough` (L0 releases as 1.15.2).
+
+## 2026-11-14 — Shell parity with the sensei Relay mockup; font roles that resolve (sensei-hq)
+
+Sensei's Relay screen carried two local overrides of the shell (relay-toolbar.css,
+relay-filters.css) and its stat cards differed from the mockup. User ruling: one shell,
+fixed here, not patched per screen. Branch `fix/zen-sumi-shell-parity`.
+
+- Font utilities: `font-display` and `font-ui` generated NOTHING, and `font-sans` /
+  `font-mono` resolved to the wind preset's system stacks (preset `theme.fontFamily`
+  loses to the nested wind preset). Each is now a rule on the role variable:
+  display·heading → `--font-display`, ui·sans·body → `--font-ui`, mono → `--font-mono`.
+  Convention (user, 2026-11-14): markup uses the utility, CSS files use the variable,
+  never a face name. graph.css read an undefined `--font-body` → `--font-ui`.
+- StatCard (base): value in `var(--font-display)` 1.5rem/500; card pad 10/12, radius 10,
+  gap 4; mark and icon 13px; the description reserves ONE line (two left a gap under a
+  one-line card). Every style: an `accent` tone, and the icon read in the card's tone
+  like the mark. zen-sumi: frame = `--paper-edge`, pressed fill = `--paper-mute`.
+- Decision (user, 2026-11-14): the zen-sumi stat frame is the edge hairline, not 3:1 —
+  the card is told by its label and value, pressed by the inset ink ring. The contrast
+  browser spec holds zen-sumi cards to the edge token instead.
+- Toolbar: items take `kind` (view | toggle → `data-kind`) and `count` (a badge, and
+  "Queue · 7" as name and title). zen-sumi's title bar draws 36px framed icon buttons;
+  a pressed view's icon is accent, a pressed toggle's ink.
+- Filters band: a FormRenderer lays out as a wrapping row (closes #178).
+- Gotcha: `@rokkit/app`'s svelte-check reads `@rokkit/ui` types from ui's BUILT dist;
+  a type change in ui needs `bun run build` in packages/ui before `bun run check`.
+- Red → green as separate commits. Gates: `bun run check` (9069 passed) + browser (183).
+
+## 2026-11-14 — Timeline: a tone per item and a dot marker, for sensei's task history (sensei-hq)
+
+Sensei's relay task history drew its own timeline (a bordered column, absolutely placed
+dots that sat off the line). Catalogue rule (user, 2026-11-14): rokkit first, the missing
+prop goes into rokkit. Branch `feat/timeline-tone-dot`.
+
+- Field `tone` (default key `tone`, PillTone set) → `data-tone` on the item; every style
+  rings the node in that token (neutral = `--ink-faint`, not sensei's `--paper-edge-strong`,
+  which rokkit does not define).
+- Prop `marker: 'dot'` → `data-marker` on the root: a 12px plain dot, paper-filled, centred
+  on a 12px column; the connector is absolute from this dot's centre to the next one's,
+  through the gap. `--timeline-gap` (default 1.5rem) and `--timeline-dot-top` (0.375rem).
+- Red → green as separate commits. Gates: `bun run check` (9092 passed) + browser (183).
+
+## 2026-11-14 — Pill title (sensei-hq)
+
+Sensei's relay lane row carries a short host tag ("in Cursor"); its hover text names the
+host in full. Pill takes `title` → the `title` attribute. Pill llms doc gained the
+`tone` / `variant` / `size` rows #181 left out. Branch `feat/pill-title`, red → green.

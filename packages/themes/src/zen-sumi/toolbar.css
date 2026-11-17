@@ -85,10 +85,18 @@
    Separator & Divider
    ============================================================================= */
 
+/* The separator reads as a rule: the strong edge (the mute fill was all but invisible). */
 [data-style='zen-sumi'] [data-toolbar-separator] {
-  @apply bg-paper-mute bg-none;
+  background-color: var(--paper-edge-strong);
+  background-image: none;
 }
 
 [data-style='zen-sumi'] [data-toolbar-divider] {
   @apply bg-paper-mute bg-none;
+}
+
+/* The count badge: ink on paper. */
+[data-style='zen-sumi'] [data-toolbar-count] {
+  background-color: var(--ink);
+  color: var(--paper);
 }

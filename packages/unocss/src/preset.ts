@@ -20,12 +20,20 @@ const THEME_CONFIG = {
 	}
 }
 
-const FONT_FAMILIES = {
-	mono: ['var(--font-mono)'],
-	heading: ['var(--font-heading)'],
-	sans: ['var(--font-sans)'],
-	body: ['var(--font-sans)']
+// The font roles a config sets (typography.js): display · ui · mono. heading · sans · body are
+// older spellings of the same roles. Rules, not theme.fontFamily: the wind preset's own
+// sans/mono stacks would otherwise win and a utility would ignore the config.
+const FONT_ROLES: Record<string, string> = {
+	display: 'var(--font-display)',
+	heading: 'var(--font-display)',
+	ui: 'var(--font-ui)',
+	sans: 'var(--font-ui)',
+	body: 'var(--font-ui)',
+	mono: 'var(--font-mono)'
 }
+const FONT_RULES: [string, Record<string, string>][] = Object.entries(FONT_ROLES).map(
+	([role, variable]) => [`font-${role}`, { 'font-family': variable }]
+)
 
 // ─── Preset ──────────────────────────────────────────────────────────────────
 
@@ -46,7 +54,7 @@ export function presetRokkit(options = {}): Preset {
 			})
 		],
 		extractors: [extractorSvelte()],
-		rules: [['hidden', { display: 'none' }]],
+		rules: [['hidden', { display: 'none' }], ...FONT_RULES],
 		safelist: safelist(config),
 		preflights: [
 			...rootPreflights(theme, colormap, config, rootExtraVars(config)),
@@ -54,7 +62,7 @@ export function presetRokkit(options = {}): Preset {
 		],
 		shortcuts: shortcuts(theme, colormap, config),
 		theme: {
-			fontFamily: FONT_FAMILIES,
+			fontFamily: Object.fromEntries(Object.entries(FONT_ROLES).map(([role, v]) => [role, [v]])),
 			colors: themeColors(theme, colormap, config)
 		},
 		transformers: [transformerDirectives(), transformerVariantGroup()]

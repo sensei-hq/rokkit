@@ -33,10 +33,14 @@ export class Wrapper {
 	// when any proxy.expanded or proxy.children changes.
 	flatView = $derived(this.#proxyTree.flatView)
 
-	// Navigable items: exclude separators, spacers, and disabled items.
+	// Navigable items: exclude separators, spacers, and disabled items — and, in a
+	// display-only list (selectable: false), a leaf with no link, which is no control.
 	// This is the subset that keyboard navigation moves through.
 	#navigable = $derived(
-		this.flatView.filter((n) => n.type !== 'separator' && n.type !== 'spacer' && !n.proxy.disabled)
+		this.flatView.filter(
+			(n) =>
+				n.type !== 'separator' && n.type !== 'spacer' && !n.proxy.disabled && !this.#isStatic(n.proxy)
+		)
 	)
 
 	// ─── State ──────────────────────────────────────────────────────────────────
@@ -51,6 +55,7 @@ export class Wrapper {
 	#selectedValue = $state(undefined)
 
 	#collapsible
+	#selectable
 
 	// ─── Multi-select ──────────────────────────────────────────────────────────
 
@@ -60,7 +65,7 @@ export class Wrapper {
 
 	/**
 	 * @param {import('./proxy-tree.svelte.js').ProxyTree} proxyTree
-	 * @param {{ onselect?: Function, onchange?: Function, onselectionchange?: (values: unknown[]) => void, collapsible?: boolean, multiselect?: boolean }} [options]
+	 * @param {{ onselect?: Function, onchange?: Function, onselectionchange?: (values: unknown[]) => void, collapsible?: boolean, multiselect?: boolean, selectable?: boolean }} [options]
 	 */
 	constructor(proxyTree, options = {}) {
 		this.#proxyTree = proxyTree
@@ -69,6 +74,12 @@ export class Wrapper {
 		this.#onselectionchange = options.onselectionchange
 		this.#collapsible = options.collapsible ?? true
 		this.#multiselect = options.multiselect ?? false
+		this.#selectable = options.selectable ?? true
+	}
+
+	/** A leaf with no link in a display-only list: shown, never focused or selected. */
+	#isStatic(proxy) {
+		return !this.#selectable && !proxy.hasChildren && !proxy.get('href')
 	}
 
 	// ─── IWrapper: state read by Navigator ─────────────────────────────────────
@@ -197,10 +208,11 @@ export class Wrapper {
 	select(path) {
 		const key = path ?? this.#focusedKey
 		if (!key) return
+		const proxy = this.#proxyTree.lookup.get(key)
+		if (!proxy || this.#isStatic(proxy)) return
 		this.#focusedKey = key
 		this.#anchorKey = key
-		const proxy = this.#proxyTree.lookup.get(key)
-		if (proxy) this.#selectProxy(proxy, key)
+		this.#selectProxy(proxy, key)
 	}
 
 	/**

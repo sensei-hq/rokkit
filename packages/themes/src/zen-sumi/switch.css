@@ -1,13 +1,15 @@
 /**
  * Switch - Zen-Sumi Theme Styles
  *
- * Flat pill. Off: paper-edge track, so the off state stands off the page and the
- * thumb in both modes (#173). On: primary (shu vermillion) track.
- * Thumb: paper white. No shadows.
+ * Flat pill. Off: ink-faint track — the quietest ink, which every skin holds at AA on paper in
+ * both modes, so the off track stands 3:1 off paper, paper-soft and paper-mute and the paper
+ * thumb 3:1 off the track (WCAG 1.4.11). paper-edge is a hairline: by night it is the tone of
+ * paper-mute, and the off switch vanished on a settings card. On: primary (shu vermillion) track.
+ * Thumb: paper. No shadows.
  */
 
 [data-style='zen-sumi'] [data-switch-track] {
-  @apply bg-paper-edge border-0;
+  @apply bg-ink-faint border-0;
   background-image: none;
 }
 

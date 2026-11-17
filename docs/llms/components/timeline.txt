@@ -32,6 +32,7 @@ import { Timeline } from '@rokkit/ui'
 | `items` | `unknown[]` | `[]` | Data array |
 | `fields` | `Record<string,string>` | `{}` | Field mapping (e.g. `{ label: 'title' }`) |
 | `icons` | `Record<string, string>` | `{}` | Override marker icons per state |
+| `marker` | `'dot'` | — | `dot`: a small plain dot per item on one continuous line (a history or log) instead of numbered steps |
 | `class` | `string` | `''` | Additional CSS classes |
 
 ## Field Mapping
@@ -43,6 +44,7 @@ import { Timeline } from '@rokkit/ui'
 | `completed` | `'completed'` | Step is done |
 | `active` | `'active'` | Current step |
 | `icon` | `'icon'` | Custom marker icon class |
+| `tone` | `'tone'` | `neutral`, `accent`, `success`, `warning` or `danger`: the node is ringed in that colour (`data-tone` on the item) |
 
 ## Snippets
 
@@ -56,5 +58,19 @@ import { Timeline } from '@rokkit/ui'
 | `data-timeline-item` | Individual step |
 | `data-completed` | Present on completed steps |
 | `data-active` | Present on the active step |
+| `data-tone` | The item's tone, when it has one |
+| `data-marker` | `dot` on the root when `marker` is `dot` |
 | `data-timeline-marker` | Step marker/icon |
 | `data-timeline-content` | Text content area |
+
+## Dot marker (a history)
+
+```svelte
+<Timeline items={entries} marker="dot" class="[--timeline-gap:0.75rem] [--timeline-dot-top:0.875rem]">
+  {#snippet content(item)}<Entry {item} />{/snippet}
+</Timeline>
+```
+
+CSS variables: `--timeline-gap` (space under each item, default `1.5rem`) and `--timeline-dot-top` (the dot's
+offset from the item's top, default `0.375rem`, to line it up with the first line of the content). The line runs
+from each dot's centre to the next one's.

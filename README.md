@@ -1,7 +1,7 @@
 # Rokkit
 
-[![Maintainability](https://qlty.sh/gh/jerrythomas/projects/rokkit/maintainability.svg)](https://qlty.sh/gh/jerrythomas/projects/rokkit)
-[![Code Coverage](https://qlty.sh/gh/jerrythomas/projects/rokkit/coverage.svg)](https://qlty.sh/gh/jerrythomas/projects/rokkit)
+[![Maintainability](https://qlty.sh/gh/sensei-hq/projects/rokkit/maintainability.svg)](https://qlty.sh/gh/sensei-hq/projects/rokkit)
+[![Code Coverage](https://qlty.sh/gh/sensei-hq/projects/rokkit/coverage.svg)](https://qlty.sh/gh/sensei-hq/projects/rokkit)
 
 ![Rokkit](rokkit.svg)
 
@@ -37,7 +37,7 @@ Components have been separated into the following packages. Refer to the [storie
 To install Rokkit, use the following command:
 
 ```bash
-degit jerrythomas/rokkit/sites/quick-start my-app
+degit sensei-hq/rokkit/sites/quick-start my-app
 bun install
 ```
 
@@ -110,7 +110,7 @@ We hope you enjoy using Rokkit in your projects!
 ## Quickstart
 
 ```bash
-degit jerrythomas/rokkit/sites/quick-start my-app
+degit sensei-hq/rokkit/sites/quick-start my-app
 cd my-app
 bun install
 bun dev

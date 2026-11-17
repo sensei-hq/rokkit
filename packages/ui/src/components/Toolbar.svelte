@@ -104,6 +104,19 @@
 		return itemSnippet ?? null
 	}
 
+	/** An item's count, when it has one above zero. */
+	const countOf = (proxy: ProxyItem): number => {
+		const n = Number(proxy.get('count') ?? 0)
+		return Number.isFinite(n) && n > 0 ? n : 0
+	}
+	/** The accessible name: the label, with the count when there is one ("Queue · 7"). */
+	const nameOf = (proxy: ProxyItem): string => {
+		const n = countOf(proxy)
+		return n > 0 ? `${proxy.label} · ${n}` : proxy.label
+	}
+	const titleOf = (proxy: ProxyItem): string =>
+		proxy.get('shortcut') ? `${nameOf(proxy)} (${proxy.get('shortcut')})` : nameOf(proxy)
+
 	// Check if we have data-driven items or slot-based content
 	const hasItems = $derived(items.length > 0)
 	const hasSlots = $derived(start || center || end || children)
@@ -112,24 +125,57 @@
 	const isHorizontal = $derived(position === 'top' || position === 'bottom')
 </script>
 
+{#snippet itemFace(proxy: ProxyItem)}
+	{#if proxy.get('icon')}
+		<span data-toolbar-icon class={proxy.get('icon')} aria-hidden="true"></span>
+	{/if}
+	{#if proxy.label && !proxy.get('icon')}
+		<span data-toolbar-label>{proxy.label}</span>
+	{/if}
+	{#if countOf(proxy) > 0}
+		<!-- The count is in the item's name already; the badge only shows it. -->
+		<span data-toolbar-count aria-hidden="true">{countOf(proxy)}</span>
+	{/if}
+{/snippet}
+
+{#snippet linkItem(proxy: ProxyItem, pathKey: string | undefined)}
+	{@const inert = proxy.disabled || disabled}
+	{@const itemAttrs = proxy.get('attrs') as Record<string, string> | undefined}
+	<!-- A link that cannot navigate drops its href (and says so), so no click, middle-click or
+	     Enter can follow it; a live one is a real anchor for client routing and open-in-new.
+	     The item's own attrs spread first, so the toolbar's attributes always win. -->
+	<a
+		{...itemAttrs}
+		data-toolbar-item
+		data-path={pathKey}
+		data-kind={proxy.get('kind') || undefined}
+		data-disabled={inert || undefined}
+		href={inert ? undefined : String(proxy.get('href'))}
+		role={inert ? 'link' : undefined}
+		aria-disabled={inert || undefined}
+		aria-label={nameOf(proxy)}
+		title={titleOf(proxy)}
+	>
+		{@render itemFace(proxy)}
+	</a>
+{/snippet}
+
 {#snippet defaultItem(proxy: ProxyItem, pathKey: string | undefined)}
+	{@const itemAttrs = proxy.get('attrs') as Record<string, string> | undefined}
 	<button
+		{...itemAttrs}
 		type="button"
 		data-toolbar-item
 		data-path={pathKey}
+		data-kind={proxy.get('kind') || undefined}
 		data-active={proxy.get('active') || undefined}
 		data-disabled={proxy.disabled || undefined}
 		disabled={proxy.disabled || disabled}
-		aria-label={proxy.label}
+		aria-label={nameOf(proxy)}
 		aria-pressed={proxy.get('active')}
-		title={proxy.get('shortcut') ? `${proxy.label} (${proxy.get('shortcut')})` : proxy.label}
+		title={titleOf(proxy)}
 	>
-		{#if proxy.get('icon')}
-			<span data-toolbar-icon class={proxy.get('icon')} aria-hidden="true"></span>
-		{/if}
-		{#if proxy.label && !proxy.get('icon')}
-			<span data-toolbar-label>{proxy.label}</span>
-		{/if}
+		{@render itemFace(proxy)}
 	</button>
 {/snippet}
 
@@ -167,6 +213,8 @@
 				{/snippet}
 			</svelte:boundary>
 		</div>
+	{:else if proxy.get('href')}
+		{@render linkItem(proxy, pathKey)}
 	{:else}
 		{@render defaultItem(proxy, pathKey)}
 	{/if}

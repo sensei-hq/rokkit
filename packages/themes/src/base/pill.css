@@ -59,3 +59,24 @@
   opacity: 0.5;
   cursor: default;
 }
+
+/* A compact chip: the size a row carries beside its text, no control height. */
+[data-pill][data-size='sm'] {
+  gap: 0.25rem;
+  padding: 0.0625rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  min-height: 0;
+}
+
+/* An outline chip: a frame and no fill. Each style colours the frame. */
+[data-pill][data-variant='outline'] {
+  border: 1px solid;
+  background-color: transparent;
+}
+
+/* A toned chip carries a frame so its tint has an edge; each style colours both. */
+[data-pill][data-tone] {
+  border-width: 1px;
+  border-style: solid;
+}

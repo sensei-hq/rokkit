@@ -6,7 +6,7 @@
 	const content = `# Markdown rendering
 
 A short showcase covering the standard nodes — paragraphs, **bold**,
-_italic_, \`inline code\`, [links](https://github.com/jerrythomas/rokkit),
+_italic_, \`inline code\`, [links](https://github.com/sensei-hq/rokkit),
 lists, blockquotes, and fenced code blocks.
 
 ## Lists

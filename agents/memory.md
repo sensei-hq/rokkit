@@ -48,7 +48,7 @@ Violations must be justified or the plan revised.
 | UnoCSS       | latest  | Atomic CSS + icon generation       | unocss.dev     |
 | Vitest       | latest  | Unit testing                       | vitest.dev     |
 | Playwright   | latest  | E2E testing                        | playwright.dev |
-| Bun          | latest  | Runtime + package manager          | bun.sh         |
+| Bun          | 1.4.4 (pinned — root `packageManager` + every `setup-bun` `bun-version`; Cloudflare Workers Builds reads `packageManager`. To upgrade: bump local bun, `bun install`, commit `bun.lock`, bump the pins) | Runtime + package manager | bun.sh |
 | Ramda        | latest  | Data transforms (being phased out) | ramdajs.com    |
 
 ## Key Decisions

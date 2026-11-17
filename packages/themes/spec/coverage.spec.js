@@ -168,3 +168,11 @@ describe('control-height scale is shared + consistent', () => {
 		)
 	})
 })
+
+describe('toolbar — a link item looks like a button item', () => {
+	it('base drops the anchor underline from a toolbar link item', () => {
+		expect(stripComments(css('base', 'toolbar'))).toMatch(
+			/a\[data-toolbar-item\]\s*\{[^}]*text-decoration:\s*none/
+		)
+	})
+})

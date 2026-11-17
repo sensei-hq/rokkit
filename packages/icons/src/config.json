@@ -1,7 +1,7 @@
 {
   "package": {
     "namespace": "@rokkit",
-    "homepage": "https://github.com/jerrythomas/rokkit"
+    "homepage": "https://github.com/sensei-hq/rokkit"
   },
   "bundles": {
     "auth": { "color": true }

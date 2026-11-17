@@ -195,4 +195,4 @@ const action = resolveAction(keymap, event) // returns action string or null
 
 ---
 
-Part of [Rokkit](https://github.com/jerrythomas/rokkit) — a Svelte 5 component library and design system.
+Part of [Rokkit](https://github.com/sensei-hq/rokkit) — a Svelte 5 component library and design system.

@@ -491,7 +491,7 @@ Replace the `links` array (lines 12-18) with:
 		{ label: 'Components', href: '/app', match: (p: string) => p.startsWith('/app') || homeIsActive },
 		{ label: 'Guides', href: '/guides', match: (p: string) => p.startsWith('/guides') },
 		{ label: 'Chat demo', href: '/chat', match: (p: string) => p.startsWith('/chat') },
-		{ label: 'GitHub ↗', href: 'https://github.com/jerrythomas/rokkit', external: true, match: () => false }
+		{ label: 'GitHub ↗', href: 'https://github.com/sensei-hq/rokkit', external: true, match: () => false }
 	]
 ```
 

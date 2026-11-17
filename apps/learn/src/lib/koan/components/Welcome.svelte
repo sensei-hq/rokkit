@@ -54,7 +54,7 @@
 			variant="default"
 			style="ghost"
 			size="sm"
-			href="https://github.com/jerrythomas/rokkit"
+			href="https://github.com/sensei-hq/rokkit"
 			target="_blank"
 			title="View Rokkit on GitHub"
 			aria-label="GitHub"

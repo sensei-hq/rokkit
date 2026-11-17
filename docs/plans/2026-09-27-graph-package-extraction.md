@@ -269,7 +269,7 @@ Expected: FAIL — no `graph` project exists yet ("No test files found").
   "description": "Node-link diagram components — pluggable layouts, ER/schema views",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrythomas/rokkit.git"
+    "url": "git+https://github.com/sensei-hq/rokkit.git"
   },
   "author": "Jerry Thomas <me@jerrythomas.name>",
   "license": "MIT",
@@ -5538,7 +5538,7 @@ in dbd replace the link with the published range and re-run Step 8's gate.
 
 ```bash
 cd ~/Developer/dbd && git log --oneline -1 && \
-  gh issue comment 159 --repo jerrythomas/rokkit \
+  gh issue comment 159 --repo sensei-hq/rokkit \
     --body "Slice 1 shipped — see docs/design/23-graph.md. dbd now consumes @rokkit/graph. Slices 2 (force-directed) and 3 (dbd#24 v2 model) remain."
 ```
 

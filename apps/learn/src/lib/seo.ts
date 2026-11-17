@@ -22,7 +22,7 @@ export const SITE = {
 	 *  Rasterized from og-image.svg (the source of truth). */
 	ogImage: '/og-image.png',
 	twitter: '@senseihq',
-	github: 'https://github.com/jerrythomas/rokkit',
+	github: 'https://github.com/sensei-hq/rokkit',
 	locale: 'en'
 } as const
 

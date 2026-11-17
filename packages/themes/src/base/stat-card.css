@@ -1,0 +1,99 @@
+/* StatCard — base structural styles: the icon and label on top, the value below at the end */
+
+[data-stat-cards] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+[data-stat-card] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.625rem 0.75rem;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.625rem;
+  /* A plain card is a frame, nothing more: no pointer says it does something. */
+  cursor: default;
+  position: relative;
+  font: inherit;
+  text-align: start;
+}
+
+/* A card as a button keeps the card's box: no native chrome, the full width of its cell. */
+button[data-stat-card] {
+  appearance: none;
+  width: 100%;
+}
+
+/* An interactive card (a button, or a card whose value links) says so with the pointer. */
+[data-stat-card-interactive] {
+  cursor: pointer;
+}
+
+/* A card spans the columns it is given; the grid decides how wide a column is. */
+[data-stat-card][data-span] {
+  grid-column: span var(--stat-card-span);
+}
+
+[data-stat-card-head] {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  font-size: 0.75rem;
+}
+
+[data-stat-card-icon] {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+}
+
+[data-stat-card-mark] {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  line-height: 1;
+}
+
+/* A label wraps rather than being cut short (a phone's two-up cards are narrow). */
+[data-stat-card-label] {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The number is display type: the theme's display font role, so a change of face follows. */
+[data-stat-card-value] {
+  align-self: flex-end;
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+
+a[data-stat-card-value]:hover {
+  text-decoration: underline;
+}
+
+/* The link covers its card, so the whole card is the target, not the number alone. */
+a[data-stat-card-value]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* At most two lines; one line's space is kept, so an empty description still lines a band up
+   without leaving a gap under a one-line card. */
+[data-stat-card-description] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  min-height: 1rem;
+}

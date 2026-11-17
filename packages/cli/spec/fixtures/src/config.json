@@ -2,7 +2,7 @@
   "package": {
     "namespace": "@rokkit",
     "version": "1.0.0-test",
-    "homepage": "https://github.com/jerrythomas/rokkit"
+    "homepage": "https://github.com/sensei-hq/rokkit"
   },
   "app": {
     "color": false

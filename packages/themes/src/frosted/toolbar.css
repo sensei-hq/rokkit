@@ -90,3 +90,9 @@
 [data-style='frosted'] [data-toolbar-divider] {
   background-color: color-mix(in oklch, var(--ink-soft) 20%, transparent);
 }
+
+/* The count badge: ink on paper. */
+[data-style='frosted'] [data-toolbar-count] {
+  background-color: var(--ink);
+  color: var(--paper);
+}

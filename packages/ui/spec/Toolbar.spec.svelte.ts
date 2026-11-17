@@ -425,3 +425,128 @@ describe('Toolbar', () => {
 		})
 	})
 })
+
+describe('Toolbar — link items', () => {
+	it('renders an item with an href as an anchor with that href and its accessible name', () => {
+		const { container } = render(Toolbar, {
+			items: [{ label: 'Open settings', value: 'settings', icon: 'i-cog', href: '/settings' }]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.getAttribute('href')).toBe('/settings')
+		expect(link.getAttribute('aria-label')).toBe('Open settings')
+		expect(link.hasAttribute('aria-pressed')).toBe(false)
+		expect(link.querySelector('[data-toolbar-icon]')?.classList.contains('i-cog')).toBe(true)
+	})
+
+	it('renders a disabled link item without an href, so it cannot navigate', () => {
+		const { container } = render(Toolbar, {
+			items: [{ label: 'Open', value: 'open', icon: 'i-x', href: '/x', disabled: true }]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.hasAttribute('href')).toBe(false)
+		expect(link.getAttribute('aria-disabled')).toBe('true')
+		expect(link.getAttribute('role')).toBe('link')
+	})
+
+	it('renders every link item without an href when the whole toolbar is disabled', () => {
+		const { container } = render(Toolbar, {
+			disabled: true,
+			items: [{ label: 'Open', value: 'open', icon: 'i-x', href: '/x' }]
+		})
+
+		expect(container.querySelector('[data-toolbar-item]')?.hasAttribute('href')).toBe(false)
+	})
+})
+
+describe('Toolbar — per-item attrs', () => {
+	it("renders an item's attrs on its button, so a host can hang test hooks on it", () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Sync now',
+					value: 'sync',
+					icon: 'i-sync',
+					attrs: { 'data-testid': 'sync-button', 'data-band': 'filters' }
+				},
+				{ label: 'Plain', value: 'plain', icon: 'i-plain' }
+			]
+		})
+		const buttons = container.querySelectorAll('[data-toolbar-item]')
+
+		expect(buttons[0]?.getAttribute('data-testid')).toBe('sync-button')
+		expect(buttons[0]?.getAttribute('data-band')).toBe('filters')
+		expect(buttons[1]?.hasAttribute('data-testid')).toBe(false)
+	})
+
+	it("renders an item's attrs on its link", () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Open settings',
+					value: 'settings',
+					icon: 'i-cog',
+					href: '/settings',
+					attrs: { 'data-testid': 'settings-link' }
+				}
+			]
+		})
+		const link = container.querySelector('[data-toolbar-item]') as HTMLAnchorElement
+
+		expect(link.tagName).toBe('A')
+		expect(link.getAttribute('href')).toBe('/settings')
+		expect(link.getAttribute('data-testid')).toBe('settings-link')
+	})
+
+	it('keeps its own attributes when attrs name them: the label stays the accessible name', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{
+					label: 'Sync now',
+					value: 'sync',
+					icon: 'i-sync',
+					attrs: { 'aria-label': 'Sneaky', 'data-toolbar-item': 'no' }
+				}
+			]
+		})
+		const button = container.querySelector('button')!
+
+		expect(button.getAttribute('aria-label')).toBe('Sync now')
+		expect(button.hasAttribute('data-toolbar-item')).toBe(true)
+	})
+
+	// ─── Kind and count (the shell header's view buttons, sensei-hq Relay) ──
+
+	it('says what an item is: a view (a place) or a toggle (a switch)', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{ label: 'Queue', value: 'queue', icon: 'i-q', kind: 'view', active: true },
+				{ label: 'Info', value: 'info', icon: 'i-i', kind: 'toggle' },
+				{ label: 'Plain', value: 'plain', icon: 'i-p' }
+			]
+		})
+		const kinds = [...container.querySelectorAll('[data-toolbar-item]')].map((b) =>
+			b.getAttribute('data-kind')
+		)
+		expect(kinds).toEqual(['view', 'toggle', null])
+	})
+
+	it('hangs a count badge on an item and names it with the count', () => {
+		const { container } = render(Toolbar, {
+			items: [
+				{ label: 'Queue', value: 'queue', icon: 'i-q', count: 7 },
+				{ label: 'Crew', value: 'crew', icon: 'i-c', count: 0 }
+			]
+		})
+		const [queue, crew] = [...container.querySelectorAll('[data-toolbar-item]')] as HTMLElement[]
+		expect(queue.querySelector('[data-toolbar-count]')?.textContent).toBe('7')
+		expect(queue.querySelector('[data-toolbar-count]')?.getAttribute('aria-hidden')).toBe('true')
+		expect(queue.getAttribute('aria-label')).toBe('Queue · 7')
+		expect(queue.getAttribute('title')).toBe('Queue · 7')
+		expect(crew.querySelector('[data-toolbar-count]')).toBeNull()
+		expect(crew.getAttribute('aria-label')).toBe('Crew')
+	})
+})

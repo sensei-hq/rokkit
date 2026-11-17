@@ -63,7 +63,7 @@
    ============================================================================= */
 
 [data-timeline-body] {
-  padding-bottom: 1.5rem;
+  padding-bottom: var(--timeline-gap, 1.5rem);
   min-height: 2rem;
   display: flex;
   flex-direction: column;
@@ -81,4 +81,38 @@
   margin-top: 0.25rem;
   font-size: 0.8125rem;
   line-height: 1.5;
+}
+
+/* =============================================================================
+   Dot marker — a small plain dot per item on one continuous line (a history,
+   a log). The dot sits --timeline-dot-top below the item's top, so it can be
+   lined up with the first line of what the item renders; the line runs from
+   this dot's centre to the next one's, through the gap between the items.
+   ============================================================================= */
+
+[data-timeline][data-marker='dot'] [data-timeline-item] {
+  grid-template-columns: 0.75rem 1fr;
+}
+
+[data-timeline][data-marker='dot'] [data-timeline-marker] {
+  position: relative;
+  padding-top: var(--timeline-dot-top, 0.375rem);
+}
+
+[data-timeline][data-marker='dot'] [data-timeline-circle] {
+  position: relative;
+  z-index: 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  min-height: 0.75rem;
+  box-sizing: border-box;
+}
+
+[data-timeline][data-marker='dot'] [data-timeline-connector] {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(var(--timeline-dot-top, 0.375rem) + 0.375rem);
+  bottom: calc(-1 * (var(--timeline-dot-top, 0.375rem) + 0.375rem));
+  min-height: 0;
 }

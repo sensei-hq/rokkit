@@ -193,12 +193,14 @@ const wakaba = {
 }
 
 /**
- * The skin `overrides` for status roles: each token reads `palette.<light>` on light paper and
- * `palette.<dark>` on dark paper. The `-soft` tints keep rokkit's light 100 in both modes,
+ * The skin `overrides` for a family's roles: each token reads `palette.<light>` on light paper
+ * and `palette.<dark>` on dark paper. Status roles take them, and primary and accent too: their
+ * 500 is too bright to read as text on light paper, so by day they paint a deeper shade, which
+ * also takes near-white text as a fill. The `-soft` tints keep rokkit's light 100 in both modes,
  * which the themes darken their status copy against.
  * @param {Record<string, [string, number, number]>} roles - role → [palette, light shade, dark shade]
  */
-function statusOverrides(roles) {
+function roleOverrides(roles) {
 	return Object.fromEntries(
 		Object.entries(roles).map(([role, [palette, light, dark]]) => [
 			role,
@@ -211,6 +213,15 @@ function statusOverrides(roles) {
 const WARM = { surface: { light: 'kami', dark: 'sumi' }, ink: { light: 'kami', dark: 'sumi' } }
 /** The cool paper/ink pair: kiri by day, yoru by night. */
 const COOL = { surface: { light: 'kiri', dark: 'yoru' }, ink: { light: 'kiri', dark: 'yoru' } }
+
+/**
+ * A divider is a hairline etched into the paper: by night the edge is the step just above
+ * paper-soft (200) — the surface's 400, and even 300, read as a lifted rule. By day the 400 is
+ * already etched.
+ */
+const edge = (light, dark) => ({ 'paper-edge': { light: `${light}.400`, dark: `${dark}.200` } })
+const WARM_EDGE = edge('kami', 'sumi')
+const COOL_EDGE = edge('kiri', 'yoru')
 
 /** The status roles most families share: jade, amber, crimson, indigo. */
 const TRADITIONAL_STATUS = {
@@ -245,7 +256,11 @@ export const zenSumi = {
 		tertiary: 'kohaku',
 		accent: 'shu',
 		...TRADITIONAL_STATUS,
-		overrides: statusOverrides(TRADITIONAL_OVERRIDES)
+		overrides: { ...roleOverrides({
+			...TRADITIONAL_OVERRIDES,
+			primary: ['shu', 600, 500],
+			accent: ['shu', 600, 500]
+		}), ...WARM_EDGE }
 	}
 }
 
@@ -262,7 +277,12 @@ export const seaGlass = {
 		accent: 'sora',
 		...TRADITIONAL_STATUS,
 		success: 'take',
-		overrides: statusOverrides({ ...TRADITIONAL_OVERRIDES, success: ['take', 800, 400] })
+		overrides: { ...roleOverrides({
+			...TRADITIONAL_OVERRIDES,
+			success: ['take', 800, 400],
+			primary: ['umi', 700, 500],
+			accent: ['sora', 700, 500]
+		}), ...COOL_EDGE }
 	}
 }
 
@@ -278,7 +298,11 @@ export const sakuraEmber = {
 		tertiary: 'momo',
 		accent: 'momo',
 		...TRADITIONAL_STATUS,
-		overrides: statusOverrides(TRADITIONAL_OVERRIDES)
+		overrides: { ...roleOverrides({
+			...TRADITIONAL_OVERRIDES,
+			primary: ['daidai', 700, 500],
+			accent: ['momo', 700, 500]
+		}), ...WARM_EDGE }
 	}
 }
 
@@ -294,7 +318,11 @@ export const fujiDusk = {
 		tertiary: 'kikyo',
 		accent: 'kikyo',
 		...TRADITIONAL_STATUS,
-		overrides: statusOverrides(TRADITIONAL_OVERRIDES)
+		overrides: { ...roleOverrides({
+			...TRADITIONAL_OVERRIDES,
+			primary: ['fuji', 700, 500],
+			accent: ['kikyo', 700, 500]
+		}), ...COOL_EDGE }
 	}
 }
 
@@ -311,7 +339,12 @@ export const mossGarden = {
 		accent: 'mizu',
 		...TRADITIONAL_STATUS,
 		success: 'wakaba',
-		overrides: statusOverrides({ ...TRADITIONAL_OVERRIDES, success: ['wakaba', 800, 400] })
+		overrides: { ...roleOverrides({
+			...TRADITIONAL_OVERRIDES,
+			success: ['wakaba', 800, 400],
+			primary: ['koke', 700, 500],
+			accent: ['mizu', 700, 500]
+		}), ...WARM_EDGE }
 	}
 }
 

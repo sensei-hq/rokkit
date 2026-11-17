@@ -167,4 +167,31 @@ describe('Pill', () => {
 		await fireEvent.keyDown(container.querySelector('[data-pill]')!, { key: 'Delete' })
 		expect(onremove).not.toHaveBeenCalled()
 	})
+
+	// ─── Tone, variant, size (a status chip: sensei's Relay states and tags) ──
+
+	it('wears its tone, its variant and its size; none of them when not given', () => {
+		const { container } = render(Pill, { value: 'merged', tone: 'success', variant: 'outline', size: 'sm' })
+		const pill = container.querySelector('[data-pill]') as HTMLElement
+		expect(pill.getAttribute('data-tone')).toBe('success')
+		expect(pill.getAttribute('data-variant')).toBe('outline')
+		expect(pill.getAttribute('data-size')).toBe('sm')
+		const plain = render(Pill, { value: 'idle' }).container.querySelector('[data-pill]') as HTMLElement
+		for (const a of ['data-tone', 'data-variant', 'data-size']) expect(plain.hasAttribute(a), a).toBe(false)
+	})
+
+	it('a status chip is not a control: no role, no tab stop, no remove', () => {
+		const { container } = render(Pill, { value: 'lease lost', tone: 'danger' })
+		const pill = container.querySelector('[data-pill]') as HTMLElement
+		expect(pill.getAttribute('role')).toBeNull()
+		expect(pill.hasAttribute('tabindex')).toBe(false)
+		expect(container.querySelector('[data-pill-remove]')).toBeNull()
+	})
+
+	it('carries a title for its hover text; none when not given', () => {
+		const { container } = render(Pill, { value: 'in Cursor', size: 'sm', title: 'Running in Cursor on this machine' })
+		expect(container.querySelector('[data-pill]')?.getAttribute('title')).toBe('Running in Cursor on this machine')
+		const plain = render(Pill, { value: 'idle' }).container.querySelector('[data-pill]') as HTMLElement
+		expect(plain.hasAttribute('title')).toBe(false)
+	})
 })

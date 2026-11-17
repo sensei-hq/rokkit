@@ -17,6 +17,7 @@
 	import { EntitiesView, EntityView } from '@rokkit/graph/schema'
 	import { explorer } from './store.svelte'
 	import { datasets } from './datasets'
+	import DesignViewer from './DesignViewer.svelte'
 
 	const config = $derived(explorer.config)
 
@@ -121,6 +122,12 @@
 					controls={explorer.controls}
 					legend={explorer.legend}
 				/>
+			</div>
+		{:else if explorer.view === 'design'}
+			<!-- The whole design viewer, composed from @rokkit/graph/schema with the sidebar on
+			     the right. It reads the e-commerce design itself, not this diagram's state. -->
+			<div class="canvas">
+				<DesignViewer />
 			</div>
 		{:else if explorer.view === 'entity'}
 			<div class="scroll">

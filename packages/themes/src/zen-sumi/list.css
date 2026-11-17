@@ -37,6 +37,13 @@
   padding: 0.375rem 0.5rem;
 }
 
+/* Dark mode — resting items a step quieter (ink-mute): full ink on sumi glares as a rail of
+   near-white labels. Hover, focus and the current item (below) keep their own colours. */
+[data-mode='dark'] [data-style='zen-sumi'] [data-list] [data-list-item],
+[data-style='zen-sumi'][data-mode='dark'] [data-list] [data-list-item] {
+  @apply text-ink-mute;
+}
+
 /* Hover and focus — subtle paper wash */
 [data-style='zen-sumi']
   [data-list]
@@ -140,4 +147,27 @@
 
 [data-style='zen-sumi'] [data-list] [data-list-item][data-selected='true'] [data-item-icon] {
   @apply text-primary;
+}
+
+/* =============================================================================
+   Card variant — paper card, edge frame, mute hairline between rows
+   ============================================================================= */
+
+[data-style='zen-sumi'] [data-list][data-variant='card'] {
+  @apply bg-paper border-paper-edge;
+}
+
+/* Rows fill the card edge to edge: square, padded 10px 14px */
+[data-style='zen-sumi'] [data-list][data-variant='card'] [data-list-item] {
+  border-radius: 0;
+  padding: 0.625rem 0.875rem;
+}
+
+[data-style='zen-sumi'] [data-list][data-variant='card'] [data-list-item] + [data-list-item] {
+  @apply border-paper-mute;
+}
+
+/* A display-only row is not a control: no wash on hover */
+[data-style='zen-sumi'] [data-list] [data-list-item][data-static]:hover:not(:disabled):not([data-disabled='true']) {
+  background: transparent;
 }

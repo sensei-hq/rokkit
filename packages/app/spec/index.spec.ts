@@ -42,9 +42,29 @@ describe('app barrel exports', () => {
 		expect(index.resolveMode).toBeDefined()
 	})
 
+	it('exports the screen shell, its info band and its rules from main index', () => {
+		expect(index.ScreenShell).toBeDefined()
+		expect(index.ScreenInfo).toBeDefined()
+		for (const name of [
+			'isOpen',
+			'presentPanels',
+			'togglePanel',
+			'resolveToolbar',
+			'statSpan',
+			'applyStat',
+			'clearStat',
+			'setFilterValue',
+			'changedKeys'
+		] as const)
+			expect(typeof index[name], name).toBe('function')
+		expect(index.PANEL_IDS).toEqual(['info', 'stats', 'filters', 'side'])
+	})
+
 	it('exports from components/index.ts', () => {
 		expect(components.ThemeSwitcherToggle).toBeDefined()
 		expect(components.SkinSwitcherToggle).toBeDefined()
 		expect(components.TableOfContents).toBeDefined()
+		expect(components.ScreenShell).toBeDefined()
+		expect(components.ScreenInfo).toBeDefined()
 	})
 })

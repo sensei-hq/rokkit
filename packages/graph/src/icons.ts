@@ -19,7 +19,7 @@ export const DEFAULT_ICONS: Record<string, string> = {
 	// ─── node kinds ───────────────────────────────────────────────────────────
 	table: 'i-glyph:table',
 	/** A view is a lens over other data, not storage of its own. */
-	view: 'i-glyph:eye',
+	view: 'i-glyph:split-view',
 	/** dbd v2's wire string. Materialized = the query is stored, hence layers. */
 	materialized_view: 'i-glyph:layers',
 	/** Alias: rokkit's themes and demos have said `matview` since slice 1. */
@@ -31,6 +31,13 @@ export const DEFAULT_ICONS: Record<string, string> = {
 	trigger: 'i-glyph:bolt',
 	/** A closed set of labels. */
 	enum: 'i-glyph:tag',
+	/** dbd v3. The collection has no sequence glyph; a number field is what one hands out. */
+	sequence: 'i-glyph:input-number',
+
+	// ─── design views ─────────────────────────────────────────────────────────
+	/** A schema groups objects, as a folder groups files. */
+	schema: 'i-glyph:folder',
+	database: 'i-glyph:database',
 
 	// ─── row badges ───────────────────────────────────────────────────────────
 	/** Identity constraint. The collection has no key glyph; `lock` is the closest. */

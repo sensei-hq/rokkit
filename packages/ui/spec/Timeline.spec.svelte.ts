@@ -160,6 +160,42 @@ describe('Timeline', () => {
 		})
 	})
 
+	// ─── Tone ───────────────────────────────────────────────────────
+
+	it('reads each item in its tone', () => {
+		const items = [{ label: 'Merged', tone: 'success' }, { label: 'Asked', tone: 'warning' }, { label: 'Plain' }]
+		const { container } = render(Timeline, { items })
+		const rows = container.querySelectorAll('[data-timeline-item]')
+		expect(rows[0].getAttribute('data-tone')).toBe('success')
+		expect(rows[1].getAttribute('data-tone')).toBe('warning')
+		expect(rows[2].hasAttribute('data-tone')).toBe(false)
+	})
+
+	it('maps the tone field', () => {
+		const items = [{ label: 'Lost', outcome: 'danger' }]
+		const { container } = render(Timeline, { items, fields: { tone: 'outcome' } })
+		expect(container.querySelector('[data-timeline-item]')?.getAttribute('data-tone')).toBe('danger')
+	})
+
+	// ─── Dot marker ─────────────────────────────────────────────────
+
+	it('draws a plain dot for each item when marker is dot: no number, no icon', () => {
+		const items = [{ label: 'One', completed: true }, { label: 'Two', icon: 'i-lucide:star' }, { label: 'Three' }]
+		const { container } = render(Timeline, { items, marker: 'dot' })
+		expect(container.querySelector('[data-timeline]')?.getAttribute('data-marker')).toBe('dot')
+		const circles = container.querySelectorAll('[data-timeline-circle]')
+		expect(circles.length).toBe(3)
+		circles.forEach((c) => {
+			expect(c.textContent?.trim()).toBe('')
+			expect(c.querySelector('span')).toBeNull()
+		})
+	})
+
+	it('numbers its steps by default (no marker attribute)', () => {
+		const { container } = render(Timeline, { items: sampleItems })
+		expect(container.querySelector('[data-timeline]')?.hasAttribute('data-marker')).toBe(false)
+	})
+
 	// ─── Custom icons ───────────────────────────────────────────────
 
 	it('supports custom completed icon', () => {

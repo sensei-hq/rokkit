@@ -25,6 +25,10 @@ import { Pill } from '@rokkit/ui'
 | `disabled` | `boolean` | `false` | Disable remove button |
 | `icons` | `{ remove?: string }` | — | Override remove icon |
 | `onremove` | `(value) => void` | — | Called when remove button is clicked |
+| `tone` | `'neutral' \| 'accent' \| 'success' \| 'warning' \| 'danger'` | — | A status chip's colour (`data-tone`) |
+| `variant` | `'outline'` | — | A frame and no fill (`data-variant`) |
+| `size` | `'sm'` | — | The compact chip a row carries beside its text (`data-size`) |
+| `title` | `string` | — | Hover text: what a short chip stands for |
 | `class` | `string` | `''` | Additional CSS classes |
 
 ## Snippets

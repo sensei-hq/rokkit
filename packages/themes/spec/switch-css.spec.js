@@ -20,8 +20,9 @@ const bgToken = (css, selector) => {
 	return rule?.[1]?.match(/\bbg-([a-z-]+)/)?.[1]
 }
 
-/** Tones that sit within a few hundredths of the page in either mode. */
-const NEAR_PAGE = ['paper', 'paper-soft', 'paper-mute']
+/** Tones that sit within a few hundredths of the page in either mode. paper-edge is a hairline:
+ * by night the palette families set it to the surface's 200, the tone of paper-mute. */
+const NEAR_PAGE = ['paper', 'paper-soft', 'paper-mute', 'paper-edge']
 
 describe('zen-sumi switch — the off state is visible', () => {
 	const css = read('zen-sumi/switch.css')
@@ -38,10 +39,10 @@ describe('zen-sumi switch — the off state is visible', () => {
 		expect(track).not.toBe(thumb)
 	})
 
-	it('uses the hairline tone, as the minimal theme does', () => {
-		expect(track).toBe('paper-edge')
+	it('uses the quietest ink, as the minimal theme does (contrast: switch-contrast.browser.spec)', () => {
+		expect(track).toBe('ink-faint')
 		expect(bgToken(read('minimal/switch.css'), "[data-style='minimal'] [data-switch-track]")).toBe(
-			'paper-edge'
+			'ink-faint'
 		)
 	})
 

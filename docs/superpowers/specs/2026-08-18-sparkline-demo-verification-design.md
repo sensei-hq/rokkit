@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-18
 **Status:** Design approved
-**Issue:** [#147](https://github.com/jerrythomas/rokkit/issues/147)
+**Issue:** [#147](https://github.com/sensei-hq/rokkit/issues/147)
 **App:** `apps/learn`
 
 ## Problem

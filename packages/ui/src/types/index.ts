@@ -81,6 +81,7 @@ export * from './avatar.js'
 
 // Badge Types
 export * from './badge.js'
+export * from './stat-card.js'
 
 // BreadCrumbs Types
 export * from './breadcrumbs.js'

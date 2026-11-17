@@ -63,10 +63,19 @@ describe.each(Object.entries(PALETTE_FAMILIES))('palette family %s', (name, fami
 				expect(deltaE(fills[i][1], fills[j][1]), `${fills[i][0]} vs ${fills[j][0]}`).toBeGreaterThanOrEqual(0.07)
 	})
 
-	it('puts a readable on-colour on its primary fill', () => {
-		const fill = family.palettes[family.skin.primary][500]
+	it.each(MODES)('puts a readable on-colour on the primary fill it paints in %s', (mode) => {
+		const fill = value('primary', mode)
 		const on = oklch.fromHex(pickOnColor(Y(fill)))
 		expect(ratio(fill, on)).toBeGreaterThanOrEqual(AA)
+	})
+
+	it.each(MODES)('reads primary and accent text at AA on paper and paper-soft in %s', (mode) => {
+		const problems = ['primary', 'accent'].flatMap((role) =>
+			['paper', 'paper-soft']
+				.filter((bg) => ratio(value(role, mode), value(bg, mode)) < AA)
+				.map((bg) => `${role} on ${bg}: ${ratio(value(role, mode), value(bg, mode)).toFixed(2)}`)
+		)
+		expect(problems).toEqual([])
 	})
 
 	it.each(MODES)('reads status text at AA on paper and paper-soft in %s', (mode) => {
@@ -80,6 +89,29 @@ describe.each(Object.entries(PALETTE_FAMILIES))('palette family %s', (name, fami
 				.map(([bg, v]) => `${role} on ${bg}: ${ratio(text, v).toFixed(2)}`)
 		})
 		expect(problems).toEqual([])
+	})
+
+	it.each(MODES)('reads text-on-<role>-soft at AA on each role tint in %s', (mode) => {
+		// color-mix(in oklch, role 55%, black): black is L 0 with no chroma, so L and C scale.
+		const darken = (v) => {
+			const [L, C, H] = v.split(/\s+/).map(Number)
+			return `${L * 0.55} ${C * 0.55} ${H}`
+		}
+		const problems = ['accent', ...STATUS]
+			.map((role) => [role, ratio(darken(value(role, mode)), value(`${role}-soft`, mode))])
+			.filter(([, r]) => r < AA)
+			.map(([role, r]) => `${role}: ${r.toFixed(2)}`)
+		expect(problems).toEqual([])
+	})
+
+	// A divider is a hairline etched into the paper, not a rule: by night the edge is the step
+	// just above paper-soft (200). The surface's 400 drew every divider ten lightness points
+	// brighter than sensei's own palette had, and even 300 read as prominent (sensei, 2026-10-29).
+	it('etches its dark-mode edge one step above paper-soft; light is unchanged', () => {
+		const surface = (mode) => family.palettes[family.skin.surface[mode]]
+		expect(value('paper-edge', 'dark')).toBe(surface('dark')[200])
+		expect(value('paper-edge', 'dark')).not.toBe(value('paper-soft', 'dark'))
+		expect(value('paper-edge', 'light')).toBe(surface('light')[400])
 	})
 
 	it('builds a preset', () => {

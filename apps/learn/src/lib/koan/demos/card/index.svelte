@@ -15,7 +15,7 @@
 				<p>A basic card with text content. No interaction.</p>
 			</Card>
 
-			<Card href="https://github.com/jerrythomas/rokkit" {...spread}>
+			<Card href="https://github.com/sensei-hq/rokkit" {...spread}>
 				<h3>Linked Card</h3>
 				<p>Click to open the repo — renders as an anchor.</p>
 			</Card>

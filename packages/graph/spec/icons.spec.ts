@@ -47,6 +47,12 @@ describe('default icons', () => {
 		}
 	})
 
+	// An eye reads as "visibility", not "a view over tables"; split-view is a derived
+	// pane over others (user, 2026-10-30).
+	it('marks a view as a split view', () => {
+		expect(DEFAULT_ICONS.view).toBe('i-glyph:split-view')
+	})
+
 	it('keeps `matview` as an alias of `materialized_view`', () => {
 		// dbd's wire string is `materialized_view`; rokkit's themes and demo have said `matview`
 		// since slice 1. Both resolve, so neither consumer silently falls back.
@@ -65,6 +71,12 @@ describe('default icons', () => {
 		const badges = ['pk', 'fk', 'uq', 'nn'].map((b) => DEFAULT_ICONS[b])
 
 		expect(new Set(badges).size).toBe(4)
+	})
+
+	it('names a sequence, a schema and a database — the design views wear them', () => {
+		expect(DEFAULT_ICONS.sequence).toBe('i-glyph:input-number')
+		expect(DEFAULT_ICONS.schema).toBe('i-glyph:folder')
+		expect(DEFAULT_ICONS.database).toBe('i-glyph:database')
 	})
 
 	it('ships a fallback for an unknown kind', () => {

@@ -1,0 +1,211 @@
+import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
+const read = (p) => readFileSync(join(process.cwd(), 'packages/themes/src', p), 'utf-8')
+const declarations = (p) => read(p).replace(/\/\*[\s\S]*?\*\//g, '')
+const rulesFor = (file, selector) =>
+	declarations(file)
+		.split('}')
+		.filter((rule) => rule.includes(selector))
+const has = (file, selector, pattern) => rulesFor(file, selector).some((r) => pattern.test(r))
+
+const STYLES = ['rokkit', 'minimal', 'material', 'frosted', 'zen-sumi']
+const ROLES = ['accent', 'primary', 'secondary', 'info', 'success', 'warning', 'danger']
+
+describe('screen shell theme CSS', () => {
+	it('is imported by base and by every style', () => {
+		expect(read('base/index.css')).toContain('screen-shell.css')
+		for (const style of STYLES)
+			expect(read(`${style}/index.css`), style).toContain('screen-shell.css')
+	})
+
+	it('fills its container, and only the body and the sidebar scroll', () => {
+		const f = 'base/screen-shell.css'
+		expect(has(f, '[data-screen-shell] {', /height:\s*100%/)).toBe(true)
+		expect(has(f, '[data-screen-shell] {', /min-height:\s*0/)).toBe(true)
+		expect(has(f, '[data-screen-shell] {', /overflow:\s*hidden/)).toBe(true)
+		expect(has(f, '[data-screen-main] {', /min-height:\s*0/)).toBe(true)
+		expect(has(f, '[data-screen-body] {', /overflow:\s*auto/)).toBe(true)
+		expect(has(f, '[data-screen-sidebar] {', /overflow:\s*auto/)).toBe(true)
+		const scrolling = declarations(f)
+			.split('}')
+			.filter((r) => /overflow(-[xy])?:\s*(auto|scroll)/.test(r))
+			.map((r) => r.split('{')[0].trim())
+		expect(scrolling.sort()).toEqual(['[data-screen-body]', '[data-screen-sidebar]'])
+	})
+
+	// Mobile-first (sensei #420): the unprefixed rules are the phone layout; min-width
+	// queries step up. A max-width query is desktop-first and is not used.
+	const outsideMedia = (f) => declarations(f).replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '')
+	const mediaBlock = (f, query) => {
+		const css = declarations(f)
+		const at = css.indexOf(`@media ${query}`)
+		if (at < 0) return ''
+		let depth = 0
+		for (let i = css.indexOf('{', at); i < css.length; i++) {
+			if (css[i] === '{') depth++
+			else if (css[i] === '}' && --depth === 0) return css.slice(at, i + 1)
+		}
+		return ''
+	}
+
+	it('uses no max-width query: it steps up from the phone', () => {
+		expect(declarations('base/screen-shell.css')).not.toMatch(/@media \(max-width/)
+	})
+
+	it('lays the stats on a 12-column grid whose rows share one height, two per row on a phone', () => {
+		const f = 'base/screen-shell.css'
+		expect(
+			has(f, '[data-screen-stats] {', /grid-template-columns:\s*repeat\(12, minmax\(0, 1fr\)\)/)
+		).toBe(true)
+		expect(has(f, '[data-screen-stats] {', /grid-auto-rows:\s*1fr/)).toBe(true)
+		// Phone first: two per row; from 640px a card takes the span it is given.
+		expect(outsideMedia(f)).toMatch(/\[data-screen-stats\] \[data-stat-card\]\s*\{[^}]*grid-column:\s*span 6/)
+		expect(mediaBlock(f, '(min-width: 640px)')).toMatch(
+			/\[data-screen-stats\] \[data-stat-card\]\[data-span\]\s*\{[^}]*grid-column:\s*span var\(--stat-card-span\)/
+		)
+	})
+
+	it('lays the info band out in one column on a phone, three from 900px, the third after a hairline', () => {
+		const f = 'base/screen-shell.css'
+		expect(outsideMedia(f)).toMatch(/\[data-screen-info\]\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\);/)
+		const wide = mediaBlock(f, '(min-width: 900px)')
+		expect(wide).toMatch(/\[data-screen-info\]\s*\{[^}]*grid-template-columns:\s*minmax\(0, 4fr\) minmax\(0, 5fr\) minmax\(0, 3fr\)/)
+		expect(wide).toMatch(/\[data-screen-info-column\]:nth-child\(3\)\s*\{[^}]*border-inline-start-width:\s*1px/)
+		// On a phone the third column sits under the others, with no hairline beside it.
+		expect(outsideMedia(f)).not.toMatch(/\[data-screen-info-column\]:nth-child\(3\)\s*\{[^}]*border-inline-start-width:\s*1px/)
+	})
+
+	it('sizes the search as the filters band’s first control, and draws no title-bar separator for it', () => {
+		const f = 'base/screen-shell.css'
+		expect(has(f, '[data-screen-filters] [data-screen-search]', /flex:\s*0 1 16rem/)).toBe(true)
+		for (const file of ['base', ...STYLES].map((x) => `${x}/screen-shell.css`))
+			expect(declarations(file), file).not.toContain('[data-screen-search] + [data-toolbar]')
+	})
+
+	it('maps each info role to its token', () => {
+		for (const role of ROLES)
+			expect(
+				has(
+					'base/screen-shell.css',
+					`[data-screen-info][data-role='${role}']`,
+					new RegExp(`--screen-role:\\s*var\\(--${role}\\)`)
+				),
+				role
+			).toBe(true)
+	})
+
+	it('puts no colour in base — colour is each style’s', () => {
+		const offenders = declarations('base/screen-shell.css')
+			.split('}')
+			.filter((r) => /(^|[;{\s])(color|background-color|border-color|background):/.test(r))
+		expect(offenders).toEqual([])
+	})
+
+	it.each(STYLES)(
+		'%s washes the info band with its role over paper, 12%% by day and 18%% by night',
+		(style) => {
+			const f = `${style}/screen-shell.css`
+			const css = declarations(f)
+			expect(css).toMatch(
+				new RegExp(
+					`\\[data-style='${style}'\\] \\[data-screen-info\\] \\{[^}]*background-color:\\s*color-mix\\(in oklch, var\\(--screen-role\\) var\\(--screen-wash\\), var\\(--paper\\)\\)`
+				)
+			)
+			expect(css).toMatch(
+				new RegExp(
+					`\\[data-style='${style}'\\] \\[data-screen-info\\] \\{[^}]*--screen-wash:\\s*12%`
+				)
+			)
+			expect(css).toMatch(
+				new RegExp(
+					`\\[data-mode='dark'\\] \\[data-style='${style}'\\] \\[data-screen-info\\][\\s\\S]*?--screen-wash:\\s*18%`
+				)
+			)
+			expect(css).toMatch(
+				new RegExp(`\\[data-style='${style}'\\]\\[data-mode='dark'\\] \\[data-screen-info\\]`)
+			)
+		}
+	)
+
+	it.each(STYLES)(
+		'%s colours every part from tokens, raw colours only as color-mix of tokens',
+		(style) => {
+			const css = declarations(`${style}/screen-shell.css`)
+			for (const hook of [
+				'[data-screen-shell]',
+				'[data-screen-header]',
+				'[data-screen-mark]',
+				'[data-screen-title]',
+				'[data-screen-context]',
+				'[data-screen-description]',
+				'[data-screen-search]',
+				'[data-screen-info-label]',
+				'[data-screen-info-mark]',
+				'[data-screen-info-title]',
+				'[data-screen-info-text]',
+				'[data-screen-info-step-seal]',
+				'[data-screen-info-value]',
+				'[data-screen-info-meter]',
+				'[data-screen-stats]',
+				'[data-screen-filters]',
+				'[data-screen-filter-chip]',
+				'[data-screen-sidebar]',
+				'[data-screen-footer]'
+			]) {
+				expect(css, `${style} / ${hook}`).toContain(`[data-style='${style}'] ${hook}`)
+			}
+			expect(
+				css
+					.split('}')
+					.filter((r) => /#[0-9a-f]{3,8}\b|rgba?\(|(?<!color-mix\(in )oklch\(/i.test(r)),
+				style
+			).toEqual([])
+			expect(css, 'text on the wash stays ink').toMatch(
+				new RegExp(
+					`\\[data-style='${style}'\\] \\[data-screen-info-text\\] \\{[^}]*color:\\s*var\\(--ink-soft\\)`
+				)
+			)
+		}
+	)
+
+	// ─── The title bar's toolbar and the filters band (sensei-hq Relay, rokkit#178) ──
+
+	it('zen-sumi draws the title bar’s items as 36px framed icon buttons, pressed onto the mute fill', () => {
+		const f = 'zen-sumi/screen-shell.css'
+		const item = "[data-style='zen-sumi'] [data-screen-tools] [data-toolbar-item] {"
+		expect(has(f, item, /width:\s*2\.25rem/)).toBe(true)
+		expect(has(f, item, /height:\s*2\.25rem/)).toBe(true)
+		expect(has(f, item, /border:\s*1px solid var\(--paper-edge\)/)).toBe(true)
+		expect(has(f, item, /border-radius:\s*0\.5rem/)).toBe(true)
+		expect(
+			has(f, "[data-screen-tools] [data-toolbar-item][data-active='true']", /background-color:\s*var\(--paper-mute\)/)
+		).toBe(true)
+		expect(
+			has(f, "[data-screen-tools] [data-toolbar-item][data-active='true']", /border-color:\s*var\(--paper-edge-strong\)/)
+		).toBe(true)
+	})
+
+	it('zen-sumi reads a pressed view in the accent and a pressed toggle in ink', () => {
+		const f = 'zen-sumi/screen-shell.css'
+		expect(
+			has(f, "[data-toolbar-item][data-kind='view'][data-active='true'] [data-toolbar-icon]", /color:\s*var\(--accent\)/)
+		).toBe(true)
+		expect(has(f, '[data-screen-tools] [data-toolbar-item] [data-toolbar-icon]', /color:\s*var\(--ink\)/)).toBe(true)
+	})
+
+	it('hangs the count badge at the item’s corner in base, ink on paper in each style', () => {
+		expect(has('base/toolbar.css', '[data-toolbar-count]', /position:\s*absolute/)).toBe(true)
+		expect(has('base/toolbar.css', '[data-toolbar-item] {', /position:\s*relative/)).toBe(true)
+		for (const style of STYLES)
+			expect(declarations(`${style}/toolbar.css`), style).toContain(`[data-style='${style}'] [data-toolbar-count]`)
+	})
+
+	it('lays a filter form out as a row in the filters band', () => {
+		const f = 'base/screen-shell.css'
+		expect(has(f, '[data-screen-filters] [data-form-root]', /flex-direction:\s*row/)).toBe(true)
+		expect(has(f, '[data-screen-filters] [data-form-root]', /flex-wrap:\s*wrap/)).toBe(true)
+		expect(has(f, '[data-screen-filters] [data-form-root]', /align-items:\s*flex-end/)).toBe(true)
+	})
+})

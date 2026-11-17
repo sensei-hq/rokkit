@@ -88,3 +88,9 @@
 [data-style='rokkit'] [data-toolbar-divider] {
   @apply from-ink-soft to-paper-mute bg-gradient-to-r;
 }
+
+/* The count badge: ink on paper. */
+[data-style='rokkit'] [data-toolbar-count] {
+  background-color: var(--ink);
+  color: var(--paper);
+}

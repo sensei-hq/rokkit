@@ -48,6 +48,7 @@
 				<option value="diagram">Diagram</option>
 				<option value="entity">Entity</option>
 				<option value="entities">Entities</option>
+				<option value="design">Design viewer</option>
 			</select>
 		</div>
 	{/if}

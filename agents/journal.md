@@ -1,5 +1,36 @@
 # Project Journal
 
+## 2026-11-17 — Pinned bun to 1.4.4 everywhere; fixed the Cloudflare frozen-lockfile deploy failure
+
+**Symptom:** the Cloudflare Workers Builds deploy failed at install with
+`incorrect peer dependency vite@7.3.6` / `@sveltejs/vite-plugin-svelte@6.2.4`
+warnings followed by `lockfile had changes, but lockfile is frozen`.
+
+**Diagnosis (skew, not repo corruption):** the committed `bun.lock` is valid —
+`bun install --frozen-lockfile` passes under local bun 1.4.4 on BOTH `develop`
+and `main` (main checked in a detached worktree, then removed), and GHA `Check`
+runs the same frozen install on latest bun (= 1.4.4, the current release) and is
+green on the same commit. Only the Cloudflare builder disagrees: Workers Builds
+runs `bun install --frozen-lockfile` itself when `bun.lock` is present, using its
+own default bun, which lags the bun that wrote the lockfile — hence both the
+peer warnings (neither 1.4.4 nor GHA emits them) and the rewrite demand.
+
+**Fix:** root `package.json` gained `"packageManager": "bun@1.4.4"`, which
+Workers Builds reads for the toolchain version (per its build-image docs — no
+dashboard change needed); GHA `setup-bun` is pinned to `1.4.4` in `check.yml`
+(both jobs), `coverage.yml`, and `publish.yml` (`latest` → `1.4.4`), so local,
+CI, and deploy resolve identically. Upgrade path is in the `check.yml` comment:
+bump local bun, `bun install`, commit `bun.lock`, bump the pins. If the
+Cloudflare project ever sets a `BUN_VERSION` dashboard var, it must match (or be
+removed so `packageManager` wins).
+
+**Verified:** frozen install green after the edit; `actionlint` clean on all
+three workflows; clean `apps/learn` build with the Cloudflare adapter
+(`CF_PAGES=1`, real exit 0, `.svelte-kit/cloudflare/_worker.js` emitted).
+Uncommitted — needs a commit + push (or dashboard Retry) for Cloudflare to pick
+up the pin. (Also noted: `| tail` masks the build's exit code — re-ran with output
+to a file to confirm the real 0.)
+
 ## 2026-11-16 — ScreenShell lays out for a phone first; a stat label wraps
 
 **Motivation:** sensei #420 (phone support). At 430px the shell's info band kept three

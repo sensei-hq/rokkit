@@ -1,6 +1,6 @@
 # 26 — Ask Rokkit: a chat that follows up
 
-Status: **built** (2026-10-02). Plan and slice history: `docs/plans/2026-10-02-chat-intents.md`.
+Status: **built** (2026-10-02). Plan and slice history: `openspec/changes/archive/docs-plans/2026-10-02-chat-intents.md`.
 Code: `apps/learn/src/lib/chat-demo/intent/`, `apps/learn/src/routes/api/chat/interpret/`.
 
 The owner's ask: *"follow up chat questions can actually be implemented as actions (interpret

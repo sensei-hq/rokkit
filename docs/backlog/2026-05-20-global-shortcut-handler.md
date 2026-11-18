@@ -60,4 +60,4 @@ commands.register({
 
 ## Deliverable
 
-A design doc at `docs/design/19-command-system.md` covering the store API, registration grammar, scope rules, and palette UI. Implementation plan in `docs/superpowers/plans/<date>-command-system.md` once the design is agreed.
+A design doc at `docs/design/19-command-system.md` covering the store API, registration grammar, scope rules, and palette UI. Implementation plan in `openspec/changes/archive/superpowers-plans/2026-06-10-command-system.md` once the design is agreed.

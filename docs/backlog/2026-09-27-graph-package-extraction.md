@@ -2,7 +2,7 @@
 
 **Raised:** 2026-09-27, from issue #159
 **Status:** SLICE 1 BUILT (2026-09-28) — **blocked on acceptance: dbd must consume it**
-**Plan:** `docs/plans/2026-09-27-graph-package-extraction.md`
+**Plan:** `openspec/changes/archive/docs-plans/2026-09-27-graph-package-extraction.md`
 **Design:** `docs/design/23-graph.md`
 **Upstream:** `sensei-hq/dbd` `site/src/lib/design/` · data contract in `sensei-hq/dbd#24`
 

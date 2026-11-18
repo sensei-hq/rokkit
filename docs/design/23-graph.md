@@ -846,7 +846,7 @@ handlers.
   relationship links).
 
 Graph now depends on `@rokkit/states`. `@rokkit/ui`, already a graph peer, depends on it, so
-a consumer installs nothing new. Plan: `docs/plans/2026-10-01-graph-messages-and-interactions.md`.
+a consumer installs nothing new. Plan: `openspec/changes/archive/docs-plans/2026-10-01-graph-messages-and-interactions.md`.
 
 ## The shade channel (#164)
 

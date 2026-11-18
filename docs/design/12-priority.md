@@ -67,10 +67,10 @@ Major design-system initiative — phases 3–9, then release 1 of the trimmed t
     `typography` / `colors` / `contrast` / `shortcuts`. It's checked against 640 configs'
     full output, and `@ts-nocheck` is gone.
 
-  Plans are in `docs/plans/2026-09-30-*-decomposition.md`. See journal 2026-09-30 (3), (4), (7), (9) and (10).
+  Plans are in `openspec/changes/archive/docs-plans/2026-09-30-*-decomposition.md`. See journal 2026-09-30 (3), (4), (7), (9) and (10).
 
 - [x] **Architecture-analysis primitives** — Shipped 2026-09-30 (plan:
-  `docs/plans/2026-09-30-architecture-analysis-primitives.md`). `@rokkit/chart`: `Rule`
+  `openspec/changes/archive/docs-plans/2026-09-30-architecture-analysis-primitives.md`). `@rokkit/chart`: `Rule`
   `slope`/`intercept` (clipped abline, midpoint label), `Plot.Region` (bands with open ends,
   polygons), `Plot.Hull` (padded per-group convex hull), `Plot.Contour` (d3-contour density),
   `PlotChart` `xDomain`/`yDomain`, and the spec path rendering all four. `@rokkit/graph`:

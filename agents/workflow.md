@@ -21,7 +21,7 @@ CLAUDE.md loads this file at session start — follow it.
 
 - New features, new patterns, architectural changes
 - Anything that could be done multiple ways
-- **Process:** Backlog → Plan → Implement (see below)
+- **Process:** Backlog → Propose → Implement → Archive (see below)
 
 ### Tactical Work (lightweight)
 
@@ -34,43 +34,52 @@ Ask. The cost of a question is low.
 
 ---
 
-## Pipeline: Backlog → Plan → Implement
+## Pipeline: Backlog → Propose → Implement → Archive (openspec)
+
+All non-trivial work follows the openspec process. Context: `openspec/project.md`.
 
 ### 1. BACKLOG
 
-Identify or create a work item in `docs/backlog/`.
+Identify or create a work item in `openspec/backlog/` as `BL-NNN-<slug>.md`
+(registry + format: `openspec/backlog/README.md`). Pre-openspec items keep
+their `docs/backlog/` home and are aliased by BL-ID in that registry.
 
-- If the work touches a **new module**: create requirements (`docs/requirements/NNN-<module>.md`) and design (`docs/design/NNN-<module>.md`) first.
-- If the work touches an **existing module**: check that requirements and design docs are still current.
+- If the work touches a **new module**: create the feature vision
+  (`docs/features/NN-<module>.md`) and design (`docs/design/NN-<module>.md`) first.
+- If the work touches an **existing module**: check that the feature and design
+  docs are still current.
 - Clarifications happen inline in conversation — capture answers in the relevant docs.
-- Add the item to the appropriate backlog file in `docs/backlog/`.
 
-### 2. PLAN
+### 2. PROPOSE
 
-Create an implementation plan in `docs/plans/README.md`.
+Create a change in `openspec/changes/<name>/` with three files:
 
-- Define: goal, tasks, approach, and reference to the backlog item.
-- **Present the plan to the user for agreement.** No code until agreed.
-- One active plan at a time.
+- `proposal.md` — why, what, impact, risks (cite the BL item + product/spec homes)
+- `tasks.md` — ordered checkbox task list, one commit per task where practical
+- `specs/spec.md` — Given/When/Then scenarios the implementation must satisfy
+
+- **Present the proposal to the user for agreement.** No code until agreed.
+- One active change per stream.
 
 ### 3. IMPLEMENT
 
-Execute the agreed plan.
+Execute the agreed proposal.
 
-- Work through tasks in order.
+- Work through `tasks.md` in order.
 - Before marking work done, run the **completion checklist**:
-  1. Code complete, tests pass
-  2. Requirements doc still accurate? Update if not.
+  1. Code complete, tests pass (`bun run test:ci`), lint clean (0/0)
+  2. Feature doc still accurate? Update if not.
   3. Design doc still accurate? Update if not.
-  4. Archive plan to `docs/plans/<datetime>-<name>.md`
-  5. Update `agents/journal.md`
-  6. Mark item done in `docs/backlog/`
+  4. Move the change dir to `openspec/changes/archive/<name>/`
+  5. Update `openspec/changes/archive/README.md` index + `agents/journal.md`
+  6. Close the BL item (mark done in its home)
 
 ---
 
 ## Interrupts
 
-Everything goes to `docs/backlog/`. No inline insertion into current work. Pick it up next.
+Everything goes to `openspec/backlog/` as a new `BL-NNN-<slug>.md`. No inline
+insertion into current work. Pick it up next.
 
 ---
 
@@ -81,12 +90,12 @@ Everything goes to `docs/backlog/`. No inline insertion into current work. Pick 
 1. Read `agents/workflow.md` — this file
 2. Read `agents/memory.md` — project knowledge
 3. Read `agents/journal.md` (last ~50 lines) — recent progress
-4. Check `docs/plans/README.md` — active plan to resume?
+4. Check `openspec/changes/` — active change to resume?
 5. Consult `agents/design-patterns.md` and `agents/references.md` as needed during implementation
 
 ### During Session
 
-- Track progress in the active plan
+- Track progress in the active change's `tasks.md`
 - Capture decisions in `agents/memory.md` immediately
 - Update `docs/design/*.md` when designs change
 
@@ -100,7 +109,7 @@ Everything goes to `docs/backlog/`. No inline insertion into current work. Pick 
 
 ## Crash Recovery
 
-1. Check `docs/plans/README.md` — find active plan
+1. Check `openspec/changes/` — find active change (dirs other than `archive/`)
 2. Read `agents/journal.md` — last recorded progress
 3. Resume from where work stopped
 
@@ -115,7 +124,8 @@ Everything goes to `docs/backlog/`. No inline insertion into current work. Pick 
 | `agents/journal.md`         | Progress log                   | Every session                  |
 | `agents/design-patterns.md` | Established patterns cookbook  | When patterns are proven       |
 | `agents/references.md`      | Coding conventions, styling    | When conventions change        |
-| `docs/requirements/`        | Module requirements (what/why) | When module scope changes      |
+| `openspec/project.md`       | Project context for changes    | When stack/conventions change  |
+| `openspec/backlog/`         | BL-ID backlog items            | When items are added/completed |
+| `openspec/changes/<name>/`  | Active change proposal         | When starting/finishing work   |
+| `docs/features/`            | Product vision (what/why)      | When module scope changes      |
 | `docs/design/`              | Module design (how/why)        | When design changes            |
-| `docs/backlog/`             | Prioritized work items         | When items are added/completed |
-| `docs/plans/README.md`      | Active plan                    | When starting/finishing work   |

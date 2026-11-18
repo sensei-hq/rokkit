@@ -55,46 +55,35 @@ For design work: agree on approach before writing code. For tactical work: confi
 
 ## Step 5: Check/Create Backlog Item
 
-Look in `docs/backlog/` for an existing item. If none:
-
-```bash
-# Create: docs/backlog/YYYY-MM-DD-<feature-name>.md
-```
-
-Format:
+Look in `openspec/backlog/` (registry: `openspec/backlog/README.md`) for an
+existing item. If none, create `openspec/backlog/BL-NNN-<feature-name>.md`
+(next ID is recorded in the registry):
 
 ```markdown
-# <Feature Name>
+# BL-NNN: <Feature Name>
 
-**Status:** In Progress
-**Added:** YYYY-MM-DD
+**Status:** open
+**Area:** <component | chart | graph | themes | toolchain | learn-site | ...>
 
-## Goal
+## Problem
 
-One sentence.
+Why this matters, in one or two sentences.
 
-## Scope
+## Acceptance
 
-What's in, what's out.
+- [ ] Observable outcome 1
+- [ ] Observable outcome 2
 ```
 
-## Step 6: Active Plan
+## Step 6: Propose the Change
 
-For non-trivial work, create or update `docs/plans/README.md`:
+For non-trivial work, create `openspec/changes/<name>/` with three files:
 
-```markdown
-# Active Plan: <Feature Name>
+- `proposal.md` — why, what, impact, risks (cite the BL item)
+- `tasks.md` — ordered checkbox task list
+- `specs/spec.md` — Given/When/Then acceptance scenarios
 
-**Goal:** one sentence
-**Backlog ref:** docs/backlog/YYYY-MM-DD-<name>.md
-
-## Tasks
-
-- [ ] Task 1
-- [ ] Task 2
-```
-
-Present the plan and wait for confirmation before coding.
+Present the proposal and wait for confirmation before coding.
 
 ## Step 7: Track With Todos
 

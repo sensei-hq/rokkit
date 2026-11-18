@@ -1,5 +1,52 @@
 # Project Journal
 
+## 2026-11-18 — Deep review + openspec migration (deep-review workflow, committed as 8c18cb194 + 1acfb4385)
+
+**Security (manual review, no strix binary; all static-only, unconfirmed):**
+F1 MEDIUM tooltip stored-XSS (`Tooltip.svelte::formatDefault` + `{@html}`,
+default-off mitigates), F2 MEDIUM MarkdownRenderer SSR identity fallback
+(trusted in-app, real for SSR consumers), F3 MEDIUM `/api/chat/interpret`
+unauthenticated + unthrottled (quota/availability, no key leak), F4 LOW
+`buildInitScript` interpolation, F5 LOW WebLLM CDN without SRI, F6 INFO no
+CSP/headers, F7 INFO `?model=` into WebLLM id. Verified good: key
+server-only, allowlist + bounds, no SSRF, dompurify single-copy 3.4.16 with
+floor specs, escaped Table/LLM paths, secrets clean, no eval. OWASP mapped
+(all ten). develop CI on the Kit 3 push is green (Check 8m1s, Coverage 8m41s).
+
+**Duplication (jscpd 2.57%, 294 clones):** 7 candidates ≥3 uses (57 onMount
+shell pages, 8 md5-identical icons indexes, graph focus-root prelude,
+6-site edge identity incl. exact 21-line dupe, forms input-spec factory,
+themes css-spec headers, matchMedia setup trio) + documented near-misses.
+Kit-3 surface clean (zero `$lib` remnants).
+
+**Dead code (24 items):** unused deps (chart d3/forms ramda/cli iconify,
+root dompurify, learn fonts/web-llm/iconify-json, app test libs),
+misplaced root `user-event` (phantom dep of forms specs), 12 dead
+Observatory interfaces, 9 orphan learn components, dead exports/shims,
+Kit leftovers (root `svelte.config.js`, `vercel.json`, cli broken exports,
+icons script name). D13 (test-only modules), D20 (cli Kit-3 detect),
+D23 (unocss subpath exports) need maintainer decisions — no specs written.
+
+**Follow-ups:** 13 child-written changes (dup ×7, dead-code ×6 = 39 files)
++ 3 parent-written MEDIUM security changes (`fix-tooltip-xss-sink`,
+`ssr-safe-markdown-sanitize`, `ratelimit-chat-interpret`), all specs-only
+with confirm-first PoC tasks. Total 16 changes / 48 files.
+
+**Openspec migration:** `docs/plans/` (27) + `docs/superpowers/{plans,specs}/`
+(41+31) verified completed/superseded and moved byte-identical via staged
+`git mv` to `openspec/changes/archive/`; empty dirs removed. New:
+`openspec/{project.md,product,specs,backlog}/README.md` (BL-001..BL-012
+alias open `docs/backlog/` items, which stay put) + archive index. 17 ref
+swaps in 15 files; pipeline rewritten to openspec in `agents/workflow.md`,
+`CLAUDE.md`, `.claude/commands/{feature-start,backlog}.md`. Only 2 source
+files touched, comment-only. Verified: 99 staged renames, zero live
+`docs/plans|docs/superpowers` refs outside frozen journal + one historical
+memory row. Repaired: followups child appended its journal entry at EOF —
+moved into this entry.
+
+**Open:** commit this batch; D13/D20/D23 + icons/scripts decisions;
+F1–F3 PoC confirmation runs.
+
 ## 2026-11-18 — Kit 3 toolchain migration done on develop; branch protection landed; dependabot mystery solved (ultracode workflow)
 
 Coordinated workflow resolved the three deploy-follow-up items one by one.

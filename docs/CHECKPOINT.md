@@ -1,8 +1,8 @@
 # Checkpoint
 
 **Slice:** Deep review + openspec migration (deep-review workflow).
-Uncommitted on `develop`: 99 staged renames + 16 follow-up changes
-(48 files) + ref updates + pipeline rewrite.
+Committed on `develop` as 8c18cb194 (migration) + 1acfb4385
+(16 follow-up changes). This checkpoint rides in the docs commit.
 
 **Done:**
 - Security review: 7 findings (3 MEDIUM static-only) + OWASP map +

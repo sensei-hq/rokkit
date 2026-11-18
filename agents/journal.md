@@ -1,5 +1,81 @@
 # Project Journal
 
+## 2026-11-18 — Kit 3 toolchain migration done on develop; branch protection landed; dependabot mystery solved (ultracode workflow)
+
+Coordinated workflow resolved the three deploy-follow-up items one by one.
+Openspec proposals for all three: `openspec/changes/{kit3-toolchain-migration,
+main-branch-protection,dependabot-routing}/{proposal.md,tasks.md,specs/spec.md}`.
+
+**Kit 3 migration (DONE, committed as de27cd6c9, 142 files):** kit ^3.3.1, adapters
+auto ^8.0.1 + cloudflare ^8.0.3, vite ^8.3.8, plugin-svelte ^7.3.1, svelte
+^5.57.3, typescript ^6.0.3, unocss ^66.13.0, paraglide 2.29.3. `svelte.config.js`
+deleted into `vite.config.js`; `$lib`→`#lib`, `$app/environment`→`$app/env`,
+`$env/*`→`$app/env/*` via `src/env.ts`; hooks to `@sveltejs/kit/hooks`;
+readonly-event fix; tsconfigs extend `$app/tsconfig`. The first migrate attempt
+died on a transport error AFTER doing the work; the retry verified it to
+completion. All five gates re-run independently (real exit codes): frozen
+install 0 (764 installs), lint 0, svelte-check 0/0, `CF_PAGES=1` build 0 with
+`_worker.js` (8500B), test:ci 0 — 605 files / 9134 tests passed, 1 skipped.
+bun 1.4.4 pin intact (re-verified: all four `bun-version` pins present — the
+migrate agent misreported them absent). Post-workflow fixes the agent's gate
+list missed (`check:types`, `check:build`): ambient `process` declaration in
+`graph/src/layout/options.ts` (TS2591), explicit `rootDir` in all seven
+`tsconfig.build.json` (TS5011), `benchmark/` excluded from data's declaration
+emit (TS6059 — `benchmark/` is unimported by src/spec, so the exclusion
+loses nothing); deleted stray compiler-emitted `benchmark/*.d.ts` (untracked)
+that broke lint — verified `check:build` no longer regenerates them.
+Non-blocking: UnoCSS
+`transform_index_html` warnings during build; CSS output verified full (1.4MB).
+Merging to `main` closes reopened security alerts 2-5 (kit CVEs <3.0.0).
+
+**Branch protection (minimal rule LIVE on main):** was 404 unprotected; now
+`required_status_checks {strict, [check, browser]}`, `enforce_admins: false`,
+nothing else (contexts verified against run 44215225968, app_id 15368).
+Re-verified via API after the run.
+
+**Dependabot (diagnosed, no file to fix):** #175 was a SECURITY update, not a
+version update — enabled by the repo Settings toggle
+(`security_and_analysis.dependabot_security_updates`), which always targets the
+default branch (`main`) with no `target-branch` option. No
+`.github/dependabot.yml` ever existed (11 branch tips + full history searched;
+2 bot PRs ever, both CVE-driven). Backstop = the protection rule above.
+
+**Open:** commit+push the migration; harden main (`enforce_admins`, required
+reviews ≥1, conversation resolution — user decision); mirror protection to
+develop (user decision); optional version-updates-only `dependabot.yml` with
+`target-branch: develop`; Cloudflare preview deploy check.
+
+## 2026-11-17 — Hotfix on main: reverted dependabot's Kit 3 bump (deploy + GHA red since Nov 14)
+
+**Symptom:** with bun pinned, Cloudflare failed differently:
+`@sveltejs/kit changed from ^2.70.3 to ^3.1.0 in apps/learn` — and GHA
+Check/Coverage on `main` failed the same frozen install.
+
+**Cause:** dependabot PR #175 (merged Nov 14) bumped kit 2.70.3 → 3.1.0 in
+`apps/learn` AND `packages/unocss` without syncing `bun.lock` (the
+npm_and_yarn group doesn't manage it). PR #187 carried the mismatch into the
+release merge. The PR's own Check was red — `main` has no required status
+checks, so it merged anyway.
+
+**Why revert, not sync:** syncing the lock resolved `kit@3.2.0`, whose peers
+demand vite ^8, vite-plugin-svelte ^7, typescript ^6 and svelte ^5.57.1, and
+bun nested a second Kit 2.70.3 under both adapters. That is a five-way
+toolchain migration, not a lockfile sync — it belongs on `develop`, not
+smuggled into `main`. Revert restores consistency with NO lock change.
+
+**Fix (3cc33ee74, direct to `main` — `develop` never had the bump):** two
+one-line spec reverts. Verified in a detached worktree (since removed):
+frozen install exit 0, themes build exit 0, `CF_PAGES=1` learn build real
+exit 0 with `_worker.js` emitted. GHA Check (6m44s) + Coverage (6m18s) green
+on the hotfix; Cloudflare build outcome not visible from here (no new
+deployment listed as of the check — dashboard is the source of truth).
+
+**Follow-ups:** (1) Kit 3 migration on `develop` (kit + vite 8 +
+plugin-svelte 7 + TS 6 + svelte ≥ 5.57.1, coordinated). (2) GitHub branch
+protection requiring green Check on `main` (repo setting, not code).
+(3) Dependabot has no in-repo config file — find where it's enabled before
+the next bump re-breaks `main`.
+
 ## 2026-11-17 — Pinned bun to 1.4.4 everywhere; fixed the Cloudflare frozen-lockfile deploy failure
 
 **Symptom:** the Cloudflare Workers Builds deploy failed at install with

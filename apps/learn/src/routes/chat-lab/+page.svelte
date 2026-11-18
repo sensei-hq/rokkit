@@ -7,7 +7,7 @@
 		ChatHistory,
 		ChatStream,
 		Chips
-	} from '$lib/chat'
+	} from '#lib/chat/index.js'
 
 	const styles = [
 		{ id: 'zen-sumi', label: 'zen-sumi', colors: ['#F7F3EA', '#2A2925', '#A83D1F'] },

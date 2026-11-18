@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { MODES, cardFor, type ChatMode } from '$lib/chat-demo/modes'
-	import { setPendingPrompt } from '$lib/chat-demo/store.svelte'
+	import { MODES, cardFor, type ChatMode } from '#lib/chat-demo/modes.js'
+	import { setPendingPrompt } from '#lib/chat-demo/store.svelte.ts'
 
 	// Web-LLM needs WebGPU; disable its card when unavailable. (Derived, not
 	// $state+$effect — evaluates to false during SSR where navigator is absent,

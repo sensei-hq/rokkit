@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { catalog } from '$lib/koan/catalog'
+import { catalog } from '#lib/koan/catalog.js'
 import type { EntryGenerator, PageLoad } from './$types'
 
 export const prerender = true

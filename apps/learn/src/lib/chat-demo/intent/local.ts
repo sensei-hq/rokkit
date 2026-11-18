@@ -4,8 +4,8 @@
  * search picks the demo; the screen demo's own prop schema and variants pick a change. The
  * only vocabulary written here is the cue words and the chart kinds — never a demo's words.
  */
-import { miniIndex } from '$lib/koan/catalog'
-import type { DemoPropSchema } from '$lib/koan/types'
+import { miniIndex } from '#lib/koan/catalog.js'
+import type { DemoPropSchema } from '#lib/koan/types.js'
 import type { Interpretation, Screen, View } from './types'
 import { CHART_KINDS, catalog, dataOf, propSchemaOf, variantsOf } from './demos'
 

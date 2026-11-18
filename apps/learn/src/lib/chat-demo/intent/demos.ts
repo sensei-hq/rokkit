@@ -3,8 +3,8 @@
  * module adds only what the chat needs on top — the chart kinds as variants, sample data, and
  * which demos exist only inside the /app layout.
  */
-import { catalog, findById, routeFor } from '$lib/koan/catalog'
-import type { DemoMeta, DemoPropSchema, DemoVariant } from '$lib/koan/types'
+import { catalog, findById, routeFor } from '#lib/koan/catalog.js'
+import type { DemoMeta, DemoPropSchema, DemoVariant } from '#lib/koan/types.js'
 import {
 	AREA_CHART_SPEC,
 	BOX_PLOT_SPEC,

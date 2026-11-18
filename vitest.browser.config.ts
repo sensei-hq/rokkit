@@ -20,7 +20,7 @@ import { playwright } from '@vitest/browser-playwright'
  * files.
  */
 export default defineConfig({
-	plugins: [svelte({ hot: false }), svelteTesting()],
+	plugins: [svelte(), svelteTesting()],
 	// Without this, `svelte` resolves to index-server.js and mount() throws
 	// `lifecycle_function_unavailable` — the export conditions default to the
 	// server build even though these tests run in a real browser.

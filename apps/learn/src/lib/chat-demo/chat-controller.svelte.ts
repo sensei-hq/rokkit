@@ -13,18 +13,18 @@
 import type { ChatMessageData } from '@rokkit/ui'
 import type { ChatMode } from './modes'
 import { MODES } from './modes'
-import { conversation, submitText, submitData } from '$lib/chat-demo/store.svelte'
-import { llm } from '$lib/chat-demo/llm.svelte'
+import { conversation, submitText, submitData } from '#lib/chat-demo/store.svelte.ts'
+import { llm } from '#lib/chat-demo/llm.svelte.ts'
 import {
 	bucketByRecency,
 	recencyLabel,
 	loadConversation,
 	setCurrentId,
 	type Conversation
-} from '$lib/koan/conversations.svelte'
-import { findById } from '$lib/koan/catalog'
+} from '#lib/koan/conversations.svelte.ts'
+import { findById } from '#lib/koan/catalog.js'
 import { goto } from '$app/navigation'
-import { tryParse, parseCSV } from '$lib/chat-demo/infer'
+import { tryParse, parseCSV } from '#lib/chat-demo/infer.js'
 
 // Re-export so the page can render sidebar rows without importing the store
 // module directly.
@@ -78,7 +78,7 @@ export const collapsed = $state({ value: false })
 // A synthetic trailing message represents the "thinking" indicator.
 
 export type AssistantData = {
-	blocks?: import('$lib/chat-demo/types').Block[]
+	blocks?: import('#lib/chat-demo/types.js').Block[]
 	provider?: 'scripted' | 'openrouter' | 'webllm'
 	thinking?: boolean
 }

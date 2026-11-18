@@ -1,4 +1,4 @@
-import { catalog } from '$lib/koan/catalog'
+import { catalog } from '#lib/koan/catalog.js'
 
 // Static, indexable component index — content counterpart to the interactive
 // /app catalog (which is noindex). Prerendered to plain HTML.

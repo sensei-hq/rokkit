@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageLoad } from './$types'
-import { isChatMode } from '$lib/chat-demo/modes'
+import { isChatMode } from '#lib/chat-demo/modes.js'
 
 export const load: PageLoad = ({ params }) => {
 	if (!isChatMode(params.mode)) redirect(307, '/chat')

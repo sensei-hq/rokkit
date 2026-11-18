@@ -48,6 +48,6 @@
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "svelte": "^5.55.7"
+    "svelte": "^5.57.3"
   }
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Input } from '@rokkit/forms'
 	import { Button } from '@rokkit/ui'
-	import { theme } from '$lib/stores/theme.svelte'
+	import { theme } from '#lib/stores/theme.svelte.ts'
 
 	let {
 		query = $bindable(''),

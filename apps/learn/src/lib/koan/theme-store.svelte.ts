@@ -1,7 +1,7 @@
 import type { SavedTheme, WizardMode, WizardState } from './types'
 import { SvelteDate } from 'svelte/reactivity'
 import { read, write, clear } from './persistence'
-import { theme as legacyTheme } from '$lib/stores/theme.svelte'
+import { theme as legacyTheme } from '#lib/stores/theme.svelte.ts'
 
 // NOTE: Breaking change — keys renamed from 'koan.*' to 'rokkit-site.*'.
 // Existing local state under the old keys is silently ignored on next load.

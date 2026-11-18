@@ -3,7 +3,7 @@
  * <ChatMessage/> in the conversation reads from here when its own `who` prop
  * is unset.
  *
- *   import { configureWho } from '$lib/chat'
+ *   import { configureWho } from '#lib/chat/index.js'
  *   configureWho({ assistant: 'Rokkit' })   // user stays the default 'you'
  *
  * Defaults are canonical lowercase names ('you' / 'assistant'). Visual

@@ -5,8 +5,8 @@
  * takes 2–26 options), the prop questions from the screen demo's prop schema — so nothing
  * here is written per demo. The answers are a proposal; the client validates them as usual.
  */
-import { miniIndex } from '$lib/koan/catalog'
-import type { DemoPropSchema } from '$lib/koan/types'
+import { miniIndex } from '#lib/koan/catalog.js'
+import type { DemoPropSchema } from '#lib/koan/types.js'
 import type { Interpretation, View } from './types'
 import { STARTERS, demoById, propSchemaOf, variantsOf } from './demos'
 import { topicOf } from './local'

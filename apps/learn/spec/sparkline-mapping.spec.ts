@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { toSparklineProps, type SparklineSettings } from '$lib/koan/demos/sparkline/mapping'
+import { toSparklineProps, type SparklineSettings } from '#lib/koan/demos/sparkline/mapping.js'
 
 const base: SparklineSettings = { type: 'bar', baseline: false, highlight: 'none', trend: 'none' }
 

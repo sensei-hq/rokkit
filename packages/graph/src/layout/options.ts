@@ -90,6 +90,7 @@ export function appliesTo(layout: string, option: string): boolean {
 const warned = new Set<string>()
 
 /** Bundlers replace this; `process` is undefined in a browser, hence the guarded read. */
+declare const process: { env?: { NODE_ENV?: string } } | undefined
 function isProduction(): boolean {
 	return typeof process !== 'undefined' && process.env?.NODE_ENV === 'production'
 }

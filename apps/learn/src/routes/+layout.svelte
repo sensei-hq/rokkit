@@ -4,11 +4,11 @@
 	import { themable } from '@rokkit/actions'
 	import { vibe } from '@rokkit/states'
 	import { page } from '$app/state'
-	import SiteHeader from '$lib/components/SiteHeader.svelte'
-	import SiteFooter from '$lib/components/SiteFooter.svelte'
-	import Seo from '$lib/components/Seo.svelte'
-	import { skinDefinitions } from '$lib/data/skins'
-	import { STORAGE_KEY } from '$lib/theme-config'
+	import SiteHeader from '#lib/components/SiteHeader.svelte'
+	import SiteFooter from '#lib/components/SiteFooter.svelte'
+	import Seo from '#lib/components/Seo.svelte'
+	import { skinDefinitions } from '#lib/data/skins.js'
+	import { STORAGE_KEY } from '#lib/theme-config.js'
 
 	// `/embed/*` pages are loaded inside iframes (used by the home theme
 	// showcase). They get no site chrome — the iframe IS the chrome.

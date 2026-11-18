@@ -1,6 +1,6 @@
 <script>
-	import { theme } from '$lib/stores/theme.svelte'
-	import { skinDefinitions, availablePalettes, getPaletteColor } from '$lib/data/skins'
+	import { theme } from '#lib/stores/theme.svelte.ts'
+	import { skinDefinitions, availablePalettes, getPaletteColor } from '#lib/data/skins.js'
 	import { SkinSwitcherToggle } from '@rokkit/app'
 
 	/** @type {{ layout?: 'page' | 'panel', sections?: string[], labels?: Record<string, string>, currentLocale?: string, locales?: string[], localeLabels?: Record<string, string>, onLocaleChange?: (locale: string) => void }} */

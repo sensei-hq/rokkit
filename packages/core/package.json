@@ -42,7 +42,7 @@
     }
   },
   "dependencies": {
-    "@unocss/preset-mini": "^66.6.1",
+    "@unocss/preset-mini": "^66.13.0",
     "date-fns": "^4.1.0",
     "ramda": "^0.32.0"
   },

@@ -4,12 +4,7 @@ import { svelteTesting } from '@testing-library/svelte/vite'
 import path from 'path'
 
 export default defineConfig({
-	plugins: [
-		svelte({
-			hot: false
-		}),
-		svelteTesting()
-	],
+	plugins: [svelte(), svelteTesting()],
 	test: {
 		globals: true,
 		environment: 'jsdom',
@@ -160,16 +155,26 @@ export default defineConfig({
 					setupFiles: ['./spec/setup.ts']
 				},
 				resolve: {
-					alias: {
-						$lib: path.resolve('./apps/learn/src/lib'),
-						// `$app/environment` is the SvelteKit virtual module that
-						// `theme.svelte.ts` reaches for. The root vitest config
-						// doesn't load the sveltekit() plugin, so we alias it to
-						// a stub that exports the four expected fields.
-						'$app/environment': path.resolve('./apps/learn/spec/stubs/app-environment.ts'),
-						'$env/dynamic/private': path.resolve('./apps/learn/spec/stubs/env-dynamic-private.ts'),
-						$app: path.resolve('./apps/learn/src/app')
-					}
+					// Exact-match regexes: '$app/env' is a string-prefix of
+					// '$app/env/private', so plain string aliases would route the
+					// private module at the env stub. `#lib` needs no alias: it
+					// resolves natively through the `imports` map in
+					// apps/learn/package.json.
+					alias: [
+						{
+							find: /^\$app\/env\/private$/,
+							replacement: path.resolve('./apps/learn/spec/stubs/env-dynamic-private.ts')
+						},
+						{
+							// `$app/env` is the SvelteKit virtual module that
+							// `theme.svelte.ts` reaches for. The root vitest config
+							// doesn't load the sveltekit() plugin, so we alias it to
+							// a stub that exports the four expected fields.
+							find: /^\$app\/env$/,
+							replacement: path.resolve('./apps/learn/spec/stubs/app-env.ts')
+						},
+						{ find: '$app', replacement: path.resolve('./apps/learn/src/app') }
+					]
 				}
 			}
 		]

@@ -54,7 +54,7 @@ const meta: DemoMeta = {
 			code: `import {
   savePreset,
   exportTokensCss
-} from '$lib/koan/demos/theme-wizard/store.svelte'
+} from '#lib/koan/demos/theme-wizard/store.svelte.ts'
 
 // Persist the current role-step map under the named preset
 savePreset('my-brand')

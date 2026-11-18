@@ -2,7 +2,7 @@
  * checked against the catalogue; whatever does not survive turns the turn into a question
  * back to the user, never a guess. Local search, System One and an LLM all go through here.
  */
-import type { DemoPropSchema } from '$lib/koan/types'
+import type { DemoPropSchema } from '#lib/koan/types.js'
 import { VIEWS, type Interpretation, type Screen } from './types'
 import { dataOf, demoById, propSchemaOf, variantOf } from './demos'
 

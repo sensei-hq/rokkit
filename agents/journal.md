@@ -1,5 +1,26 @@
 # Project Journal
 
+## 2026-11-18 — Fixed InputCheckbox aria-hidden-focus (issue #190, PR #191)
+
+Custom variant rendered `<input hidden>` + focusable `role=button` icon
+under `aria-hidden` (axe serious, WCAG 4.1.2). Fix (issue's option B):
+native input is the control in every variant — visually hidden but
+focusable via new base CSS, icon decorative + forwarding clicks to
+`input.click()`; `toggle()` deleted (single `handleChange` path).
+Side effects fixed free: Space-scroll (no preventDefault), disabled
+icon still toggling, `required` on a hidden input. rokkit + frosted
+focus rings repointed at `input:focus-visible + [data-checkbox-icon]`;
+other styles' `:focus-within` label rules unaffected. No checkbox e2e
+fixture exists, so unit + browser specs carry it. TDD: 3 red → green;
+rewrote the span-keydown specs that encoded the bug (also fixed their
+undocumented `variant: 'icon'` spelling to `custom`; runtime treats
+non-default identically, `data-variant` normalized). Harnesses learned:
+`userEvent.type` clicks as part of typing (proven by probe) — Enter
+spec uses `fireEvent`. Gates: forms 813, lint 0, svelte-check 0/0,
+full suite 9137, themes build with new rules in dist. Out of scope
+(noted): InputField consumes `variant` for layout so schema/layout
+can't force `variant=default` — moot once custom is accessible.
+
 ## 2026-11-18 — CI workflow cleanup (PR #189)
 
 Deduped GitHub Actions per owner request. New `.github/actions/setup`

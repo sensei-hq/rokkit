@@ -1,21 +1,22 @@
 # Checkpoint
 
-**Slice:** CI workflow cleanup. PR #189 (branch
-`ci/cleanup-workflows` → `develop`): composite setup action, merged
-`ci.yml`, renamed cleanup/i18n workflows, ninja SHA pin.
+**Slice:** InputCheckbox a11y fix (#190). PR #191 (branch
+`fix/input-checkbox-a11y` → `develop`): native input is the control,
+decorative forwarding icon, theme CSS updates, 5 new specs.
 
 **Done:**
-- Spec at `openspec/changes/ci-workflow-cleanup/`; actionlint clean.
-- Job ids `check`/`browser`/`coverage` preserved → protection
-  contexts match with no settings edit.
-- Journal records the change.
+- Spec at `openspec/changes/input-checkbox-a11y/`; TDD red → green.
+- Gates green locally: forms 813, lint 0, svelte-check 0/0,
+  full suite 9137, themes build with new rules in dist.
+- Journal records the fix + harness findings.
 
-**Remaining:** CI green on #189 → merge → delete branch → re-GET
-protection on both branches to confirm contexts still match.
+**Remaining:** CI green on #191 → merge (needs owner approval) →
+close #190 → note sensei#389 workaround removal.
 
-**Next command:** `gh pr checks 189 --watch --interval 60`, then
-`gh pr merge 189 --merge`.
+**Next command:** `gh pr checks 191 --watch --interval 60`, then ask
+owner to merge.
 
-**Open questions (user):** none for this slice.
+**Open questions (user):**
+- Merge #191 once green?
 
 **Known-broken:** none.

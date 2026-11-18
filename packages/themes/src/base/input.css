@@ -234,9 +234,22 @@ button[data-form-reset]:disabled {
   @apply text-xs leading-snug;
 }
 
-/* Checkbox icon: focus handling */
-[data-checkbox-icon] {
-  @apply focus:outline-none;
+/* Custom checkbox: the native input is the control — visually hidden but
+   focusable — and the icon is decorative. The root is the positioning
+   context for the clipped input. */
+[data-checkbox-root][data-variant='custom'] {
+  position: relative;
+}
+[data-checkbox-root][data-variant='custom'] > input[type='checkbox'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Range slider thumb — theme layer sets --range-thumb via @apply on [data-range-thumb] */

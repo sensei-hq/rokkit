@@ -96,7 +96,7 @@
   @apply text-ink-soft cursor-pointer rounded text-lg transition-colors;
 }
 
-[data-style='frosted'] [data-checkbox-icon]:focus-visible {
+[data-style='frosted'] input:focus-visible + [data-checkbox-icon] {
   @apply outline-primary outline-2 outline-offset-2;
 }
 

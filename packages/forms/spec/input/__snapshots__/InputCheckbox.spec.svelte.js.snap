@@ -7,7 +7,6 @@ exports[`InputCheckbox > should render 1`] = `
     data-variant="custom"
   >
     <input
-      hidden=""
       type="checkbox"
     />
      
@@ -15,8 +14,6 @@ exports[`InputCheckbox > should render 1`] = `
       aria-hidden="true"
       class="checkbox-checked"
       data-checkbox-icon=""
-      role="button"
-      tabindex="0"
     />
     <!---->
   </div>
@@ -31,7 +28,6 @@ exports[`InputCheckbox > should render 2`] = `
     data-variant="custom"
   >
     <input
-      hidden=""
       type="checkbox"
     />
      
@@ -39,8 +35,6 @@ exports[`InputCheckbox > should render 2`] = `
       aria-hidden="true"
       class="checkbox-unchecked"
       data-checkbox-icon=""
-      role="button"
-      tabindex="0"
     />
     <!---->
   </div>

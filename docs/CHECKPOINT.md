@@ -1,22 +1,19 @@
 # Checkpoint
 
-**Slice:** InputCheckbox a11y fix (#190). PR #191 (branch
-`fix/input-checkbox-a11y` → `develop`): native input is the control,
-decorative forwarding icon, theme CSS updates, 5 new specs.
+**Slice:** v1.15.8 released. Fix (#191) + bump (f317d87ec) + PR #192
+(develop) + PR #195 (main) + tag push + Publish green + npm
+verified (forms/ui/latest = 1.15.8). #190 closed.
 
 **Done:**
-- Spec at `openspec/changes/input-checkbox-a11y/`; TDD red → green.
-- Gates green locally: forms 813, lint 0, svelte-check 0/0,
-  full suite 9137, themes build with new rules in dist.
-- Journal records the fix + harness findings.
+- Release flow proven under branch protection (PRs only).
+- Journal records the release.
 
-**Remaining:** CI green on #191 → merge (needs owner approval) →
-close #190 → note sensei#389 workaround removal.
+**Remaining:** D13/D20/D23 + icons/scripts maintainer decisions;
+F1–F3 PoC confirmations; implement the 16 follow-up changes.
 
-**Next command:** `gh pr checks 191 --watch --interval 60`, then ask
-owner to merge.
+**Next command:** none — awaiting user direction on follow-ups.
 
 **Open questions (user):**
-- Merge #191 once green?
+- D13: export test-only modules or delete? D20/D23 dedicated specs?
 
 **Known-broken:** none.

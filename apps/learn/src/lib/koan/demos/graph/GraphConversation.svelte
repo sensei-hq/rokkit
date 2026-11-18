@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
-	import { ChatStream, ChatMessage, Chips } from '$lib/chat'
-	import { shell } from '$lib/koan/shell.svelte'
+	import { ChatStream, ChatMessage, Chips } from '#lib/chat/index.js'
+	import { shell } from '#lib/koan/shell.svelte.ts'
 	import { explorer } from './store.svelte'
 	import { datasets } from './datasets'
 	import meta from './meta'

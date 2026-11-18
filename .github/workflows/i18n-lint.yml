@@ -1,0 +1,21 @@
+name: i18n lint
+
+# pull_request_target: runs from the base branch so fork PRs can't smuggle
+# workflow changes in, while the GITHUB_TOKEN keeps comment permission.
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+  issues: read
+  contents: read
+
+jobs:
+  lint:
+    name: i18n lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Ninja i18n
+        uses: opral/ninja-i18n-action@415e999371bc9489e3d4a49503c43c3d075d9428 # pinned 2024-07-01; re-pin deliberately
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

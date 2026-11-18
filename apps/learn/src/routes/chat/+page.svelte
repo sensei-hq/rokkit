@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ModePicker from '$lib/chat-demo/components/ModePicker.svelte'
+	import ModePicker from '#lib/chat-demo/components/ModePicker.svelte'
 </script>
 
 <svelte:head><title>Ask Rokkit</title></svelte:head>

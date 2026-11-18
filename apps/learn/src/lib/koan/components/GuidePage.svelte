@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MarkdownRenderer } from '@rokkit/ui'
-	import { BLOCK_PLUGINS } from '$lib/koan/block-plugins'
+	import { BLOCK_PLUGINS } from '#lib/koan/block-plugins.js'
 
 	interface Props {
 		markdown: string

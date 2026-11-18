@@ -5,12 +5,12 @@
 	 */
 	import type { Component } from 'svelte'
 	import { MarkdownRenderer } from '@rokkit/ui'
-	import { BLOCK_PLUGINS } from '$lib/koan/block-plugins'
+	import { BLOCK_PLUGINS } from '#lib/koan/block-plugins.js'
 	import type { DemoBlock } from '../types'
 	import { renderPlan } from '../intent/render-plan'
 	import { changingVariants, demoById, hrefOf, propSchemaOf, variantOf } from '../intent/demos'
 	import { adjustScreen, isScreen } from '../store.svelte'
-	import Tweaks from '$lib/koan/components/Tweaks.svelte'
+	import Tweaks from '#lib/koan/components/Tweaks.svelte'
 	import InlineComponent from './InlineComponent.svelte'
 
 	const { block, onselect }: { block: DemoBlock; onselect?: (item: unknown) => void } = $props()

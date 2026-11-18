@@ -1,6 +1,6 @@
 {
   "name": "@rokkit/themes",
-  "version": "1.15.7",
+  "version": "1.15.8",
   "description": "Theme styles for @rokkit/ui components",
   "repository": {
     "type": "git",
@@ -53,7 +53,7 @@
   "devDependencies": {
     "@rokkit/unocss": "workspace:*",
     "magic-string": "^0.30.21",
-    "unocss": "^66.5.1"
+    "unocss": "^66.13.0"
   },
   "keywords": [
     "themes",

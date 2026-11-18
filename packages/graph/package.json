@@ -1,6 +1,6 @@
 {
 	"name": "@rokkit/graph",
-	"version": "1.15.7",
+	"version": "1.15.8",
 	"description": "Node-link diagram components \u2014 pluggable layouts, ER/schema views",
 	"repository": {
 		"type": "git",
@@ -62,8 +62,8 @@
 	"devDependencies": {
 		"@rokkit/ui": "workspace:*",
 		"@sveltejs/package": "^2.5.8",
-		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"svelte": "^5.55.7",
-		"svelte-check": "^4.7.6"
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"svelte": "^5.57.3",
+		"svelte-check": "^4.7.8"
 	}
 }

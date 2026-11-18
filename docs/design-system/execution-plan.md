@@ -201,7 +201,7 @@ setup-wizard.spec.ts
 > **Status:** Complete. Commits `3d533bbe`..`500b1b04` on develop.
 > 7 sub-tasks: tertiary color + nullable resolution, roundedness axis, layout tokens, gradient border, literal icon support, UnoCSS preset updates, demo wiring.
 > 3292 unit tests passing, 30 e2e tests passing. Verified in browser.
-> Plan: `docs/superpowers/plans/2026-04-29-phase4-design-tokens.md`
+> Plan: `openspec/changes/archive/superpowers-plans/2026-04-29-phase4-design-tokens.md`
 
 **Goal**: Extend @rokkit/core and @rokkit/unocss to support the new token architecture.
 

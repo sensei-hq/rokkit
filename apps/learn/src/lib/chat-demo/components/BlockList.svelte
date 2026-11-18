@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Block, DemoBlock as DemoBlockType, SuggestionItem } from '../types'
 	import { CodeBlock, MarkdownRenderer } from '@rokkit/ui'
-	import { BLOCK_PLUGINS } from '$lib/koan/block-plugins'
+	import { BLOCK_PLUGINS } from '#lib/koan/block-plugins.js'
 	import InlineComponent from './InlineComponent.svelte'
 	import DemoBlock from './DemoBlock.svelte'
 	import { noteSelection, submitAction, submitText } from '../store.svelte'

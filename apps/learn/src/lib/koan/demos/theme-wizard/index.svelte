@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { List, Button } from '@rokkit/ui'
-	import ListItem from '$lib/components/ListItem.svelte'
+	import ListItem from '#lib/components/ListItem.svelte'
 	import StepStart from './StepStart.svelte'
 	import StepTheme from './StepTheme.svelte'
 	import StepTune from './StepTune.svelte'
 	import StepSave from './StepSave.svelte'
 	import type { WizardState } from '../../types'
 	import { themeStore, saveDraft, clearDraft, setActiveTheme } from '../../theme-store.svelte'
-	import { theme } from '$lib/stores/theme.svelte'
+	import { theme } from '#lib/stores/theme.svelte.ts'
 
 	let stepIdx = $state(0)
 

@@ -21,7 +21,12 @@ import { fileURLToPath } from 'node:url'
 export const HOLDS = {
 	typescript:
 		'svelte-check 4.x refuses TypeScript 7 at startup; it needs TS 6 as `typescript` plus TS 7 ' +
-		'aliased as `@typescript/native`, and `--tsgo` on every check script (#156 §4).'
+		'aliased as `@typescript/native`, and `--tsgo` on every check script (#156 §4).',
+	'oxc-parser':
+		'see the `oxc-parser` root override: the transitive copy (via ' +
+		'@unocss/transformer-attributify-jsx) is held at 0.115.0 there because newer releases ' +
+		'ship a `browser` entry whose WASM binding cannot load in Node, which the jsdom suite ' +
+		'resolves. Lift the override only together with a green `bun run test:ci`.'
 }
 
 /** The dependency sets an upgrade may move. Peers are a promise to consumers, not a pin. */

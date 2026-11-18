@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RokkitWordmark from '$lib/components/RokkitWordmark.svelte'
+	import RokkitWordmark from '#lib/components/RokkitWordmark.svelte'
 	import { Button } from '@rokkit/ui'
 	import { vibe } from '@rokkit/states'
 

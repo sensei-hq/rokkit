@@ -1,6 +1,6 @@
 <script lang="ts">
-	import GuidePage from '$lib/koan/components/GuidePage.svelte'
-	import LlmsBookmark from '$lib/components/LlmsBookmark.svelte'
+	import GuidePage from '#lib/koan/components/GuidePage.svelte'
+	import LlmsBookmark from '#lib/components/LlmsBookmark.svelte'
 	const { data } = $props()
 </script>
 

@@ -30,6 +30,7 @@ rokkit/
     journal.md                  <-- Chronological progress log
     design-patterns.md          <-- Established patterns cookbook
     references.md               <-- Coding conventions, styling, project structure
+  openspec/                      <-- Change process: backlog/, changes/, specs/, product/
   docs/
     features/                   <-- Feature specs (Gherkin scenarios, vision)
     design/                     <-- Architecture and design docs (numbered: NN-xxx.md)
@@ -66,22 +67,24 @@ cd apps/learn && npx playwright test
 
 ### Pipeline for work items
 
-For non-trivial work: **Backlog → Plan → Implement**.
-See `agents/workflow.md` for the full process.
+For non-trivial work: **Backlog → Propose → Implement → Archive** (openspec).
+See `agents/workflow.md` for the full process and `openspec/project.md` for
+change context. New backlog items are `openspec/backlog/BL-NNN-<slug>.md`;
+active work lives in `openspec/changes/<name>/{proposal.md,tasks.md,specs/spec.md}`.
 
 ### When a feature design is agreed upon
 
 1. Update the relevant `docs/design/*.md` module file
 2. Log in `agents/journal.md`
-3. Create/update plan in `docs/design/12-priority.md`
+3. Create/update the change proposal in `openspec/changes/<name>/`
 
 ### When completing work
 
 1. Run tests and lint — both must pass
 2. Check design docs are still accurate
-3. Update `docs/design/12-priority.md` — mark item complete
+3. Move the change to `openspec/changes/archive/` and update its index
 4. Update `agents/journal.md` with summary and commit hashes
-5. Update status in `docs/features/` and `docs/design/`
+5. Update status in `docs/features/` and `docs/design/`, close the BL item
 
 ### Lint Rules
 
@@ -108,6 +111,9 @@ backlog to hide a new one in. If lint prints anything, this change caused it.
 | `agents/journal.md`         | Chronological progress log                |
 | `agents/design-patterns.md` | Established patterns cookbook             |
 | `agents/references.md`      | Coding conventions, styling, structure    |
+| `openspec/project.md`       | Project context for changes               |
+| `openspec/backlog/`         | BL-ID backlog + registry                  |
+| `openspec/changes/`         | Active change proposals                   |
 | `agents/tracking.md`        | Active tracking log                       |
 | `docs/features/`            | Feature specs (Gherkin scenarios, vision) |
 | `docs/design/`              | Architecture and design docs              |

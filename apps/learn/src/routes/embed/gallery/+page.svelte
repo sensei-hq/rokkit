@@ -26,7 +26,7 @@
 	import { BarChart, PieChart, LineChart, ScatterPlot, BoxPlot } from '@rokkit/chart'
 	import { Graph, GraphState } from '@rokkit/graph'
 	import { EntityView } from '@rokkit/graph/schema'
-	import { datasets } from '$lib/koan/demos/graph/datasets'
+	import { datasets } from '#lib/koan/demos/graph/datasets.js'
 
 	const style = $derived(page.url.searchParams.get('style') ?? 'zen-sumi')
 	const skin = $derived(page.url.searchParams.get('skin') ?? 'default')

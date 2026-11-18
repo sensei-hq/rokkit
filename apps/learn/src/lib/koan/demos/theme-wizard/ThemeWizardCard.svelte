@@ -3,7 +3,7 @@
 	import { SvelteSet } from 'svelte/reactivity'
 	import { Select } from '@rokkit/ui'
 	import { vibe } from '@rokkit/states'
-	import { siteStyles } from '$lib/data/site-styles'
+	import { siteStyles } from '#lib/data/site-styles.js'
 	import {
 		wizardState,
 		ramps,

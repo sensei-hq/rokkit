@@ -21,10 +21,10 @@
  *   - radius / role overrides → localStorage[`${STORAGE_KEY}-skin`], owned here.
  */
 
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
 import { vibe } from '@rokkit/states'
-import { applyRoleColor, skinDefinitions } from '$lib/data/skins'
-import { STORAGE_KEY } from '$lib/theme-config'
+import { applyRoleColor, skinDefinitions } from '#lib/data/skins.js'
+import { STORAGE_KEY } from '#lib/theme-config.js'
 
 const SKIN_KEY = `${STORAGE_KEY}-skin`
 const ROLES = ['surface', 'primary', 'secondary', 'accent'] as const

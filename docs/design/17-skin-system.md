@@ -1,6 +1,6 @@
 # 17 — Skin System
 
-**Status:** Designed 2026-06-10 (approved). Implementation plan: `docs/superpowers/plans/<date>-skin-system.md`.
+**Status:** Designed 2026-06-10 (approved). Implementation plan: `openspec/changes/archive/superpowers-plans/2026-06-10-skin-system.md`.
 
 ## Overview
 

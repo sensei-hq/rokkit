@@ -3,8 +3,8 @@
 	import { afterNavigate } from '$app/navigation'
 	import { TableOfContents } from '@rokkit/app'
 	import { List } from '@rokkit/ui'
-	import { guidesByCategory, type GuideCategory } from '$lib/guides'
-	import Search from '$lib/guides/Search.svelte'
+	import { guidesByCategory, type GuideCategory } from '#lib/guides/index.js'
+	import Search from '#lib/guides/Search.svelte'
 
 	const { children } = $props()
 

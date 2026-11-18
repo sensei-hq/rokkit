@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { setShellResponse, setShellVariant, shell } from '$lib/koan/shell.svelte'
+	import { setShellResponse, setShellVariant, shell } from '#lib/koan/shell.svelte.ts'
 	import { page } from '$app/state'
 
 	onMount(() => {

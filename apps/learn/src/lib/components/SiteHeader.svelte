@@ -1,10 +1,10 @@
 <script lang="ts">
-	import RokkitWordmark from '$lib/components/RokkitWordmark.svelte'
-	import SiteNav from '$lib/components/SiteNav.svelte'
+	import RokkitWordmark from '#lib/components/RokkitWordmark.svelte'
+	import SiteNav from '#lib/components/SiteNav.svelte'
 	import { ThemeSwitcherToggle } from '@rokkit/app'
 	import { Toggle } from '@rokkit/ui'
 	import { vibe } from '@rokkit/states'
-	import { siteStyles, siteDensities } from '$lib/data/site-styles'
+	import { siteStyles, siteDensities } from '#lib/data/site-styles.js'
 
 	// Vertical offset of the density-line rects per option — tighter gaps read
 	// as "compact", looser as "comfortable".

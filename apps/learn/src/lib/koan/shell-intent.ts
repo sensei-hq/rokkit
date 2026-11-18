@@ -2,10 +2,10 @@
  * (`chat-demo/intent`) against the demo on the canvas. The shell renders its own conversation,
  * so a reading becomes one of four shell actions rather than chat blocks.
  */
-import { interpretLocally } from '$lib/chat-demo/intent/local'
-import { validate } from '$lib/chat-demo/intent/validate'
-import { hrefOf } from '$lib/chat-demo/intent/demos'
-import type { Interpretation, Screen } from '$lib/chat-demo/intent/types'
+import { interpretLocally } from '#lib/chat-demo/intent/local.js'
+import { validate } from '#lib/chat-demo/intent/validate.js'
+import { hrefOf } from '#lib/chat-demo/intent/demos.js'
+import type { Interpretation, Screen } from '#lib/chat-demo/intent/types.js'
 
 export type ShellAction =
 	/** Open a demo (and variant). */

@@ -32,7 +32,7 @@ import { PATTERNS } from './patterns/patterns.js'
  * `applyZoom` / `resetZoom`. `geoms/Highlight.svelte` is the one geom that reads
  * `state?.selectedRows`, but it does so defensively (`?? []`) — multi-select and zoom
  * are explicit non-goals for a spark (see
- * docs/superpowers/specs/2026-08-20-spark-plot-geom-architecture-design.md), so their
+ * openspec/changes/archive/superpowers-specs/2026-08-20-spark-plot-geom-architecture-design.md), so their
  * absence degrades Highlight to "nothing selected", not a runtime error. That's a
  * different failure mode than every member below, where absence throws.
  */

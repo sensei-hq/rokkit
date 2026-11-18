@@ -1,6 +1,6 @@
 /**
  * Chat-demo conversation API. Backed by the shared conversation store in
- * `$lib/koan/conversations` (surface='chat') — every submit lands as a
+ * `#lib/koan/conversations` (surface='chat') — every submit lands as a
  * user turn + an assistant `blocks` turn, persisted to localStorage so the
  * shared sidebar can resume them later.
  *
@@ -33,7 +33,7 @@ import {
 	updateLastAssistantBlocks,
 	type ChatProvider,
 	type Turn
-} from '$lib/koan/conversations.svelte'
+} from '#lib/koan/conversations.svelte.ts'
 
 /** Snapshot the current provider + model so the conversation records who
  * produced each assistant turn. Resume can use this to restore the toggle. */

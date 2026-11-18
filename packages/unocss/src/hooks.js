@@ -83,7 +83,7 @@ export function themeInitScript(options = {}) {
  *   export const handle = sequence(themeHook(), otherHook)
  *
  * @param {ThemeHookOptions} [options]
- * @returns {import('@sveltejs/kit').Handle}
+ * @returns {import('@sveltejs/kit/hooks').Handle}
  */
 export function themeHook(options = {}) {
 	const script = buildInitScript(options)

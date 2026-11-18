@@ -9,8 +9,8 @@
 - **2026-05-20 (landed)**: Sumi palette inverted (50 = darkest, 950 = lightest) so dark mode visually flips. Stopgap that conflates "palette convention" with "role inversion."
 - **2026-05-21 (planned)**: Add a `tokens: { name: 'palette.shade' }` override layer to skin config. Per-token semantic mapping (like UnoCSS shortcuts). Replaces the previously-planned `invert: true` flag — direct mapping is simpler, more flexible, and removes the need for both `INVERTED_ROLES` name-coupling and `1000 - shade` math. The original "invert-flag" plan is superseded.
 
-**Design spec:** `docs/superpowers/specs/2026-05-21-direct-token-mapping-design.md`
-**Implementation plan:** `docs/superpowers/plans/2026-05-21-direct-token-mapping-refactor.md`
+**Design spec:** `openspec/changes/archive/superpowers-specs/2026-05-21-direct-token-mapping-design.md`
+**Implementation plan:** `openspec/changes/archive/superpowers-plans/2026-05-21-direct-token-mapping-refactor.md`
 
 The plan is 8 sequenced tasks (1–6 implementation, 7–8 docs + verification), each its own commit. Realistic cost: **~4 hours** (much smaller than the previous invert-flag scope because defaults stay unchanged — the change is purely additive).
 

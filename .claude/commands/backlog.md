@@ -11,7 +11,8 @@ Read `docs/design/12-priority.md` in full. This is the canonical list of all pen
 Also skim:
 
 - `agents/journal.md` (last 50 lines) — what was recently completed
-- `docs/plans/README.md` — is there already an active plan?
+- `openspec/changes/` — is there already an active change?
+- `openspec/backlog/README.md` — BL-ID registry of open items
 
 ## Step 2: Surface the Backlog
 

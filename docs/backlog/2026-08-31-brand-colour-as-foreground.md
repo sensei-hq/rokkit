@@ -38,7 +38,7 @@ Every option below is a visual-language decision, not a token swap:
 1. **A darker foreground stop.** Introduce a foreground-safe variant (e.g. the
    700 stop) for text/icon use, keeping the 500 for fills. Cost: adds to a
    deliberately trimmed token vocabulary
-   (`docs/superpowers/specs/2026-05-15-trimmed-token-vocabulary-design.md`), and
+   (`openspec/changes/archive/superpowers-specs/2026-05-15-trimmed-token-vocabulary-design.md`), and
    every theme has to opt in per part.
 2. **Drop brand colour from foregrounds.** Selected text becomes `ink`, and the
    selection signal moves entirely to a non-colour mark — the inset bar / left

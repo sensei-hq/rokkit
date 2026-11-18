@@ -21,7 +21,7 @@
 	 * no submit step.
 	 */
 	import { FormRenderer } from '@rokkit/forms'
-	import type { DemoPropSchema } from '$lib/koan/types'
+	import type { DemoPropSchema } from '#lib/koan/types.js'
 
 	interface Props {
 		schema: Record<string, DemoPropSchema>

@@ -7,7 +7,7 @@ import { PlotState } from '../src/PlotState.svelte.js'
 
 /**
  * Measures the perf claim behind the Spark/Plot geom-composition design (see
- * docs/superpowers/specs/2026-08-20-spark-plot-geom-architecture-design.md's risk table):
+ * openspec/changes/archive/superpowers-specs/2026-08-20-spark-plot-geom-architecture-design.md's risk table):
  * that `SparkState` is cheap enough for "a table column of sparklines" — hundreds of inline
  * instances — because it omits most of what `PlotState` carries (zoom, crossfilter,
  * selection, facets, symbols, tooltip/format/label helpers, axis positions, orientation

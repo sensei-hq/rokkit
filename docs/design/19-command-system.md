@@ -1,7 +1,7 @@
 # 19 — Command System (public)
 
 **Status:** Designed 2026-06-09 (revised — promoted to a public, first-class feature).
-Implementation plan: `docs/superpowers/plans/<date>-command-system.md`.
+Implementation plan: `openspec/changes/archive/superpowers-plans/2026-06-10-command-system.md`.
 **Supersedes the sketch in:** `docs/backlog/2026-05-20-global-shortcut-handler.md`.
 
 ## Overview

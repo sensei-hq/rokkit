@@ -9,7 +9,12 @@ import { upstreamProblem } from '../../src/lib/chat-demo/intent/upstream'
 import { DEFAULT_OPENROUTER_MODEL } from '../../src/lib/chat-demo/models'
 
 const env: Record<string, string | undefined> = {}
-vi.mock('$env/dynamic/private', () => ({ env }))
+vi.mock('$app/env/private', () => ({
+	// Live binding: the 503 spec deletes the key, beforeEach restores it.
+	get OPENROUTER_API_KEY() {
+		return env.OPENROUTER_API_KEY
+	}
+}))
 
 const endpoint = () => import('../../src/routes/api/chat/interpret/+server')
 const event = (body: unknown, fetch: typeof globalThis.fetch) =>

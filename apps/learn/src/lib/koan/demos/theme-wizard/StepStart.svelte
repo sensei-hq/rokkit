@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WizardState } from '../../types'
-	import { skinDefinitions, getPaletteColor } from '$lib/data/skins'
+	import { skinDefinitions, getPaletteColor } from '#lib/data/skins.js'
 
 	let { state = $bindable<WizardState>() }: { state?: WizardState } = $props()
 

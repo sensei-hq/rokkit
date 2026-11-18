@@ -83,7 +83,7 @@ Thin wrappers over `PlotChart` with a `spec` pre-built from named channel props:
 and publishes it on the `'plot-state'` context; geoms `registerGeom()` into it.
 
 **It is a composition, not a monolith** (decomposed 2026-09-30, plan
-`docs/plans/2026-09-30-plotstate-decomposition.md`). `PlotState` derives nothing: it builds
+`openspec/changes/archive/docs-plans/2026-09-30-plotstate-decomposition.md`). `PlotState` derives nothing: it builds
 nine job classes from `src/state/` in dependency order, each owning one concern and reading only
 those built before it —
 

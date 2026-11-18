@@ -7,7 +7,7 @@
 	 * the current path, so the `.org` mirror consolidates onto `.com`.
 	 */
 	import { page } from '$app/state'
-	import { SITE, isNoindexPath, absoluteUrl, type SeoData } from '$lib/seo'
+	import { SITE, isNoindexPath, absoluteUrl, type SeoData } from '#lib/seo.js'
 
 	let { seo = {} }: { seo?: SeoData } = $props()
 

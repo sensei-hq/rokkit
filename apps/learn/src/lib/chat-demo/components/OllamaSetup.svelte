@@ -5,7 +5,7 @@
 	 * site reaching the local network makes the browser ask for permission, so it should be the
 	 * visitor's click that triggers it.
 	 */
-	import { browser } from '$app/environment'
+	import { browser } from '$app/env'
 	import { checkOllama, setupSteps, type OllamaStatus } from '../intent/ollama-setup'
 	import { DEFAULT_OLLAMA } from '../intent/interpret'
 

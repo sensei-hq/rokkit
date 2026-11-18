@@ -65,6 +65,7 @@ Violations must be justified or the plan revised.
 | ItemProxy deleted, ProxyItem is canonical    | All components migrated to ProxyItem from @rokkit/states; ItemProxy class removed                     | 2026-03 |
 | Legacy Proxy deleted from @rokkit/states     | Ramda-dependent Proxy class replaced by lightweight wrapper in deriveLookupWithProxy                  | 2026-03 |
 | Migrated to simplified workflow              | Adopted Story → Plan → Implement pipeline. Plans in docs/plans/, dropped open-questions/sessions.     | 2026-03 |
+| Migrated to openspec process               | Backlog → Propose → Implement → Archive. BL-IDs in openspec/backlog/, changes in openspec/changes/, legacy plans/specs in openspec/changes/archive/. | 2026-11 |
 
 ## Key Architectural Decisions
 

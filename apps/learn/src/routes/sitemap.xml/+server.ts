@@ -1,6 +1,6 @@
-import { guides } from '$lib/guides'
-import { catalog } from '$lib/koan/catalog'
-import { SITE } from '$lib/seo'
+import { guides } from '#lib/guides/index.js'
+import { catalog } from '#lib/koan/catalog.js'
+import { SITE } from '#lib/seo.js'
 
 // Prerendered to a static /sitemap.xml. Only indexable content routes are
 // listed — the /app catalog and /chat shells are interactive (noindex), so

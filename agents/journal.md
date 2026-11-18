@@ -1,5 +1,177 @@
 # Project Journal
 
+## 2026-11-18 — Fixed InputCheckbox aria-hidden-focus (issue #190, PR #191)
+
+Custom variant rendered `<input hidden>` + focusable `role=button` icon
+under `aria-hidden` (axe serious, WCAG 4.1.2). Fix (issue's option B):
+native input is the control in every variant — visually hidden but
+focusable via new base CSS, icon decorative + forwarding clicks to
+`input.click()`; `toggle()` deleted (single `handleChange` path).
+Side effects fixed free: Space-scroll (no preventDefault), disabled
+icon still toggling, `required` on a hidden input. rokkit + frosted
+focus rings repointed at `input:focus-visible + [data-checkbox-icon]`;
+other styles' `:focus-within` label rules unaffected. No checkbox e2e
+fixture exists, so unit + browser specs carry it. TDD: 3 red → green;
+rewrote the span-keydown specs that encoded the bug (also fixed their
+undocumented `variant: 'icon'` spelling to `custom`; runtime treats
+non-default identically, `data-variant` normalized). Harnesses learned:
+`userEvent.type` clicks as part of typing (proven by probe) — Enter
+spec uses `fireEvent`. Gates: forms 813, lint 0, svelte-check 0/0,
+full suite 9137, themes build with new rules in dist. Out of scope
+(noted): InputField consumes `variant` for layout so schema/layout
+can't force `variant=default` — moot once custom is accessible.
+
+## 2026-11-18 — CI workflow cleanup (PR #189)
+
+Deduped GitHub Actions per owner request. New `.github/actions/setup`
+composite owns the bun 1.4.4 pin + node 24.x + frozen install +
+optional themes build (was pasted ×4). Merged `check.yml` + `coverage.yml`
+into `ci.yml` (name "CI") with job ids `check`/`browser`/`coverage`
+UNCHANGED, so the protection contexts keep matching with no settings
+edit. `schedule.yml` → `cleanup-runs.yml`; `ninja_i18n.yml` →
+`i18n-lint.yml` with `opral/ninja-i18n-action` pinned to SHA 415e9993
+(was `@main`). `publish.yml`/`deprecate.yml` kept, setup via composite.
+Spec: `openspec/changes/ci-workflow-cleanup/`. Validated with actionlint;
+CI on the PR itself proves the composite + renames live.
+
+## 2026-11-18 — Branch hardening complete: main + develop fully protected (PR #188)
+
+Finished the approved hardening via `gh api` (settings only, no commits).
+Both `main` and `develop` now enforce, verified by re-GET:
+`required_status_checks {strict, [check, browser]}` (app_id 15368),
+`enforce_admins: true`, `required_pull_request_reviews: 1`,
+`required_conversation_resolution: true`, no other restrictions.
+
+Consequences: direct pushes to either branch are now blocked (hotfixes
+need PRs); every merge needs green check+browser and resolved
+conversations. The 1-approval rule was dropped the same day: the owner
+is the sole merger, so a non-author approval would deadlock every own
+PR. Current rule on both branches: strict checks + no-bypass +
+conversation resolution, no required reviews.
+
+## 2026-11-18 — Deep review + openspec migration (deep-review workflow, committed as 8c18cb194 + 1acfb4385)
+
+**Security (manual review, no strix binary; all static-only, unconfirmed):**
+F1 MEDIUM tooltip stored-XSS (`Tooltip.svelte::formatDefault` + `{@html}`,
+default-off mitigates), F2 MEDIUM MarkdownRenderer SSR identity fallback
+(trusted in-app, real for SSR consumers), F3 MEDIUM `/api/chat/interpret`
+unauthenticated + unthrottled (quota/availability, no key leak), F4 LOW
+`buildInitScript` interpolation, F5 LOW WebLLM CDN without SRI, F6 INFO no
+CSP/headers, F7 INFO `?model=` into WebLLM id. Verified good: key
+server-only, allowlist + bounds, no SSRF, dompurify single-copy 3.4.16 with
+floor specs, escaped Table/LLM paths, secrets clean, no eval. OWASP mapped
+(all ten). develop CI on the Kit 3 push is green (Check 8m1s, Coverage 8m41s).
+
+**Duplication (jscpd 2.57%, 294 clones):** 7 candidates ≥3 uses (57 onMount
+shell pages, 8 md5-identical icons indexes, graph focus-root prelude,
+6-site edge identity incl. exact 21-line dupe, forms input-spec factory,
+themes css-spec headers, matchMedia setup trio) + documented near-misses.
+Kit-3 surface clean (zero `$lib` remnants).
+
+**Dead code (24 items):** unused deps (chart d3/forms ramda/cli iconify,
+root dompurify, learn fonts/web-llm/iconify-json, app test libs),
+misplaced root `user-event` (phantom dep of forms specs), 12 dead
+Observatory interfaces, 9 orphan learn components, dead exports/shims,
+Kit leftovers (root `svelte.config.js`, `vercel.json`, cli broken exports,
+icons script name). D13 (test-only modules), D20 (cli Kit-3 detect),
+D23 (unocss subpath exports) need maintainer decisions — no specs written.
+
+**Follow-ups:** 13 child-written changes (dup ×7, dead-code ×6 = 39 files)
++ 3 parent-written MEDIUM security changes (`fix-tooltip-xss-sink`,
+`ssr-safe-markdown-sanitize`, `ratelimit-chat-interpret`), all specs-only
+with confirm-first PoC tasks. Total 16 changes / 48 files.
+
+**Openspec migration:** `docs/plans/` (27) + `docs/superpowers/{plans,specs}/`
+(41+31) verified completed/superseded and moved byte-identical via staged
+`git mv` to `openspec/changes/archive/`; empty dirs removed. New:
+`openspec/{project.md,product,specs,backlog}/README.md` (BL-001..BL-012
+alias open `docs/backlog/` items, which stay put) + archive index. 17 ref
+swaps in 15 files; pipeline rewritten to openspec in `agents/workflow.md`,
+`CLAUDE.md`, `.claude/commands/{feature-start,backlog}.md`. Only 2 source
+files touched, comment-only. Verified: 99 staged renames, zero live
+`docs/plans|docs/superpowers` refs outside frozen journal + one historical
+memory row. Repaired: followups child appended its journal entry at EOF —
+moved into this entry.
+
+**Open:** commit this batch; D13/D20/D23 + icons/scripts decisions;
+F1–F3 PoC confirmation runs.
+
+## 2026-11-18 — Kit 3 toolchain migration done on develop; branch protection landed; dependabot mystery solved (ultracode workflow)
+
+Coordinated workflow resolved the three deploy-follow-up items one by one.
+Openspec proposals for all three: `openspec/changes/{kit3-toolchain-migration,
+main-branch-protection,dependabot-routing}/{proposal.md,tasks.md,specs/spec.md}`.
+
+**Kit 3 migration (DONE, committed as de27cd6c9, 142 files):** kit ^3.3.1, adapters
+auto ^8.0.1 + cloudflare ^8.0.3, vite ^8.3.8, plugin-svelte ^7.3.1, svelte
+^5.57.3, typescript ^6.0.3, unocss ^66.13.0, paraglide 2.29.3. `svelte.config.js`
+deleted into `vite.config.js`; `$lib`→`#lib`, `$app/environment`→`$app/env`,
+`$env/*`→`$app/env/*` via `src/env.ts`; hooks to `@sveltejs/kit/hooks`;
+readonly-event fix; tsconfigs extend `$app/tsconfig`. The first migrate attempt
+died on a transport error AFTER doing the work; the retry verified it to
+completion. All five gates re-run independently (real exit codes): frozen
+install 0 (764 installs), lint 0, svelte-check 0/0, `CF_PAGES=1` build 0 with
+`_worker.js` (8500B), test:ci 0 — 605 files / 9134 tests passed, 1 skipped.
+bun 1.4.4 pin intact (re-verified: all four `bun-version` pins present — the
+migrate agent misreported them absent). Post-workflow fixes the agent's gate
+list missed (`check:types`, `check:build`): ambient `process` declaration in
+`graph/src/layout/options.ts` (TS2591), explicit `rootDir` in all seven
+`tsconfig.build.json` (TS5011), `benchmark/` excluded from data's declaration
+emit (TS6059 — `benchmark/` is unimported by src/spec, so the exclusion
+loses nothing); deleted stray compiler-emitted `benchmark/*.d.ts` (untracked)
+that broke lint — verified `check:build` no longer regenerates them.
+Non-blocking: UnoCSS
+`transform_index_html` warnings during build; CSS output verified full (1.4MB).
+Merging to `main` closes reopened security alerts 2-5 (kit CVEs <3.0.0).
+
+**Branch protection (minimal rule LIVE on main):** was 404 unprotected; now
+`required_status_checks {strict, [check, browser]}`, `enforce_admins: false`,
+nothing else (contexts verified against run 44215225968, app_id 15368).
+Re-verified via API after the run.
+
+**Dependabot (diagnosed, no file to fix):** #175 was a SECURITY update, not a
+version update — enabled by the repo Settings toggle
+(`security_and_analysis.dependabot_security_updates`), which always targets the
+default branch (`main`) with no `target-branch` option. No
+`.github/dependabot.yml` ever existed (11 branch tips + full history searched;
+2 bot PRs ever, both CVE-driven). Backstop = the protection rule above.
+
+**Open:** commit+push the migration; harden main (`enforce_admins`, required
+reviews ≥1, conversation resolution — user decision); mirror protection to
+develop (user decision); optional version-updates-only `dependabot.yml` with
+`target-branch: develop`; Cloudflare preview deploy check.
+
+## 2026-11-17 — Hotfix on main: reverted dependabot's Kit 3 bump (deploy + GHA red since Nov 14)
+
+**Symptom:** with bun pinned, Cloudflare failed differently:
+`@sveltejs/kit changed from ^2.70.3 to ^3.1.0 in apps/learn` — and GHA
+Check/Coverage on `main` failed the same frozen install.
+
+**Cause:** dependabot PR #175 (merged Nov 14) bumped kit 2.70.3 → 3.1.0 in
+`apps/learn` AND `packages/unocss` without syncing `bun.lock` (the
+npm_and_yarn group doesn't manage it). PR #187 carried the mismatch into the
+release merge. The PR's own Check was red — `main` has no required status
+checks, so it merged anyway.
+
+**Why revert, not sync:** syncing the lock resolved `kit@3.2.0`, whose peers
+demand vite ^8, vite-plugin-svelte ^7, typescript ^6 and svelte ^5.57.1, and
+bun nested a second Kit 2.70.3 under both adapters. That is a five-way
+toolchain migration, not a lockfile sync — it belongs on `develop`, not
+smuggled into `main`. Revert restores consistency with NO lock change.
+
+**Fix (3cc33ee74, direct to `main` — `develop` never had the bump):** two
+one-line spec reverts. Verified in a detached worktree (since removed):
+frozen install exit 0, themes build exit 0, `CF_PAGES=1` learn build real
+exit 0 with `_worker.js` emitted. GHA Check (6m44s) + Coverage (6m18s) green
+on the hotfix; Cloudflare build outcome not visible from here (no new
+deployment listed as of the check — dashboard is the source of truth).
+
+**Follow-ups:** (1) Kit 3 migration on `develop` (kit + vite 8 +
+plugin-svelte 7 + TS 6 + svelte ≥ 5.57.1, coordinated). (2) GitHub branch
+protection requiring green Check on `main` (repo setting, not code).
+(3) Dependabot has no in-repo config file — find where it's enabled before
+the next bump re-breaks `main`.
+
 ## 2026-11-17 — Pinned bun to 1.4.4 everywhere; fixed the Cloudflare frozen-lockfile deploy failure
 
 **Symptom:** the Cloudflare Workers Builds deploy failed at install with

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ChatStream, ChatMessage, Chips } from '$lib/chat'
-	import { shell } from '$lib/koan/shell.svelte'
+	import { ChatStream, ChatMessage, Chips } from '#lib/chat/index.js'
+	import { shell } from '#lib/koan/shell.svelte.ts'
 	import { explorer } from './store.svelte'
 	import type { Tip } from './registry'
 

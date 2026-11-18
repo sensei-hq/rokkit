@@ -30,4 +30,14 @@ describe('bun.lock', () => {
 		expect(config).toMatch(/execute:\s*'bun install --ignore-scripts'/)
 		expect(config).toMatch(/all:\s*true/)
 	})
+
+	it('holds oxc-parser at the root override (its browser entry breaks jsdom)', () => {
+		// oxc-parser 0.153 (via @unocss/transformer-attributify-jsx) ships a
+		// `browser` export condition that the jsdom suite resolves to a WASM
+		// binding which cannot load in Node — collection crashes before a
+		// single test runs, and aliases/inline cannot reach the externalized
+		// chain. The root `overrides` hold it at 0.115.0, verified without the
+		// browser entry; lift only together with a green `bun run test:ci`.
+		expect(lock.packages['oxc-parser'][0]).toBe('oxc-parser@0.115.0')
+	})
 })

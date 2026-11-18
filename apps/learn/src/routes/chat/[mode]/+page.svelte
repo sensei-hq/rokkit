@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { tick, onMount } from 'svelte'
-	import { ChatHistory, configureWho } from '$lib/chat'
+	import { ChatHistory, configureWho } from '#lib/chat/index.js'
 	import { ChatTimeline, ChatComposer, ChatMessage } from '@rokkit/ui'
-	import { conversation, takePendingPrompt } from '$lib/chat-demo/store.svelte'
-	import { pickStarterHints } from '$lib/chat-demo/starter-hints'
-	import OllamaSetup from '$lib/chat-demo/components/OllamaSetup.svelte'
-	import { getCurrentId, getCurrentConversation, setCurrentId } from '$lib/koan/conversations.svelte'
+	import { conversation, takePendingPrompt } from '#lib/chat-demo/store.svelte.ts'
+	import { pickStarterHints } from '#lib/chat-demo/starter-hints.js'
+	import OllamaSetup from '#lib/chat-demo/components/OllamaSetup.svelte'
+	import { getCurrentId, getCurrentConversation, setCurrentId } from '#lib/koan/conversations.svelte.ts'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import {
@@ -16,8 +16,8 @@
 		detectWebGPU,
 		OPENROUTER_MODELS,
 		WEBLLM_MODELS
-	} from '$lib/chat-demo/llm.svelte'
-	import { cardFor } from '$lib/chat-demo/modes'
+	} from '#lib/chat-demo/llm.svelte.ts'
+	import { cardFor } from '#lib/chat-demo/modes.js'
 	import {
 		composerValue,
 		attachError,
@@ -31,8 +31,8 @@
 		bucketsFor,
 		submitFile,
 		recencyLabel
-	} from '$lib/chat-demo/chat-controller.svelte'
-	import BlockList from '$lib/chat-demo/components/BlockList.svelte'
+	} from '#lib/chat-demo/chat-controller.svelte.ts'
+	import BlockList from '#lib/chat-demo/components/BlockList.svelte'
 
 	const { data } = $props()
 
@@ -94,9 +94,8 @@
 	function selectModel(id: string) {
 		if (conversation.turns.length > 0) startNewChat()
 		goto(`/chat/${data.mode}?model=${encodeURIComponent(id)}`, {
-			replaceState: true,
-			keepFocus: true,
-			noScroll: true
+			replace: true,
+			reset: false
 		})
 		if (data.mode === 'webllm') resetWebLLMEngine()
 	}
@@ -163,7 +162,7 @@
 </svelte:head>
 
 <div class="chat-shell">
-	{#snippet convRow(conv: import('$lib/koan/conversations.svelte').Conversation)}
+	{#snippet convRow(conv: import('#lib/koan/conversations.svelte.ts').Conversation)}
 		<button
 			type="button"
 			class="conv"

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Code, MarkdownRenderer } from '@rokkit/ui'
-	import SvelteFence from '$lib/components/fences/SvelteFence.svelte'
-	import TsFence from '$lib/components/fences/TsFence.svelte'
-	import JsFence from '$lib/components/fences/JsFence.svelte'
-	import CssFence from '$lib/components/fences/CssFence.svelte'
+	import SvelteFence from '#lib/components/fences/SvelteFence.svelte'
+	import TsFence from '#lib/components/fences/TsFence.svelte'
+	import JsFence from '#lib/components/fences/JsFence.svelte'
+	import CssFence from '#lib/components/fences/CssFence.svelte'
 
 	const { data } = $props()
 	const c = $derived(data.component)

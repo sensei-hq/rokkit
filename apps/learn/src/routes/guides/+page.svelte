@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { guidesByCategory, type GuideCategory } from '$lib/guides'
+	import { guidesByCategory, type GuideCategory } from '#lib/guides/index.js'
 
 	const grouped = guidesByCategory()
 	const categories: GuideCategory[] = ['basics', 'data', 'design', 'workflows', 'advanced']

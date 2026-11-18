@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { setShellBrowse } from '$lib/koan/shell.svelte'
+	import { setShellBrowse } from '#lib/koan/shell.svelte.ts'
 
 	/**
 	 * Browse-first entry point: the full demo catalog as a grid, without the landing

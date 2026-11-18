@@ -86,7 +86,7 @@ flowchart LR
 ## FormBuilder Responsibilities
 
 `FormBuilder` (`lib/builder.svelte.js`) is the reactive core, and a COMPOSITION (decomposed
-2026-09-30, plan `docs/plans/2026-09-30-formbuilder-decomposition.md`): it builds five job
+2026-09-30, plan `openspec/changes/archive/docs-plans/2026-09-30-formbuilder-decomposition.md`): it builds five job
 classes from `lib/state/` and derives `elements` from them through the pure `buildElements`.
 `FormRenderer` creates one stable instance at mount and wires prop changes to it via `$effect`.
 

@@ -1,15 +1,16 @@
-import { paraglideMiddleware } from '$lib/paraglide/server.js'
-import { getLocale, getTextDirection } from '$lib/paraglide/runtime.js'
+import { paraglideMiddleware } from '#lib/paraglide/server.js'
+import { getLocale, getTextDirection } from '#lib/paraglide/runtime.js'
 import { themeInitScript } from '@rokkit/unocss/hooks'
-import { STORAGE_KEY } from '$lib/theme-config'
+import { STORAGE_KEY } from '#lib/theme-config.js'
 
 const initScript = themeInitScript({ storageKey: STORAGE_KEY, defaultStyle: 'zen-sumi' })
 
-/** @type {import('@sveltejs/kit').Handle} */
+/** @type {import('@sveltejs/kit/hooks').Handle} */
 export const handle = ({ event, resolve }) => {
 	return paraglideMiddleware(event.request, ({ request }) => {
-		event.request = request
-		return resolve(event, {
+		// Kit 3: `event.request` is readonly — pass a shallow copy carrying the
+		// delocalized request instead of assigning onto the event.
+		return resolve({ ...event, request }, {
 			transformPageChunk({ html }) {
 				// Inject in `<head>` (just before `</head>`) so the script
 				// runs before the body element is parsed. The script writes

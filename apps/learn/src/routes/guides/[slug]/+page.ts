@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { findGuide } from '$lib/guides'
+import { findGuide } from '#lib/guides/index.js'
 import type { PageLoad } from './$types'
 
 export const load: PageLoad = ({ params }) => {

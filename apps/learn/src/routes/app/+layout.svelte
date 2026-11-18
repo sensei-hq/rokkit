@@ -8,7 +8,7 @@
 		ChatStream,
 		Chips,
 		configureWho
-	} from '$lib/chat'
+	} from '#lib/chat/index.js'
 
 	// Brand the assistant once for this surface; every ChatMessage with
 	// kind='info' picks it up.
@@ -17,17 +17,17 @@
 	import type { TableColumn } from '@rokkit/ui'
 	import { FormRenderer } from '@rokkit/forms'
 	import { alerts, commands } from '@rokkit/states'
-	import RokkitWordmark from '$lib/components/RokkitWordmark.svelte'
-	import LlmsBookmark from '$lib/components/LlmsBookmark.svelte'
-	import { theme } from '$lib/stores/theme.svelte'
+	import RokkitWordmark from '#lib/components/RokkitWordmark.svelte'
+	import LlmsBookmark from '#lib/components/LlmsBookmark.svelte'
+	import { theme } from '#lib/stores/theme.svelte.ts'
 	import { vibe } from '@rokkit/states'
 	import { shortcuts } from '@rokkit/actions'
-	import { koan } from '$lib/koan/store.svelte'
-	import { shellAction, type ShellAction } from '$lib/koan/shell-intent'
-	import { findById, DEMO_ROUTE as CATALOG_DEMO_ROUTE } from '$lib/koan/catalog'
-	import CatalogGrid from '$lib/koan/components/CatalogGrid.svelte'
-	import APIPanel from '$lib/koan/components/APIPanel.svelte'
-	import { shell } from '$lib/koan/shell.svelte'
+	import { koan } from '#lib/koan/store.svelte.ts'
+	import { shellAction, type ShellAction } from '#lib/koan/shell-intent.js'
+	import { findById, DEMO_ROUTE as CATALOG_DEMO_ROUTE } from '#lib/koan/catalog.js'
+	import CatalogGrid from '#lib/koan/components/CatalogGrid.svelte'
+	import APIPanel from '#lib/koan/components/APIPanel.svelte'
+	import { shell } from '#lib/koan/shell.svelte.ts'
 	import {
 		conversations,
 		bucketByRecency,
@@ -42,20 +42,20 @@
 		getCurrentId,
 		getCurrentConversation,
 		type Conversation
-	} from '$lib/koan/conversations.svelte'
-	import ComposerSuggestions from '$lib/koan/components/ComposerSuggestions.svelte'
-	import ChartConversation from '$lib/koan/demos/chart/ChartConversation.svelte'
-	import ChartControls from '$lib/koan/demos/chart/ChartControls.svelte'
-	import SparklineConversation from '$lib/koan/demos/sparkline/SparklineConversation.svelte'
-	import GraphConversation from '$lib/koan/demos/graph/GraphConversation.svelte'
-	import GraphControls from '$lib/koan/demos/graph/GraphControls.svelte'
-	import SparklineControls from '$lib/koan/demos/sparkline/SparklineControls.svelte'
-	import DetailsSlab from '$lib/koan/components/DetailsSlab.svelte'
-	import type { DemoMeta } from '$lib/koan/types'
-	import ThemeWizardCard from '$lib/koan/demos/theme-wizard/ThemeWizardCard.svelte'
-	import { savePreset, resetPreset, downloadTokensCss, exportTokensCss } from '$lib/koan/demos/theme-wizard/store.svelte'
+	} from '#lib/koan/conversations.svelte.ts'
+	import ComposerSuggestions from '#lib/koan/components/ComposerSuggestions.svelte'
+	import ChartConversation from '#lib/koan/demos/chart/ChartConversation.svelte'
+	import ChartControls from '#lib/koan/demos/chart/ChartControls.svelte'
+	import SparklineConversation from '#lib/koan/demos/sparkline/SparklineConversation.svelte'
+	import GraphConversation from '#lib/koan/demos/graph/GraphConversation.svelte'
+	import GraphControls from '#lib/koan/demos/graph/GraphControls.svelte'
+	import SparklineControls from '#lib/koan/demos/sparkline/SparklineControls.svelte'
+	import DetailsSlab from '#lib/koan/components/DetailsSlab.svelte'
+	import type { DemoMeta } from '#lib/koan/types.js'
+	import ThemeWizardCard from '#lib/koan/demos/theme-wizard/ThemeWizardCard.svelte'
+	import { savePreset, resetPreset, downloadTokensCss, exportTokensCss } from '#lib/koan/demos/theme-wizard/store.svelte.ts'
 	import { onMount } from 'svelte'
-	import { browser } from '$app/environment'
+	import { browser } from '$app/env'
 	import { goto } from '$app/navigation'
 
 	interface Props {

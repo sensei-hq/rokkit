@@ -1,11 +1,11 @@
-import { error, json } from '@sveltejs/kit'
-import { env } from '$env/dynamic/private'
+import { error } from '@sveltejs/kit'
+import { OPENROUTER_API_KEY } from '$app/env/private'
 import type { RequestHandler } from './$types'
-import { interpretRequest, type InterpretBody } from '$lib/chat-demo/intent/interpret-request'
-import { shortlistFor } from '$lib/chat-demo/intent/systemone'
-import { classifierMessages, parseClassification } from '$lib/chat-demo/intent/classifier'
-import { upstreamProblem } from '$lib/chat-demo/intent/upstream'
-import type { Interpretation } from '$lib/chat-demo/intent/types'
+import { interpretRequest, type InterpretBody } from '#lib/chat-demo/intent/interpret-request.js'
+import { shortlistFor } from '#lib/chat-demo/intent/systemone.js'
+import { classifierMessages, parseClassification } from '#lib/chat-demo/intent/classifier.js'
+import { upstreamProblem } from '#lib/chat-demo/intent/upstream.js'
+import type { Interpretation } from '#lib/chat-demo/intent/types.js'
 
 /**
  * The server interpreter, for OpenRouter. The browser sends a message and a summary of what is
@@ -43,7 +43,7 @@ async function readingFrom(upstream: Response): Promise<Interpretation> {
 
 /** A curated free model asked to classify; its status passes on, its account details do not. */
 async function askOpenRouter(fetch: typeof globalThis.fetch, url: URL, body: InterpretBody): Promise<Interpretation> {
-	const key = env.OPENROUTER_API_KEY
+	const key = OPENROUTER_API_KEY
 	if (!key) throw error(503, 'No OpenRouter backend: OPENROUTER_API_KEY is not set')
 	const { message, screen, recent, model } = body
 	const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -69,5 +69,5 @@ async function askOpenRouter(fetch: typeof globalThis.fetch, url: URL, body: Int
 
 export const POST: RequestHandler = async ({ request, fetch, url }) => {
 	const body = await readBody(request)
-	return json({ interpretation: await askOpenRouter(fetch, url, body) })
+	return Response.json({ interpretation: await askOpenRouter(fetch, url, body) })
 }

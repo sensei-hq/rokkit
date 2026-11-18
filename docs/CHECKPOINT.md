@@ -1,24 +1,21 @@
 # Checkpoint
 
-**Slice:** Branch hardening complete (solo-adjusted). `main` + `develop`
-both enforce: strict required checks [check, browser],
-`enforce_admins: true`, conversation resolution, NO required reviews
-(dropped — sole merger would deadlock). Verified by API response.
-Settings-only change — nothing to commit for this slice.
+**Slice:** CI workflow cleanup. PR #189 (branch
+`ci/cleanup-workflows` → `develop`): composite setup action, merged
+`ci.yml`, renamed cleanup/i18n workflows, ninja SHA pin.
 
 **Done:**
-- `main`: minimal rule → full rule (reviews + resolution added).
-- `develop`: mirrored identical rule (was unprotected).
-- Journal records the change + the solo-deadlock escape hatch.
+- Spec at `openspec/changes/ci-workflow-cleanup/`; actionlint clean.
+- Job ids `check`/`browser`/`coverage` preserved → protection
+  contexts match with no settings edit.
+- Journal records the change.
 
-**Remaining:** D13/D20/D23 + icons/scripts maintainer decisions;
-F1–F3 PoC confirmations; implement the 16 follow-up changes;
-merge Kit 3 to `main` (closes alerts 2-5) via PR.
+**Remaining:** CI green on #189 → merge → delete branch → re-GET
+protection on both branches to confirm contexts still match.
 
-**Next command:** none — awaiting user direction on follow-ups.
+**Next command:** `gh pr checks 189 --watch --interval 60`, then
+`gh pr merge 189 --merge`.
 
-**Open questions (user):**
-- D13: export test-only modules or delete? D20/D23 dedicated specs?
-- Solo author? If merges deadlock, say so and the review rule relaxes.
+**Open questions (user):** none for this slice.
 
 **Known-broken:** none.

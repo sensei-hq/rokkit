@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Job ids are the branch-protection contexts (`check`, `browser`) — renaming
+  # one blocks merges until protection is updated to match. The workflow name
+  # is display-only and safe to change.
+  check:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      # svelte-check catches .svelte type errors that `tsc --noEmit` (the
+      # per-package pre-commit hook) does not — this is the gate `bun run bump`
+      # runs, so surface failures in CI too.
+      - name: Type + Svelte check
+        run: bun run check
+      - name: Lint
+        run: bun run lint
+
+  browser:
+    # Real-Chromium component specs (packages/*/browser) — the behaviour JSDOM cannot express:
+    # layout, hit-testing, focusout on removal. Not part of `bun run check` (kept browser-free),
+    # so without this job they rotted unnoticed through the vitest 4 upgrade.
+    # ubuntu-24.04, not -latest: Playwright cannot install Chromium on ubuntu 26.04 (Oct 2026).
+    runs-on: ubuntu-24.04
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Install Chromium
+        run: bunx playwright install --with-deps chromium
+      - name: Browser specs
+        run: bun run test:browser
+
+  coverage:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ./.github/actions/setup
+      - name: Run code coverage
+        run: bun run coverage
+      - uses: qltysh/qlty-action/coverage@08a0a862c159eae9b9003081da6663d96efef637 # v2
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/lcov.info

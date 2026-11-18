@@ -1,5 +1,20 @@
 # Project Journal
 
+## 2026-11-18 — Branch hardening complete: main + develop fully protected (uncommitted record)
+
+Finished the approved hardening via `gh api` (settings only, no commits).
+Both `main` and `develop` now enforce, verified by re-GET:
+`required_status_checks {strict, [check, browser]}` (app_id 15368),
+`enforce_admins: true`, `required_pull_request_reviews: 1`,
+`required_conversation_resolution: true`, no other restrictions.
+
+Consequences: direct pushes to either branch are now blocked (hotfixes
+need PRs); every merge needs green check+browser and resolved
+conversations. The 1-approval rule was dropped the same day: the owner
+is the sole merger, so a non-author approval would deadlock every own
+PR. Current rule on both branches: strict checks + no-bypass +
+conversation resolution, no required reviews.
+
 ## 2026-11-18 — Deep review + openspec migration (deep-review workflow, committed as 8c18cb194 + 1acfb4385)
 
 **Security (manual review, no strix binary; all static-only, unconfirmed):**

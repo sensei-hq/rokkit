@@ -19,7 +19,7 @@ Confirmed in `svelte-check@4.7.6`'s `bin/ts-version-check.js`, which reads
 `typescript/package.json` and throws when major >= 7.
 
 The issue's concern was that dbd hit this and nobody noticed because CI never ran
-`check`. **That does not apply here.** `.github/workflows/check.yml` runs
+`check`. **That does not apply here.** `.github/workflows/ci.yml` runs
 `bun run check`, which runs `check:svelte`, so the trap fails the build loudly —
 and svelte-check's error text names the exact fix. Deferring is therefore safe.
 

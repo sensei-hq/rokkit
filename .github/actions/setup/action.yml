@@ -1,0 +1,39 @@
+name: setup
+description: Install the pinned Bun + Node toolchains, install frozen deps, and build theme CSS.
+
+inputs:
+  build-themes:
+    description: Build @rokkit/themes dist after install (skip when the caller builds it itself, e.g. publish via prepublishOnly)
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      with:
+        # Pinned: bun.lock is written by this exact bun, and Cloudflare
+        # Workers Builds reads the same version from `packageManager`.
+        # A floating bun re-resolves peers and fails --frozen-lockfile
+        # (2026-11-17 deploy failure). To upgrade: bump local bun, run
+        # `bun install`, commit bun.lock, then bump this pin + packageManager.
+        bun-version: 1.4.4
+    - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      with:
+        node-version: 24.x
+    - name: Install dependencies
+      # --ignore-scripts: @rokkit/themes' `prepare` runs build.mjs mid-install,
+      # which reaches @rokkit/core → date-fns before the workspace is fully
+      # linked and fails. It is a race, so it fails intermittently rather than
+      # always (broke Coverage at v1.4.1 after passing for weeks on the dot).
+      run: bun install --frozen-lockfile --ignore-scripts
+      shell: bash
+    - name: Build theme CSS
+      if: inputs.build-themes == 'true'
+      # @rokkit/themes is the ONLY package with a `prepare` script, so it is the
+      # only thing --ignore-scripts skips — but apps/learn imports its dist and
+      # the browser specs measure the built css, so build it explicitly now that
+      # dependencies are fully linked.
+      run: cd packages/themes && bun run build
+      shell: bash

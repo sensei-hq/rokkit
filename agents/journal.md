@@ -1,6 +1,19 @@
 # Project Journal
 
-## 2026-11-18 — Branch hardening complete: main + develop fully protected (uncommitted record)
+## 2026-11-18 — CI workflow cleanup (PR #189)
+
+Deduped GitHub Actions per owner request. New `.github/actions/setup`
+composite owns the bun 1.4.4 pin + node 24.x + frozen install +
+optional themes build (was pasted ×4). Merged `check.yml` + `coverage.yml`
+into `ci.yml` (name "CI") with job ids `check`/`browser`/`coverage`
+UNCHANGED, so the protection contexts keep matching with no settings
+edit. `schedule.yml` → `cleanup-runs.yml`; `ninja_i18n.yml` →
+`i18n-lint.yml` with `opral/ninja-i18n-action` pinned to SHA 415e9993
+(was `@main`). `publish.yml`/`deprecate.yml` kept, setup via composite.
+Spec: `openspec/changes/ci-workflow-cleanup/`. Validated with actionlint;
+CI on the PR itself proves the composite + renames live.
+
+## 2026-11-18 — Branch hardening complete: main + develop fully protected (PR #188)
 
 Finished the approved hardening via `gh api` (settings only, no commits).
 Both `main` and `develop` now enforce, verified by re-GET:

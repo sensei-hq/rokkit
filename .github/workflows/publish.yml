@@ -23,21 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: ./.github/actions/setup
         with:
-          # Pinned — see check.yml: bun.lock + packageManager + CI agree on 1.4.4.
-          bun-version: 1.4.4
-
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: 24.x
-
-      - name: Install dependencies
-        # --ignore-scripts: skip lifecycle scripts (notably @rokkit/themes' `prepare`,
-        # which runs build.mjs → imports @rokkit/core → date-fns and fails mid-install
-        # on newer bun). The publish step builds each package via `prepublishOnly`
-        # after install completes (deps fully linked), so no build is needed here.
-        run: bun install --frozen-lockfile --ignore-scripts
+          # No themes build: the publish step builds each package via
+          # `prepublishOnly` after install completes (deps fully linked).
+          build-themes: 'false'
 
       # Before anything is published: bun.lock must record every workspace at its package.json
       # version, or `bun pm pack` pins siblings to the previous release (v1.8.1).

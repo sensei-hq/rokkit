@@ -29,13 +29,13 @@
 		...rest
 	}: Props = $props()
 
+	// The native input is the control in every variant: it carries focus,
+	// keyboard handling, label association, and form semantics. The custom
+	// icon is decorative and forwards pointer clicks to it.
+	let inputElement: HTMLInputElement | undefined = $state(undefined)
+
 	function handleChange(event: Event & { currentTarget: HTMLInputElement }) {
 		value = Boolean(event.currentTarget.checked)
-		onchange?.(value)
-	}
-
-	function toggle() {
-		value = !value
 		onchange?.(value)
 	}
 
@@ -44,10 +44,10 @@
 	let icon = $derived(stateIcons[value === null || value === undefined ? 'unknown' : value ? 'checked' : 'unchecked'])
 </script>
 
-<div data-checkbox-root data-variant={variant}>
+<div data-checkbox-root data-variant={variant === 'default' ? 'default' : 'custom'}>
 	<input
 		type="checkbox"
-		hidden={variant !== 'default'}
+		bind:this={inputElement}
 		{required}
 		{disabled}
 		{name}
@@ -62,11 +62,8 @@
 		<span
 			class={icon}
 			data-checkbox-icon
-			role="button"
-			tabindex="0"
-			onclick={toggle}
-			onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggle()}
 			aria-hidden="true"
+			onclick={() => inputElement?.click()}
 		></span>
 	{/if}
 </div>

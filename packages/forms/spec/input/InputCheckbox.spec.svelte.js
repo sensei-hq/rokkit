@@ -79,37 +79,91 @@ describe('InputCheckbox', () => {
 	})
 
 
-	// ─── Icon-variant toggle (non-default variants render a clickable icon) ─────
+	// ─── Icon clicks forward to the native input ─────
 
 	it('clicking the icon toggles the value and fires onchange', async () => {
 		const onchange = vi.fn()
-		const props = $state({ value: false, variant: 'icon', onchange })
+		const props = $state({ value: false, variant: 'custom', onchange })
 		const { container } = render(InputCheckbox, { props })
 		await fireEvent.click(container.querySelector('[data-checkbox-icon]'))
 		expect(onchange).toHaveBeenCalledWith(true)
-	})
-
-	it.each(['Enter', ' '])('%s on the icon toggles the value', async (key) => {
-		const onchange = vi.fn()
-		const props = $state({ value: false, variant: 'icon', onchange })
-		const { container } = render(InputCheckbox, { props })
-		await fireEvent.keyDown(container.querySelector('[data-checkbox-icon]'), { key })
-		expect(onchange).toHaveBeenCalledWith(true)
-	})
-
-	it('other keys on the icon do nothing', async () => {
-		const onchange = vi.fn()
-		const props = $state({ value: false, variant: 'icon', onchange })
-		const { container } = render(InputCheckbox, { props })
-		await fireEvent.keyDown(container.querySelector('[data-checkbox-icon]'), { key: 'x' })
-		expect(onchange).not.toHaveBeenCalled()
 	})
 
 	it('toggling from true goes back to false', async () => {
 		const onchange = vi.fn()
-		const props = $state({ value: true, variant: 'icon', onchange })
+		const props = $state({ value: true, variant: 'custom', onchange })
 		const { container } = render(InputCheckbox, { props })
 		await fireEvent.click(container.querySelector('[data-checkbox-icon]'))
 		expect(onchange).toHaveBeenCalledWith(false)
+	})
+
+	it('clicking the icon does nothing when disabled', async () => {
+		const onchange = vi.fn()
+		const props = $state({ value: false, disabled: true, onchange })
+		const { container } = render(InputCheckbox, { props })
+		await fireEvent.click(container.querySelector('[data-checkbox-icon]'))
+		expect(props.value).toBe(false)
+		expect(onchange).not.toHaveBeenCalled()
+	})
+
+	// ─── Accessibility: the native input is the control (issue #190) ────────
+
+	it('puts no focusable control under aria-hidden in the custom variant', () => {
+		const props = $state({ value: false })
+		const { container } = render(InputCheckbox, { props })
+		const input = container.querySelector('input')
+		expect(input.hasAttribute('hidden')).toBe(false)
+		expect(input.tabIndex).toBe(0)
+		const violations = [
+			...container.querySelectorAll('[aria-hidden="true"][tabindex]'),
+			...container.querySelectorAll('[aria-hidden="true"] [tabindex]')
+		]
+		expect(violations).toHaveLength(0)
+	})
+
+	it('renders the icon as decorative and forwards its clicks to the input', async () => {
+		const onchange = vi.fn()
+		const props = $state({ value: false, onchange })
+		const { container } = render(InputCheckbox, { props })
+		const icon = container.querySelector('[data-checkbox-icon]')
+		expect(icon.getAttribute('aria-hidden')).toBe('true')
+		expect(icon.hasAttribute('tabindex')).toBe(false)
+		expect(icon.hasAttribute('role')).toBe(false)
+
+		await fireEvent.click(icon)
+		expect(props.value).toBe(true)
+		expect(onchange).toHaveBeenCalledTimes(1)
+		expect(onchange).toHaveBeenCalledWith(true)
+	})
+
+	it('ignores key presses on the icon (keyboard goes through the native input)', async () => {
+		const onchange = vi.fn()
+		const props = $state({ value: false, onchange })
+		const { container } = render(InputCheckbox, { props })
+		const icon = container.querySelector('[data-checkbox-icon]')
+		await fireEvent.keyDown(icon, { key: ' ' })
+		await fireEvent.keyDown(icon, { key: 'Enter' })
+		expect(onchange).not.toHaveBeenCalled()
+		expect(props.value).toBe(false)
+	})
+
+	it('Enter on the input does nothing (native checkbox behavior)', async () => {
+		const onchange = vi.fn()
+		const props = $state({ value: false, onchange })
+		const { container } = render(InputCheckbox, { props })
+		const element = container.querySelector('input')
+		// fireEvent, not userEvent.type: type() clicks as part of typing.
+		await fireEvent.keyDown(element, { key: 'Enter' })
+		await tick()
+		expect(props.value).toBe(false)
+		expect(onchange).not.toHaveBeenCalled()
+	})
+
+	it('default variant renders a visible native checkbox with no icon', () => {
+		const props = $state({ value: false, variant: 'default' })
+		const { container } = render(InputCheckbox, { props })
+		const input = container.querySelector('input')
+		expect(input.hasAttribute('hidden')).toBe(false)
+		expect(container.querySelector('[data-checkbox-icon]')).toBeNull()
 	})
 })

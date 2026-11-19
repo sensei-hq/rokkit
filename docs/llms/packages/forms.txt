@@ -205,12 +205,14 @@ const schema = {
 | `string` | `format: 'month'` | `month` | InputMonth |
 | `string` | `format: 'week'` | `week` | InputWeek |
 | `string` | `format: 'textarea'` | `textarea` | InputTextArea |
+| `string` | `x-multiline: true` | `textarea` | InputTextArea |
 | `number` | no min+max | `number` | InputNumber |
 | `number` | has both min and max | `range` | InputRange |
 | `integer` | no min+max | `number` | InputNumber |
 | `integer` | has both min and max | `range` | InputRange |
 | `boolean` | (default) | `checkbox` | InputCheckbox |
 | `array` | (default) | `array` | ArrayEditor |
+| `array` | `items.enum` present | `multiselect` | InputMultiSelect |
 
 Additional renderer types available via `renderer` layout prop or the `renderers` registry:
 

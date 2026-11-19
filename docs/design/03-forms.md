@@ -248,8 +248,10 @@ The `renderer` field (set in the layout element) bypasses all type inference and
    - `'number'` or `'integer'` with both `min` and `max` → `'range'`; otherwise → `'number'`
    - `'boolean'` → `'checkbox'`
    - `'string'` with `enum` or `options` → `'select'` (enum values mapped to options array)
+   - `'string'` with `x-multiline: true` → `'textarea'`
    - `'string'` otherwise → `'text'`
-   - `'array'` → `'array'` (ArrayEditor)
+   - `'array'` with `items.enum` → `'multiselect'` (enum values mapped to options array)
+   - `'array'` otherwise → `'array'` (ArrayEditor)
 4. Fallback → `'text'`
 
 `readonly: true` fields bypass this entire chain and render as type `'info'` (InfoField).
@@ -279,7 +281,7 @@ A layout is an object with a `type` and an `elements` array:
     // Reorder a field that appears later in the schema
     { scope: '#/email', label: 'Email Address' },
 
-    // Textarea hint via renderer override (not in schema)
+    // Textarea via renderer override (or `x-multiline: true` in schema)
     { scope: '#/bio', label: 'About You', renderer: 'textarea' },
 
     // Nested group
@@ -332,6 +334,7 @@ The `defaultRenderers` registry maps type strings to Svelte components. `resolve
 | `string`              | `format: 'month'`         | `InputMonth`       | `type="month"`                |
 | `string`              | `format: 'week'`          | `InputWeek`        | `type="week"`                 |
 | `string`              | `renderer: 'textarea'`    | `InputTextArea`    | Set in layout, not schema     |
+| `string`              | `x-multiline: true`       | `InputTextArea`    | Schema-level long-text hint   |
 | `string`              | `renderer: 'radio'`       | `InputRadio`       | Set in layout, not schema     |
 | `string` with `enum`  | —                         | `InputSelect`      | Enum values mapped to options |
 | `number` / `integer`  | —                         | `InputNumber`      | `step="1"` for integer        |
@@ -340,6 +343,7 @@ The `defaultRenderers` registry maps type strings to Svelte components. `resolve
 | `boolean`             | `renderer: 'switch'`      | `InputSwitch`      | Toggle switch                 |
 | `boolean`             | `renderer: 'toggle'`      | `InputToggle`      | Option-set toggle             |
 | `array`               | —                         | `ArrayEditor`      | Primitive or object items     |
+| `array`, `items.enum` | —                         | `InputMultiSelect` | Enum values mapped to options |
 | `object`              | —                         | `<fieldset>` group | Recursive via `renderElement` |
 | any                   | `readonly: true`          | `InfoField`        | Read-only display, no input   |
 | any                   | `type: 'display-table'`   | `DisplayTable`     | Non-editable data table       |
@@ -844,6 +848,7 @@ const defaultRenderers = {
   checkbox: InputCheckbox,
   radio: InputRadio,
   select: InputSelect,
+  multiselect: InputMultiSelect,
   switch: InputSwitch,
   toggle: InputToggle,
   array: ArrayEditor,

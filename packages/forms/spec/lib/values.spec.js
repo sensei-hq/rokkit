@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { deepClone, deepEqual, getPath, setPath } from '../../src/lib/values.js'
+import { deepClone, deepEqual, getPath, setPath, numberOrEmpty } from '../../src/lib/values.js'
+
+describe('numberOrEmpty', () => {
+	it('maps NaN to undefined and passes numbers through (#193)', () => {
+		expect(numberOrEmpty(NaN)).toBeUndefined()
+		expect(numberOrEmpty(0)).toBe(0)
+		expect(numberOrEmpty(-42.5)).toBe(-42.5)
+	})
+})
 
 describe('deepClone', () => {
 	it('copies plain values and leaves primitives alone', () => {

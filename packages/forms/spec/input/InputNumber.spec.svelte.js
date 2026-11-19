@@ -196,4 +196,17 @@ describe('InputNumber', () => {
 		const { container } = render(InputNumber, { props })
 		expect(container).toMatchSnapshot()
 	})
+
+	it('should report a cleared box as undefined, not NaN (#193)', async () => {
+		const props = $state({ value: 3, onchange: vi.fn() })
+		const { container } = render(InputNumber, { props })
+
+		const element = container.querySelector('input')
+		await userEvent.clear(element)
+		await fireEvent.change(element)
+		await tick()
+
+		expect(props.value).toBeUndefined()
+		expect(props.onchange).toHaveBeenCalledWith(undefined)
+	})
 })

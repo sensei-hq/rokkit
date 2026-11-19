@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements'
+	import { numberOrEmpty } from '../lib/values.js'
 
 	type Props = Omit<HTMLInputAttributes, 'value' | 'onchange'> & {
 		value?: number
-		onchange?: (value: number) => void
+		onchange?: (value: number | undefined) => void
 	}
 
 	let {
@@ -25,7 +26,7 @@
 	}: Props = $props()
 
 	function handleChange(event: Event & { currentTarget: HTMLInputElement }) {
-		value = event.currentTarget.valueAsNumber
+		value = numberOrEmpty(event.currentTarget.valueAsNumber)
 		onchange?.(value)
 	}
 </script>

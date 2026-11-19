@@ -1,5 +1,13 @@
 # Project Journal
 
+## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
+
+Minor (new feature: #197). Docs mapping updated first (03-forms +
+llms forms.txt), then `bun run bump -- minor --yes --no-push` (full
+local gate green, 9167 tests). PR #202 → `develop` (CI green) → PR
+#203 → `main` (CI green) → pushed tag → Publish green → npm serves
+1.16.0 (`forms`, `ui`, `latest`).
+
 ## 2026-11-18 — Fixed #193 (NaN), #194 (select id), #197 (multiselect + textarea)
 
 **#193 (merged via PR #198, closed):** cleared `InputNumber` reported

@@ -403,3 +403,21 @@ describe('MultiSelect — focus never scrolls the page', () => {
 		}
 	})
 })
+
+describe('MultiSelect trigger id (#197, #194 pattern)', () => {
+	const items = [
+		{ label: 'Red', value: 'red' },
+		{ label: 'Green', value: 'green' }
+	]
+
+	it('renders the id on the trigger button when provided', () => {
+		const { container } = render(MultiSelect, { items, value: [], id: 'tags' })
+		const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+		expect(trigger.id).toBe('tags')
+	})
+
+	it('omits the id attribute when absent', () => {
+		const { container } = render(MultiSelect, { items, value: [] })
+		expect(container.querySelector('[data-select-trigger]')!.hasAttribute('id')).toBe(false)
+	})
+})

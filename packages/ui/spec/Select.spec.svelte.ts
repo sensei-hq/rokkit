@@ -696,4 +696,17 @@ describe('Select', () => {
 			expect(container.querySelectorAll('[data-select-option]').length).toBe(flatItems.length)
 		})
 	})
+
+	describe('trigger id (#194)', () => {
+		it('renders the id on the trigger button when provided', () => {
+			const { container } = render(Select, { items: flatItems, id: 'color' })
+			const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+			expect(trigger.id).toBe('color')
+		})
+
+		it('omits the id attribute when absent', () => {
+			const { container } = render(Select, { items: flatItems })
+			expect(container.querySelector('[data-select-trigger]')!.hasAttribute('id')).toBe(false)
+		})
+	})
 })

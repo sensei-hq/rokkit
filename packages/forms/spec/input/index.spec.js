@@ -13,6 +13,7 @@ describe('components', () => {
 			'InputEmail',
 			'InputFile',
 			'InputMonth',
+			'InputMultiSelect',
 			'InputNumber',
 			'InputPassword',
 			'InputRadio',

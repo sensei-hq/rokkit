@@ -35,11 +35,16 @@ function omit(keys, obj) {
  */
 function combineArrayElementsWithSchema(element, attribute) {
 	const schema = getSchemaWithLayout(attribute.props.items, element.schema)
+	const itemEnum = attribute.props.items?.enum
 	return {
 		...attribute,
 		...pick(['component'], element),
 		props: {
 			...omit(['items'], attribute.props),
+			// An array of enum members is a multi-choice: carry the enum as
+			// `options` (the string-enum rule in elements.js does the same),
+			// so resolveInputType can route it to a multiselect.
+			...(Array.isArray(itemEnum) && !attribute.props.options ? { options: itemEnum } : {}),
 			schema
 		}
 	}

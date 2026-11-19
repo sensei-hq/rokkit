@@ -717,3 +717,67 @@ describe('FormRenderer — lookup integration', () => {
 		expect(props.data.city).toBeNull()
 	})
 })
+
+describe('FormRenderer — select label association (#194)', () => {
+	beforeEach(() => cleanup())
+
+	it('associates the field label with the select trigger via id', () => {
+		const props = $state({
+			data: {},
+			schema: {
+				type: 'object',
+				properties: { color: { type: 'string', enum: ['red', 'green'] } }
+			},
+			layout: {
+				type: 'vertical',
+				elements: [{ label: 'Color', scope: '#/color' }]
+			}
+		})
+		const { container } = render(FormRenderer, { props })
+
+		const label = container.querySelector('label[for]')
+		expect(label?.textContent).toContain('Color')
+		const trigger = container.querySelector('[data-select-trigger]')
+		expect(trigger?.id).toBeTruthy()
+		expect(trigger?.id).toBe(label?.getAttribute('for'))
+	})
+})
+
+describe('FormRenderer — multiselect + textarea routing (#197)', () => {
+	beforeEach(() => cleanup())
+
+	it('draws an array of enum members as a MultiSelect with the enum as options', async () => {
+		const props = $state({
+			data: {},
+			schema: {
+				type: 'object',
+				properties: { tags: { type: 'array', items: { enum: ['red', 'green'] } } }
+			},
+			layout: {
+				type: 'vertical',
+				elements: [{ label: 'Tags', scope: '#/tags' }]
+			}
+		})
+		const { container } = render(FormRenderer, { props })
+
+		expect(container.querySelector('[data-multiselect]')).toBeTruthy()
+		await fireEvent.click(container.querySelector('[data-select-trigger]'))
+		expect(container.querySelectorAll('[data-select-option]')).toHaveLength(2)
+	})
+
+	it('draws an x-multiline string as a textarea', () => {
+		const props = $state({
+			data: {},
+			schema: {
+				type: 'object',
+				properties: { bio: { type: 'string', 'x-multiline': true, maxLength: 500 } }
+			},
+			layout: {
+				type: 'vertical',
+				elements: [{ label: 'Bio', scope: '#/bio' }]
+			}
+		})
+		const { container } = render(FormRenderer, { props })
+		expect(container.querySelector('textarea')).toBeTruthy()
+	})
+})

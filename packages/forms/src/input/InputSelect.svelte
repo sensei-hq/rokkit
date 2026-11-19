@@ -10,6 +10,7 @@
 		placeholder?: string
 		disabled?: boolean
 		size?: 'sm' | 'md' | 'lg'
+		id?: string
 		onchange?: (value: unknown, item: unknown) => void
 	}
 
@@ -20,6 +21,7 @@
 		placeholder,
 		disabled = false,
 		size,
+		id,
 		onchange,
 		..._rest
 	}: Props = $props()
@@ -47,5 +49,6 @@
 	placeholder={effectivePlaceholder}
 	{disabled}
 	{size}
+	{id}
 	{onchange}
 />

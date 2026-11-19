@@ -1,22 +1,21 @@
 # Checkpoint
 
-**Slice:** InputCheckbox a11y fix (#190). PR #191 (branch
-`fix/input-checkbox-a11y` → `develop`): native input is the control,
-decorative forwarding icon, theme CSS updates, 5 new specs.
+**Slice:** Issues #193 + #194 + #197 shipped. PRs #198, #199, #200
+merged to `develop`, all issues closed. Full suite 9162+.
 
 **Done:**
-- Spec at `openspec/changes/input-checkbox-a11y/`; TDD red → green.
-- Gates green locally: forms 813, lint 0, svelte-check 0/0,
-  full suite 9137, themes build with new rules in dist.
-- Journal records the fix + harness findings.
+- #193: `numberOrEmpty` shared helper (NaN → undefined).
+- #194: Select trigger `id` + forwarding + chain test.
+- #197: array-enum MultiSelect, `x-multiline` textarea,
+  `validateArray`, MultiSelect `id`.
+- Journal records all three + the gotchas (stale ui dist,
+  bind-fallback error, fields.js items stripping).
 
-**Remaining:** CI green on #191 → merge (needs owner approval) →
-close #190 → note sensei#389 workaround removal.
+**Remaining:** D13/D20/D23 maintainer decisions; F1–F3 PoC runs;
+implement the 16 follow-up changes; next release cut.
 
-**Next command:** `gh pr checks 191 --watch --interval 60`, then ask
-owner to merge.
+**Next command:** none — awaiting user direction.
 
-**Open questions (user):**
-- Merge #191 once green?
+**Open questions (user):** none.
 
 **Known-broken:** none.

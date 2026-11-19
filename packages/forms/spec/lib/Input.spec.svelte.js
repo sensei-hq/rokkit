@@ -347,4 +347,17 @@ describe('lib/Input', () => {
 
 		expect(container.querySelector('.my-custom-class')).toBeTruthy()
 	})
+
+	it('should report a cleared number box as undefined, not NaN (#193)', async () => {
+		const onchange = vi.fn()
+		const props = $state({ type: 'number', value: 3, onchange })
+		const { container } = render(Input, { props })
+
+		const el = container.querySelector('input')
+		el.value = ''
+		await fireEvent.change(el)
+
+		expect(props.value).toBeUndefined()
+		expect(onchange).toHaveBeenCalledWith(undefined)
+	})
 })

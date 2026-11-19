@@ -4,6 +4,8 @@
 	 * Provides consistent interface with label, description, message handling
 	 */
 
+	import { numberOrEmpty } from './values.js'
+
 	type Message = { state: 'error' | 'warning' | 'info' | 'success'; text: string }
 
 	type SelectOption = string | { value: unknown; label?: string }
@@ -88,7 +90,7 @@
 		if ((type === 'checkbox' || type === 'radio') && target instanceof HTMLInputElement)
 			return target.checked
 		if ((type === 'number' || type === 'range') && target instanceof HTMLInputElement)
-			return target.valueAsNumber
+			return numberOrEmpty(target.valueAsNumber)
 		return target.value
 	}
 

@@ -1,5 +1,46 @@
 # Project Journal
 
+## 2026-11-18 — Fixed #193 (NaN), #194 (select id), #197 (multiselect + textarea)
+
+**#193 (merged via PR #198, closed):** cleared `InputNumber` reported
+NaN via `valueAsNumber`. Fix at the source: new shared
+`values.numberOrEmpty` (NaN → `undefined`), used by `InputNumber` and
+generic `Input.resolveValue` (same root cause; `InputRange` can't clear
+so untouched). `isEmpty` deliberately unchanged — programmatic NaN
+still errors (pinned spec kept). Extracting the helper also fixed the
+lint complexity warning the inline version tripped.
+
+**#194 (merged via PR #199, closed):** `SelectProps.id` + trigger `{id}`,
+`InputSelect` forwards. Chain test pins `label[for]` === trigger id
+through FormRenderer (value is the raw scope `#/color` — kept, only the
+association matters). Blast-radius sweep: no other Select site needs
+it. Local gotcha (twice now): forms resolves ui types from
+`packages/ui/dist`, so cross-package type changes need a local
+`bun run build` in ui before forms `svelte-check` passes.
+
+**#197 (merged via PR #200, closed):** `resolveInputType` routes array+`items.enum`
+→ `multiselect` (options from enum) and `x-multiline` strings →
+`textarea` (chosen over `contentMediaType`: no value unambiguously
+means multiline). New `InputMultiSelect` + registry entry + barrel;
+MultiSelect trigger `id` (#194 pattern) with `$bindable()` fallback
+removed (Svelte forbids binding undefined to a fallback prop —
+internals already `?? []`). Validation: `isEmpty([])`, `validateArray`
+(membership names the value, uniqueness, non-array guard). Two real
+finds along the way: `fields.js` strips `items` before resolution
+(enum now carried as `options` at the merge layer), and `bind:value`
++ fallback is a runtime error. Full suite 9162.
+
+## 2026-11-18 — Released v1.15.8 (checkbox a11y fix)
+
+`bun run bump -- patch --yes --no-push`: full local gate green, commit
+`f317d87ec`, local tag. PR #192 → `develop` (CI green) → PR #195 →
+`main` (CI green) → pushed tag → Publish green with provenance →
+npm serves 1.15.8 (`forms`, `ui`, `latest`). #191 merged, #190 closed.
+First release under branch protection: version commit, both merges,
+and tag push all went through PRs; direct pushes stay blocked.
+sensei#389's `DecisionCheckbox` workaround can go on the next sensei
+upgrade past this version.
+
 ## 2026-11-18 — Fixed InputCheckbox aria-hidden-focus (issue #190, PR #191)
 
 Custom variant rendered `<input hidden>` + focusable `role=button` icon

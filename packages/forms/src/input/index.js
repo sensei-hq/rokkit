@@ -8,6 +8,7 @@ export { default as InputEmail } from './InputEmail.svelte'
 
 export { default as InputFile } from './InputFile.svelte'
 export { default as InputMonth } from './InputMonth.svelte'
+export { default as InputMultiSelect } from './InputMultiSelect.svelte'
 export { default as InputNumber } from './InputNumber.svelte'
 export { default as InputPassword } from './InputPassword.svelte'
 export { default as InputRadio } from './InputRadio.svelte'

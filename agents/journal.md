@@ -1,5 +1,35 @@
 # Project Journal
 
+## 2026-11-18 — Fixed #193 (NaN), #194 (select id); #197 in PR (multiselect + textarea)
+
+**#193 (merged via PR #198, closed):** cleared `InputNumber` reported
+NaN via `valueAsNumber`. Fix at the source: new shared
+`values.numberOrEmpty` (NaN → `undefined`), used by `InputNumber` and
+generic `Input.resolveValue` (same root cause; `InputRange` can't clear
+so untouched). `isEmpty` deliberately unchanged — programmatic NaN
+still errors (pinned spec kept). Extracting the helper also fixed the
+lint complexity warning the inline version tripped.
+
+**#194 (merged via PR #199, closed):** `SelectProps.id` + trigger `{id}`,
+`InputSelect` forwards. Chain test pins `label[for]` === trigger id
+through FormRenderer (value is the raw scope `#/color` — kept, only the
+association matters). Blast-radius sweep: no other Select site needs
+it. Local gotcha (twice now): forms resolves ui types from
+`packages/ui/dist`, so cross-package type changes need a local
+`bun run build` in ui before forms `svelte-check` passes.
+
+**#197 (PR #200, in CI):** `resolveInputType` routes array+`items.enum`
+→ `multiselect` (options from enum) and `x-multiline` strings →
+`textarea` (chosen over `contentMediaType`: no value unambiguously
+means multiline). New `InputMultiSelect` + registry entry + barrel;
+MultiSelect trigger `id` (#194 pattern) with `$bindable()` fallback
+removed (Svelte forbids binding undefined to a fallback prop —
+internals already `?? []`). Validation: `isEmpty([])`, `validateArray`
+(membership names the value, uniqueness, non-array guard). Two real
+finds along the way: `fields.js` strips `items` before resolution
+(enum now carried as `options` at the merge layer), and `bind:value`
++ fallback is a runtime error. Full suite 9162.
+
 ## 2026-11-18 — Released v1.15.8 (checkbox a11y fix)
 
 `bun run bump -- patch --yes --no-push`: full local gate green, commit

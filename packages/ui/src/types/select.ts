@@ -99,6 +99,9 @@ export interface MultiSelectProps extends SelectBaseProps, ItemSnippets {
 
 	/** Called when selection changes */
 	onchange?: (values: unknown[], items: unknown[]) => void
+
+	/** Rendered on the trigger button, so a `<label for>` can target it (#197, #194 pattern) */
+	id?: string
 }
 
 /**

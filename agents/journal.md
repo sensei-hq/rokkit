@@ -1,6 +1,6 @@
 # Project Journal
 
-## 2026-11-18 — Fixed #193 (NaN), #194 (select id); #197 in PR (multiselect + textarea)
+## 2026-11-18 — Fixed #193 (NaN), #194 (select id), #197 (multiselect + textarea)
 
 **#193 (merged via PR #198, closed):** cleared `InputNumber` reported
 NaN via `valueAsNumber`. Fix at the source: new shared
@@ -18,7 +18,7 @@ it. Local gotcha (twice now): forms resolves ui types from
 `packages/ui/dist`, so cross-package type changes need a local
 `bun run build` in ui before forms `svelte-check` passes.
 
-**#197 (PR #200, in CI):** `resolveInputType` routes array+`items.enum`
+**#197 (merged via PR #200, closed):** `resolveInputType` routes array+`items.enum`
 → `multiselect` (options from enum) and `x-multiline` strings →
 `textarea` (chosen over `contentMediaType`: no value unambiguously
 means multiline). New `InputMultiSelect` + registry entry + barrel;

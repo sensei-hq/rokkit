@@ -463,6 +463,11 @@ describe('validateField — arrays (#197)', () => {
 		expect(result?.state).toBe('error')
 	})
 
+	it('accepts unique members under uniqueItems', () => {
+		const schema = { type: 'array', items: { enum: ['a', 'b'] }, uniqueItems: true }
+		expect(validateField(['a', 'b'], schema, 'Tags')).toBeNull()
+	})
+
 	it('allows duplicates without uniqueItems', () => {
 		const schema = { type: 'array', items: { enum: ['a', 'b'] } }
 		expect(validateField(['a', 'a'], schema, 'Tags')).toBeNull()
@@ -474,6 +479,21 @@ describe('validateField — arrays (#197)', () => {
 			text: 'Tags is required'
 		})
 		expect(validateField([], { type: 'array' }, 'Tags')).toBeNull()
+	})
+
+	it('rejects a non-array value for an array field', () => {
+		expect(validateField('nope', { type: 'array' }, 'Tags')).toEqual({
+			state: 'error',
+			text: 'Tags must be an array'
+		})
+	})
+
+	it('skips the enum check when the schema has no items enum', () => {
+		expect(validateField(['a', 'b'], { type: 'array' }, 'Tags')).toBeNull()
+		expect(validateField(['a', 'a'], { type: 'array', uniqueItems: true }, 'Tags')).toEqual({
+			state: 'error',
+			text: 'Tags must not contain duplicates'
+		})
 	})
 })
 

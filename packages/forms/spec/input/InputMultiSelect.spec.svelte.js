@@ -39,4 +39,22 @@ describe('InputMultiSelect', () => {
 		await fireEvent.click(container.querySelectorAll('[data-select-option]')[1])
 		expect(props.value).toEqual(['foo', 'bar'])
 	})
+
+	it('forwards disabled and placeholder', () => {
+		const props = $state({
+			value: [],
+			options: ['foo'],
+			disabled: true,
+			placeholder: 'Pick some'
+		})
+		const { container } = render(InputMultiSelect, { props })
+		expect(container.querySelector('[data-select-trigger]')?.hasAttribute('disabled')).toBe(true)
+		expect(container.querySelector('[data-select-placeholder]')?.textContent).toContain('Pick some')
+	})
+
+	it('renders with minimal props', () => {
+		const props = $state({})
+		const { container } = render(InputMultiSelect, { props })
+		expect(container.querySelector('[data-multiselect]')).toBeTruthy()
+	})
 })

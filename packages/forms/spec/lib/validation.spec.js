@@ -443,3 +443,21 @@ describe('validateField — required must be true, not merely truthy', () => {
 		expect(validateField(undefined, { type: 'object', required: ['city'] }, 'Address')).toBeNull()
 	})
 })
+
+describe('validateAll — cleared number box (#193)', () => {
+	const schema = { type: 'object', properties: { budget: { type: 'number' } } }
+	const layout = { type: 'vertical', elements: [{ label: 'Budget', scope: '#/budget' }] }
+
+	it('reports no error for a cleared optional number', () => {
+		expect(validateAll({ budget: undefined }, schema, layout)).toEqual({})
+	})
+
+	it('reports "is required" for a cleared required number', () => {
+		const requiredSchema = {
+			type: 'object',
+			properties: { budget: { type: 'number', required: true } }
+		}
+		const results = validateAll({ budget: undefined }, requiredSchema, layout)
+		expect(results.budget).toEqual({ state: 'error', text: 'Budget is required' })
+	})
+})

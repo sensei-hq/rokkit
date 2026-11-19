@@ -4,6 +4,16 @@
  */
 
 /**
+ * Normalize a numeric control reading: a cleared box reads as NaN — report it
+ * as empty, never as data (#193).
+ * @param {number} numeric - e.g. `input.valueAsNumber`
+ * @returns {number|undefined}
+ */
+export function numberOrEmpty(numeric) {
+	return Number.isNaN(numeric) ? undefined : numeric
+}
+
+/**
  * Deep-clone a plain value. A JSON round-trip, which also unwraps `$state` proxies safely.
  * @param {any} value
  * @returns {any}

@@ -18,7 +18,12 @@ import { schemaAt, requiredAt } from './schema.js'
  * @returns {boolean} True if empty
  */
 function isEmpty(value) {
-	return value === undefined || value === null || value === ''
+	return (
+		value === undefined ||
+		value === null ||
+		value === '' ||
+		(Array.isArray(value) && value.length === 0)
+	)
 }
 
 /** @returns {ValidationMessage} */
@@ -133,6 +138,44 @@ function validateNumber(value, schema, label) {
 }
 
 /**
+ * Validate array enum membership
+ * @private
+ */
+function validateArrayEnum(members, schema, label) {
+	const enumValues = schema.items?.enum
+	if (!enumValues) return null
+	const badIndex = members.findIndex((member) => !enumValues.includes(member))
+	if (badIndex === -1) return null
+	const bad = members[badIndex]
+	return errorMsg(`${label} has an invalid choice: ${bad} (must be one of: ${enumValues.join(', ')})`)
+}
+
+/**
+ * Validate array uniqueness constraint
+ * @private
+ */
+function validateArrayUnique(members, schema, label) {
+	if (!schema.uniqueItems) return null
+	if (new Set(members).size !== members.length) {
+		return errorMsg(`${label} must not contain duplicates`)
+	}
+	return null
+}
+
+/**
+ * Validate array field
+ * @private
+ * @param {any[]} value - Array value (non-empty; empties skip in checkPresence)
+ * @param {Object} schema - Field schema
+ * @param {string} label - Field label
+ * @returns {ValidationMessage|null}
+ */
+function validateArray(value, schema, label) {
+	if (!Array.isArray(value)) return errorMsg(`${label} must be an array`)
+	return validateArrayEnum(value, schema, label) || validateArrayUnique(value, schema, label)
+}
+
+/**
  * Validate boolean field
  * @private
  * @param {boolean} value - Boolean value
@@ -211,6 +254,8 @@ function validateByType(value, fieldSchema, fieldLabel) {
 			return validateNumber(value, fieldSchema, fieldLabel)
 		case 'boolean':
 			return validateBoolean(value, fieldSchema, fieldLabel)
+		case 'array':
+			return validateArray(value, fieldSchema, fieldLabel)
 		default:
 			return null
 	}

@@ -5,6 +5,7 @@ import InputNumber from '../../src/input/InputNumber.svelte'
 import InputEmail from '../../src/input/InputEmail.svelte'
 import InputSelect from '../../src/input/InputSelect.svelte'
 import InputCheckbox from '../../src/input/InputCheckbox.svelte'
+import InputMultiSelect from '../../src/input/InputMultiSelect.svelte'
 
 describe('defaultRenderers', () => {
 	it('should map standard types to components', () => {
@@ -13,6 +14,7 @@ describe('defaultRenderers', () => {
 		expect(defaultRenderers.email).toBe(InputEmail)
 		expect(defaultRenderers.select).toBe(InputSelect)
 		expect(defaultRenderers.checkbox).toBe(InputCheckbox)
+		expect(defaultRenderers.multiselect).toBe(InputMultiSelect)
 	})
 
 	it('should map integer to InputNumber', () => {
@@ -41,6 +43,7 @@ describe('defaultRenderers', () => {
 			'checkbox',
 			'radio',
 			'select',
+			'multiselect',
 			'switch'
 		]
 		for (const type of expectedTypes) {

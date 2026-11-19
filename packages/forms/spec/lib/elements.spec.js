@@ -44,6 +44,25 @@ describe('resolveInputType', () => {
 		expect(resolveInputType(props)).toBe('select')
 		expect(props.options).toEqual(['a', 'b'])
 	})
+
+	it('an array with items.enum is a multiselect, and the enum becomes its options (#197)', () => {
+		const props = { type: 'array', items: { enum: ['a', 'b'] } }
+		expect(resolveInputType(props)).toBe('multiselect')
+		expect(props.options).toEqual(['a', 'b'])
+	})
+
+	it('a non-enum array stays an array editor (#197)', () => {
+		expect(resolveInputType({ type: 'array', items: { type: 'string' } })).toBe('array')
+		expect(resolveInputType({ type: 'array' })).toBe('array')
+	})
+
+	it('an array with explicit options is a multiselect (#197)', () => {
+		expect(resolveInputType({ type: 'array', options: ['a', 'b'] })).toBe('multiselect')
+	})
+
+	it('a string with x-multiline is a textarea (#197)', () => {
+		expect(resolveInputType({ type: 'string', 'x-multiline': true })).toBe('textarea')
+	})
 })
 
 describe('buildElements', () => {

@@ -444,6 +444,39 @@ describe('validateField — required must be true, not merely truthy', () => {
 	})
 })
 
+describe('validateField — arrays (#197)', () => {
+	it('accepts members of the enum', () => {
+		const schema = { type: 'array', items: { enum: ['a', 'b'] } }
+		expect(validateField(['a', 'b'], schema, 'Tags')).toBeNull()
+	})
+
+	it('rejects a member outside the enum, naming it', () => {
+		const schema = { type: 'array', items: { enum: ['a', 'b'] } }
+		const result = validateField(['a', 'zzz'], schema, 'Tags')
+		expect(result?.state).toBe('error')
+		expect(result?.text).toContain('zzz')
+	})
+
+	it('rejects duplicates under uniqueItems', () => {
+		const schema = { type: 'array', items: { enum: ['a', 'b'] }, uniqueItems: true }
+		const result = validateField(['a', 'a'], schema, 'Tags')
+		expect(result?.state).toBe('error')
+	})
+
+	it('allows duplicates without uniqueItems', () => {
+		const schema = { type: 'array', items: { enum: ['a', 'b'] } }
+		expect(validateField(['a', 'a'], schema, 'Tags')).toBeNull()
+	})
+
+	it('treats an empty array as empty: required errors, optional skips', () => {
+		expect(validateField([], { type: 'array', required: true }, 'Tags')).toEqual({
+			state: 'error',
+			text: 'Tags is required'
+		})
+		expect(validateField([], { type: 'array' }, 'Tags')).toBeNull()
+	})
+})
+
 describe('validateAll — cleared number box (#193)', () => {
 	const schema = { type: 'object', properties: { budget: { type: 'number' } } }
 	const layout = { type: 'vertical', elements: [{ label: 'Budget', scope: '#/budget' }] }

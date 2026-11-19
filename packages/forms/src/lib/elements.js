@@ -34,29 +34,46 @@ import { getSchemaWithLayout } from './fields.js'
 import { evaluateCondition } from './conditions.js'
 
 /** Schema types with a fixed input type. */
-const SCHEMA_TYPE_MAP = { boolean: 'checkbox', array: 'array' }
+const SCHEMA_TYPE_MAP = { boolean: 'checkbox' }
 
 const pathOf = (scope) => scope.replace(/^#\//, '')
 
 function stringInputType(props) {
-	if (!props.enum && !props.options) return 'text'
+	if (!props.enum && !props.options) return props['x-multiline'] ? 'textarea' : 'text'
 	// A select reads `options`; an enum is the options when none are given.
 	if (Array.isArray(props.enum) && !props.options) props.options = props.enum
 	return 'select'
 }
 
-function schemaInputType(props) {
-	if (props.type === 'number' || props.type === 'integer') {
-		return props.min !== undefined && props.max !== undefined ? 'range' : 'number'
+function arrayInputType(props) {
+	// An array of enum members is a multi-choice, not a list to edit (#197).
+	// Explicit `options` win; otherwise the enum is the options. (By the time
+	// merged props arrive here, fields.js has already folded items.enum into
+	// options — the items check covers raw schema props.)
+	const choices = props.options ?? props.items?.enum
+	if (Array.isArray(choices)) {
+		if (!props.options) props.options = choices
+		return 'multiselect'
 	}
+	return 'array'
+}
+
+function numberInputType(props) {
+	return props.min !== undefined && props.max !== undefined ? 'range' : 'number'
+}
+
+function schemaInputType(props) {
+	if (props.type === 'number' || props.type === 'integer') return numberInputType(props)
 	if (props.type === 'string') return stringInputType(props)
+	if (props.type === 'array') return arrayInputType(props)
 	return SCHEMA_TYPE_MAP[props.type] ?? 'text'
 }
 
 /**
  * The input type for a field: an explicit renderer, then a non-basic format (`email`, `date`…),
- * then its schema type — a bounded number is a range, a string with choices a select. May set
- * `props.options` from an enum.
+ * then its schema type — a bounded number is a range, a string with choices a select, an array
+ * of enum members a multiselect, an `x-multiline` string a textarea. May set `props.options`
+ * from an enum.
  * @param {Record<string, any>} props
  * @returns {string}
  */

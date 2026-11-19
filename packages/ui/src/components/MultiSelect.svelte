@@ -35,7 +35,7 @@
 	let {
 		items = [],
 		fields = {},
-		value = $bindable<unknown[]>([]),
+		value = $bindable(),
 		selected = $bindable<unknown[]>([]),
 		placeholder = messages.select,
 		size = 'md',
@@ -46,6 +46,7 @@
 		icons: userIcons = {} as SelectStateIcons,
 		onchange,
 		class: className = '',
+		id,
 		itemContent,
 		groupContent,
 		snippets = {}
@@ -226,6 +227,7 @@
 		bind:this={triggerRef}
 		type="button"
 		data-select-trigger
+		{id}
 		{disabled}
 		aria-haspopup="listbox"
 		aria-expanded={isOpen}

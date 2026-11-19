@@ -13,6 +13,7 @@ import InputDateTime from '../input/InputDateTime.svelte'
 import InputEmail from '../input/InputEmail.svelte'
 import InputFile from '../input/InputFile.svelte'
 import InputMonth from '../input/InputMonth.svelte'
+import InputMultiSelect from '../input/InputMultiSelect.svelte'
 import InputNumber from '../input/InputNumber.svelte'
 import InputPassword from '../input/InputPassword.svelte'
 import InputRadio from '../input/InputRadio.svelte'
@@ -54,6 +55,7 @@ export const defaultRenderers = {
 	checkbox: InputCheckbox,
 	radio: InputRadio,
 	select: InputSelect,
+	multiselect: InputMultiSelect,
 	switch: InputSwitch,
 	toggle: InputToggle,
 	swatch: InputSwatch

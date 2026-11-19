@@ -1,19 +1,19 @@
 # Checkpoint
 
-**Slice:** v1.15.8 released. Fix (#191) + bump (f317d87ec) + PR #192
-(develop) + PR #195 (main) + tag push + Publish green + npm
-verified (forms/ui/latest = 1.15.8). #190 closed.
+**Slice:** Issues #193 + #194 merged; #197 in PR #200 (branch
+`feat/formrenderer-multiselect-textarea` → `develop`).
 
 **Done:**
-- Release flow proven under branch protection (PRs only).
-- Journal records the release.
+- #193: `numberOrEmpty` shared helper; PR #198 merged, issue closed.
+- #194: Select trigger `id` + forwarding; PR #199 merged, closed.
+- #197: routing, wrapper, registry, validation, MultiSelect `id`;
+  gates green locally (full suite 9162); journal records it all.
 
-**Remaining:** D13/D20/D23 + icons/scripts maintainer decisions;
-F1–F3 PoC confirmations; implement the 16 follow-up changes.
+**Remaining:** CI green on #200 → merge → close #197 → delete branch.
 
-**Next command:** none — awaiting user direction on follow-ups.
+**Next command:** `gh pr checks 200 --watch --interval 60`, then
+`gh pr merge 200 --merge`.
 
-**Open questions (user):**
-- D13: export test-only modules or delete? D20/D23 dedicated specs?
+**Open questions (user):** none — merge on green per "take them".
 
 **Known-broken:** none.

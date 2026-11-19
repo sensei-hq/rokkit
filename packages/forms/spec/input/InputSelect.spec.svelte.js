@@ -108,4 +108,14 @@ describe('InputSelect', () => {
 		const placeholder = container.querySelector('[data-select-placeholder]')
 		expect(placeholder?.textContent).toContain('Pick one')
 	})
+
+	it('forwards id to the select trigger (#194)', () => {
+		const props = $state({
+			value: null,
+			options: ['foo', 'bar'],
+			id: 'color'
+		})
+		const { container } = render(InputSelect, { props })
+		expect(container.querySelector('[data-select-trigger]')?.id).toBe('color')
+	})
 })

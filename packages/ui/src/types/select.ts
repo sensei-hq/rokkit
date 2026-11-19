@@ -79,6 +79,9 @@ export interface SelectProps extends SelectBaseProps, ItemSnippets {
 
 	/** Called when selection changes */
 	onchange?: (value: unknown, item: unknown) => void
+
+	/** Rendered on the trigger button, so a `<label for>` can target it (#194) */
+	id?: string
 }
 
 /**

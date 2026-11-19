@@ -717,3 +717,28 @@ describe('FormRenderer — lookup integration', () => {
 		expect(props.data.city).toBeNull()
 	})
 })
+
+describe('FormRenderer — select label association (#194)', () => {
+	beforeEach(() => cleanup())
+
+	it('associates the field label with the select trigger via id', () => {
+		const props = $state({
+			data: {},
+			schema: {
+				type: 'object',
+				properties: { color: { type: 'string', enum: ['red', 'green'] } }
+			},
+			layout: {
+				type: 'vertical',
+				elements: [{ label: 'Color', scope: '#/color' }]
+			}
+		})
+		const { container } = render(FormRenderer, { props })
+
+		const label = container.querySelector('label[for]')
+		expect(label?.textContent).toContain('Color')
+		const trigger = container.querySelector('[data-select-trigger]')
+		expect(trigger?.id).toBeTruthy()
+		expect(trigger?.id).toBe(label?.getAttribute('for'))
+	})
+})

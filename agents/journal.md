@@ -57,6 +57,20 @@ fails the theme gate with exactly the two new keys at 1.0. rokkit's
 gradient trigger ground stays gate-blind (collector skips gradients) —
 covered by the axe probe instead (`/tmp/axeprobe/probe.mjs`, throwaway).
 
+**#209 (same branch):** zen-sumi's focus-within+selected option rule
+(0,5,0) out-specified the focus/hover rule (0,4,0), leaving text-primary
+on the paper-mute interaction fill — 4.4:1 in dark mode. Fix: restated the
+state with the pseudo-class (new (0,7,0) hover+focus rule, `text-ink`;
+selection still marked by border + check). Sibling pairing
+(unfocused-selected under focus-within, text-primary on paper) probed OK,
+so it keeps its primary text — no wider change. Axe-verified the exact
+reported scenario plus the full matrix. The interaction gate already
+covered the combo as 18 baselined keys — proved live pre-fix (all 4.4,
+all `where=zen-sumi/dark×1`) and zeroed post-fix, so all 18 keys are
+pruned (54 → 36). The gate's focus-hover rewrite exercises the new rule,
+which also covers the hover twin no pointer probe could reach (the
+CommandPalette backdrop intercepts real hovers).
+
 ## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
 
 Minor (new feature: #197). Docs mapping updated first (03-forms +

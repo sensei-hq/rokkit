@@ -10,3 +10,20 @@ if [ -f "$SIMPLE_GIT_HOOKS_RC" ]; then
 fi
 
 bun run check:types
+
+# Security gate: fail on any finding from the security plugins (dependency
+# vulns, secrets, IaC) in the staged change. Style linters are excluded —
+# qlty carries a 600+ medium backlog there, and gating on it would block every
+# commit. Paths come from the index explicitly: bare `qlty check` compares
+# committed refs, which never sees the change being committed. Qlty Cloud
+# re-checks on PRs, so a missing local install only skips (loudly);
+# SKIP_SECURITY_CHECK=1 bypasses case-by-case with a reason.
+if [ "$SKIP_SECURITY_CHECK" = "1" ]; then
+    echo "[INFO] SKIP_SECURITY_CHECK is set to 1, skipping security check."
+elif ! command -v qlty >/dev/null 2>&1; then
+    echo "[INFO] qlty is not installed, skipping security check (CI still enforces it)."
+elif git diff --cached --quiet; then
+    echo "[INFO] Nothing staged; skipping security check."
+else
+    git diff --cached --name-only -z --diff-filter=ACMR | xargs -0 qlty check --no-progress --filter trivy,osv-scanner,trufflehog,checkov
+fi

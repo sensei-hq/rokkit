@@ -1,5 +1,24 @@
 # Project Journal
 
+## 2026-11-20 — Security gate on commit; checkov CKV_GHA_7 resolved
+
+`qlty check --all`: 652 issues, 1 security, 0 high. The security item is
+checkov CKV_GHA_7 on deprecate.yml (workflow_dispatch inputs vs SLSA build
+provenance) — genuinely inapplicable (no build output; registry metadata
+only; inputs semver-validated and env-passed), so suppressed with a stated
+reason; trivy/osv-scanner/trufflehog/checkov otherwise clean, and no highs
+anywhere. Also fixed an MD018 my own journal prose introduced (`#205` at
+line start).
+
+New pre-commit security gate in `.husky/pre-commit`: `qlty check` over the
+STAGED paths (bare `qlty check` compares committed refs and never sees the
+commit — verified it passes vacuously), security plugins only
+(trivy/osv-scanner/trufflehog/checkov), fail on any finding. Style linters
+excluded (600+ medium backlog would block everything); missing qlty skips
+loudly since Qlty Cloud re-checks PRs; `SKIP_SECURITY_CHECK=1` bypasses.
+Proven both directions: fails without the skip (exit 1, finding shown),
+passes with it.
+
 ## 2026-11-20 — Released v1.16.2 (contrast follow-ups + #205)
 
 Patch. Two PRs: #215 (table-empty + gallery pin; graph unresolved 0.65 +
@@ -12,7 +31,7 @@ needed another empty sync (PR #219) for strict checks, then green and
 merged. Tag v1.16.2 → Publish green → npm serves 1.16.2 on all packages
 (latest tag; ui/themes/graph/chart lagged ~90s behind forms). Shipped bits
 verified (fields.js fold, no table-empty opacity, orange.700 overrides).
-#205 closed by hand; tracker now empty.
+Issue 205 closed by hand; tracker now empty.
 
 ## 2026-11-20 — Fixed #205 (array element drops layout keys)
 

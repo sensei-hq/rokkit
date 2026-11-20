@@ -11,6 +11,7 @@ name: Deprecate a release
 
 on:
   workflow_dispatch:
+    # checkov:skip=CKV_GHA_7: no build output exists to taint — this workflow only runs `npm deprecate` (registry metadata), and inputs are semver-validated and passed via env, never interpolated.
     inputs:
       version:
         description: 'The version to deprecate, e.g. 1.8.1'

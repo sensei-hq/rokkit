@@ -1,5 +1,26 @@
 # Project Journal
 
+## 2026-11-20 — Released v1.16.1 (axe audit: #206–#209 + follow-ups)
+
+Patch. Branch `fix/axe-audit-206-209`, one commit per issue (10 fix commits):
+#206 (nested control + unnamed listbox), #207 (false-valued field attrs),
+#208 (placeholder opacity + gallery pin), #209 (zen-sumi restatement, 18 keys
+pruned), @apply same-value dedup fix + no-drop spec, snapshot rebase (670
+keys, fully attributed), select-empty browser pin, tabs placeholder/empty +
+pins, frosted tint text + selected-option pin, contrast-lib lint fixup.
+
+PR #210 → `develop` (CI green) → release/v1.16.1 bump → PR #211 → `develop`
+(CI green). PR #212 → `main` was BEHIND: main held main-only hotfix-era
+history, so strict checks blocked it; synced via PR #213 (verified
+content-empty merge) and #212 went green and merged. Pushed tag v1.16.1 →
+Publish green → npm serves 1.16.1 (ui/forms/themes/states/core/actions,
+latest tag). Shipped bits verified: no tag-remove in ui dist, labelledby in
+Select/MultiSelect/Dropdown, `|| undefined` in forms InputField, no
+placeholder opacity in themes dist. #206 auto-closed by the merge, #207–#209
+closed by hand with release notes; #205 (array labels) stays open. Note for
+next time: main-only commits must be synced back promptly or every release
+PR trips BEHIND.
+
 ## 2026-11-20 — Frosted selected-option tint text + gradient verification (follow-up)
 
 The axe-INCOMPLETE pairings (rokkit/frosted selected labels) verified by

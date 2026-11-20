@@ -73,7 +73,7 @@ function checkSelected(mode: string, what: string) {
 
 describe.each(Object.entries(STYLES))('%s select, selected option', (style, css) => {
 	it.each(CASES)('$skin skin, $mode mode: focused-selected reads at 4.5', ({ mode, tokens }) => {
-		applyConfig(sheet, style, css, mode, tokens)
+		applyConfig(sheet, { style, css, mode, tokens })
 		const { selected } = mount()
 		selected.focus()
 		expect(document.activeElement).toBe(selected)
@@ -83,7 +83,7 @@ describe.each(Object.entries(STYLES))('%s select, selected option', (style, css)
 	it.each(CASES)(
 		'$skin skin, $mode mode: unfocused-selected under focus-within reads at 4.5',
 		({ mode, tokens }) => {
-			applyConfig(sheet, style, css, mode, tokens)
+			applyConfig(sheet, { style, css, mode, tokens })
 			const { selected, other } = mount()
 			other.focus()
 			expect(document.activeElement).toBe(other)

@@ -41,7 +41,7 @@ function mount() {
 
 describe.each(Object.entries(STYLES))('%s select, no-match filter', (style, css) => {
 	it.each(CASES)('$skin skin, $mode mode: empty message reads at 4.5', ({ mode, tokens }) => {
-		applyConfig(sheet, style, css, mode, tokens)
+		applyConfig(sheet, { style, css, mode, tokens })
 		const { empty } = mount()
 		const m = measureText(empty, mode)
 		expect(m.opacity, 'empty message must not be faded').toBe('1')

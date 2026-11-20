@@ -1,7 +1,6 @@
 import { PALETTE_FAMILIES, zenSumi as zenSumiFamily } from '@rokkit/unocss/palettes'
 import { loadConfig, resolveColormap } from '../../unocss/src/config.js'
 import { themeFor, rootPreflights } from '../../unocss/src/colors.js'
-import base from '../dist/base.css?raw'
 import rokkit from '../dist/rokkit.css?raw'
 import minimal from '../dist/minimal.css?raw'
 import material from '../dist/material.css?raw'
@@ -116,6 +115,18 @@ export function effectiveBg(el: Element, pageBg: number[]) {
 	return out
 }
 
+/** Background paint (color + image) from `el` up to documentElement. */
+function bgStack(el: Element) {
+	const stack: { bg: number[]; image: string }[] = []
+	let node: Element | null = el
+	while (node && node !== document.documentElement) {
+		const cs = getComputedStyle(node)
+		stack.push({ bg: toRGBA(cs.backgroundColor), image: cs.backgroundImage })
+		node = node.parentElement
+	}
+	return stack
+}
+
 /**
  * The opaque grounds behind `textEl`'s text: one for a flat/translucent stack,
  * one per gradient stop when the lowest painted ancestor uses a gradient (each
@@ -125,13 +136,7 @@ export function textGrounds(
 	textEl: Element,
 	pageBg: number[]
 ): { grounds: number[][]; gradient: boolean } {
-	const stack: { bg: number[]; image: string }[] = []
-	let node: Element | null = textEl
-	while (node && node !== document.documentElement) {
-		const cs = getComputedStyle(node)
-		stack.push({ bg: toRGBA(cs.backgroundColor), image: cs.backgroundImage })
-		node = node.parentElement
-	}
+	const stack = bgStack(textEl)
 	const composite = (from: number, to: number, seed: number[]) => {
 		let out = seed
 		for (let i = from; i >= to; i--) {
@@ -164,16 +169,10 @@ import baseCss from '../dist/base.css?raw'
  * Apply a style config to the page: dataset attributes plus a full sheet
  * (preflight + skin tokens + base + style css).
  */
-export function applyConfig(
-	sheet: HTMLStyleElement,
-	style: string,
-	css: string,
-	mode: string,
-	tokens: string
-) {
-	document.body.dataset.style = style
-	document.body.dataset.mode = mode
-	sheet.textContent = `${PREFLIGHT}\n${tokens}\n${baseCss}\n${css}`
+export function applyConfig(sheet: HTMLStyleElement, cfg: { style: string; css: string; mode: string; tokens: string }) {
+	document.body.dataset.style = cfg.style
+	document.body.dataset.mode = cfg.mode
+	sheet.textContent = `${PREFLIGHT}\n${cfg.tokens}\n${baseCss}\n${cfg.css}`
 }
 
 /**

@@ -1,5 +1,27 @@
 # Project Journal
 
+## 2026-11-20 — Frosted selected-option tint text + gradient verification (follow-up)
+
+The axe-INCOMPLETE pairings (rokkit/frosted selected labels) verified by
+direct computation on live computed styles. Rokkit's gradient fill +
+on-primary passes everywhere: 4.94–7.13 across all skins × modes (near-white
+4.94 light default matches the 4fd0 journal figure). Frosted's unfocused
+selected label FAILED: text-primary on the 40% primary tint reads 2.6–2.7:1
+both modes — the documented "translucent tints take ink" rule. Fix: option
+text, check, icon and description on the tint all take text-ink (now
+8.3–8.7:1); the focused state already resolved to ink via cascade and is
+unchanged (5.9–6.3:1).
+
+Permanent pin: new `select-selected-contrast.browser.spec.ts` (100 tests:
+focused + unfocused-selected labels, all styles × app-aligned skins × modes,
+real focus so :focus-within holds). Shared math/tokens factored into
+`contrast-lib.ts` with the empty spec refactored onto it. Skins had to match
+the APP's config (default IS the zen-sumi family) — the first cut used the
+preset's bare slate/orange defaults and "failed" minimal at 1.72, a different
+universe (that bare-default failure is real but out of scope; noted for a
+preset-level follow-up). This also permanently covers #209's pairing and the
+hover twin the interaction gate synthesizes but axe cannot see.
+
 ## 2026-11-20 — Opacity fades on select-empty + tabs placeholder/empty (follow-up)
 
 **select-empty:** the filterable Select's "No results" message sat at base

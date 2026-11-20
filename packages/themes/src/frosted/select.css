@@ -95,8 +95,10 @@
   --un-ring-color: color-mix(in oklch, var(--ink-soft) 40%, transparent);
 }
 
+/* A translucent tint is not a solid fill: primary text on a 40% primary
+   tint reads 2.6–2.7:1, so selected text takes ink (same rule as #209). */
 [data-style='frosted'] [data-select-option][data-selected='true'] {
-  @apply text-primary bg-primary/40;
+  @apply text-ink bg-primary/40;
 }
 
 [data-style='frosted'] [data-select-option][data-selected='true']:hover:not(:disabled),
@@ -106,7 +108,7 @@
 
 /* Check mark */
 [data-style='frosted'] [data-select-check] {
-  @apply text-primary;
+  @apply text-ink;
 }
 
 /* Checkbox */
@@ -129,7 +131,7 @@
 }
 
 [data-style='frosted'] [data-select-option][data-selected='true'] [data-item-icon] {
-  @apply text-primary;
+  @apply text-ink;
 }
 
 [data-style='frosted'] [data-select-option] [data-item-description] {
@@ -137,7 +139,7 @@
 }
 
 [data-style='frosted'] [data-select-option][data-selected='true'] [data-item-description] {
-  @apply text-primary;
+  @apply text-ink;
 }
 
 /* =============================================================================

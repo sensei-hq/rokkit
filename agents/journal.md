@@ -1,5 +1,19 @@
 # Project Journal
 
+## 2026-11-20 — Released v1.16.2 (contrast follow-ups + #205)
+
+Patch. Two PRs: #215 (table-empty + gallery pin; graph unresolved 0.65 +
+verb→ink + contrast-lib hardening incl. opacity-aware ratios, animation
+freeze, button preflight, token assertions, app-aligned skins; bare preset
+readable day steps + builtin-skins.spec.js) and #216 (#205 array layout
+keys; journal conflict with #215 resolved by keeping both entries).
+Release/v1.16.2 bump → PR #217 → `develop` (CI green) → PR #218 → `main`
+needed another empty sync (PR #219) for strict checks, then green and
+merged. Tag v1.16.2 → Publish green → npm serves 1.16.2 on all packages
+(latest tag; ui/themes/graph/chart lagged ~90s behind forms). Shipped bits
+verified (fields.js fold, no table-empty opacity, orange.700 overrides).
+#205 closed by hand; tracker now empty.
+
 ## 2026-11-20 — Fixed #205 (array element drops layout keys)
 
 `combineArrayElementsWithSchema` built array elements from schema props

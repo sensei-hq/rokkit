@@ -52,14 +52,6 @@
   @apply text-ink-mute border-paper-edge border bg-transparent bg-none;
 }
 
-[data-style='minimal'] [data-select-tag-remove] {
-  @apply text-ink-mute;
-}
-
-[data-style='minimal'] [data-select-tag-remove]:hover {
-  @apply text-ink-mute;
-}
-
 /* =============================================================================
    Dropdown Panel
    ============================================================================= */

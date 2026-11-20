@@ -704,9 +704,42 @@ describe('Select', () => {
 			expect(trigger.id).toBe('color')
 		})
 
-		it('omits the id attribute when absent', () => {
+		it('generates a trigger id when absent (#206)', () => {
 			const { container } = render(Select, { items: flatItems })
-			expect(container.querySelector('[data-select-trigger]')!.hasAttribute('id')).toBe(false)
+			const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+			expect(trigger.id).toBeTruthy()
+		})
+
+		it('generates unique trigger ids across instances (#206)', () => {
+			const first = render(Select, { items: flatItems })
+			const second = render(Select, { items: flatItems })
+			const a = (first.container.querySelector('[data-select-trigger]') as HTMLButtonElement).id
+			const b = (second.container.querySelector('[data-select-trigger]') as HTMLButtonElement).id
+			expect(a).toBeTruthy()
+			expect(b).toBeTruthy()
+			expect(a).not.toBe(b)
+		})
+	})
+
+	describe('listbox naming (#206)', () => {
+		async function open(container: HTMLElement) {
+			await fireEvent.click(container.querySelector('[data-select-trigger]')!)
+		}
+
+		it('names the open listbox after the trigger id when provided', async () => {
+			const { container } = render(Select, { items: flatItems, id: 'color' })
+			await open(container)
+			const dropdown = container.querySelector('[data-select-dropdown]')!
+			expect(dropdown.getAttribute('aria-labelledby')).toBe('color')
+		})
+
+		it('names the open listbox after the generated trigger id when absent', async () => {
+			const { container } = render(Select, { items: flatItems })
+			await open(container)
+			const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+			const dropdown = container.querySelector('[data-select-dropdown]')!
+			expect(trigger.id).toBeTruthy()
+			expect(dropdown.getAttribute('aria-labelledby')).toBe(trigger.id)
 		})
 	})
 })

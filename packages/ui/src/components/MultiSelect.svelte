@@ -10,9 +10,8 @@
 	 *   data-select-trigger     — trigger button
 	 *   data-select-value       — selected value display area
 	 *   data-select-tags        — tags container
-	 *   data-select-tag         — individual tag
+	 *   data-select-tag         — individual tag (a label, not a control)
 	 *   data-select-tag-text    — tag text
-	 *   data-select-tag-remove  — tag remove button
 	 *   data-select-count       — count indicator when exceeding maxDisplay
 	 *   data-select-placeholder — placeholder text
 	 *   data-select-arrow       — dropdown arrow icon
@@ -60,9 +59,13 @@
 	const icons = $derived({
 		...DEFAULT_STATE_ICONS.selector,
 		...DEFAULT_STATE_ICONS.checkbox,
-		...DEFAULT_STATE_ICONS.action,
 		...userIcons
 	})
+
+	// The trigger always carries an id (explicit `id` prop, else generated) so
+	// the open listbox can name itself after it (#206: aria-input-field-name).
+	const uid = $props.id()
+	const triggerId = $derived(id ?? uid)
 
 	// ─── Dropdown state ───────────────────────────────────────────────────────
 
@@ -133,11 +136,6 @@
 		const newValues = alreadySelected
 			? currentValues.filter((v) => v !== extractedValue)
 			: [...currentValues, extractedValue]
-		applySelection(newValues)
-	}
-
-	function removeTag(extractedValue: unknown) {
-		const newValues = (value ?? []).filter((v) => v !== extractedValue)
 		applySelection(newValues)
 	}
 
@@ -227,7 +225,7 @@
 		bind:this={triggerRef}
 		type="button"
 		data-select-trigger
-		{id}
+		id={triggerId}
 		{disabled}
 		aria-haspopup="listbox"
 		aria-expanded={isOpen}
@@ -239,25 +237,6 @@
 						{#each selectedProxies as proxy (proxy.value)}
 							<span data-select-tag>
 								<span data-select-tag-text>{proxy.label}</span>
-								<span
-									role="button"
-									tabindex="0"
-									data-select-tag-remove
-									aria-label="Remove {proxy.label}"
-									onclick={(e) => {
-										e.stopPropagation()
-										removeTag(proxy.value)
-									}}
-									onkeydown={(e) => {
-										if (e.key === 'Enter' || e.key === ' ') {
-											e.preventDefault()
-											e.stopPropagation()
-											removeTag(proxy.value)
-										}
-									}}
-								>
-									<span class={icons.remove} aria-hidden="true"></span>
-								</span>
 							</span>
 						{/each}
 					</span>
@@ -276,6 +255,7 @@
 			bind:this={dropdownRef}
 			data-select-dropdown
 			role="listbox"
+			aria-labelledby={triggerId}
 			aria-multiselectable="true"
 			aria-orientation="vertical"
 		>

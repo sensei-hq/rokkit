@@ -99,10 +99,6 @@
   display: contents;
 }
 
-[data-select-placeholder] {
-  opacity: 0.6;
-}
-
 [data-select-arrow] {
   flex-shrink: 0;
   transition: transform 150ms ease;
@@ -147,24 +143,6 @@
 
 [data-select-tag-text] {
   white-space: nowrap;
-}
-
-[data-select-tag-remove] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 0.125rem;
-  font-size: 0.75em;
-  opacity: 0.7;
-  transition: opacity 150ms ease;
-}
-
-[data-select-tag-remove]:hover {
-  opacity: 1;
 }
 
 [data-select-count] {
@@ -409,5 +387,4 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   text-align: center;
-  opacity: 0.6;
 }

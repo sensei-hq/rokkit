@@ -55,7 +55,7 @@
 
 /* Active/selected state */
 [data-style='material'] [data-tree-item-content][data-active='true'] {
-  @apply bg-primary text-primary;
+  @apply bg-primary text-on-primary;
 }
 
 [data-style='material'] [data-tree-item-content][data-active='true']:hover:not(:disabled) {

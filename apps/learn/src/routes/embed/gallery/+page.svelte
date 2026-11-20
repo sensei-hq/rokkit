@@ -291,6 +291,16 @@
 	-->
 	<div data-gallery-comp="select" class="cell" data-gallery-open="[data-select-trigger]"><Select items={selectItems} bind:value={selectValue} /></div>
 	<div data-gallery-comp="multiselect" class="cell" data-gallery-open="[data-select-trigger]"><MultiSelect items={colorItems} bind:value={multiValue} /></div>
+	<!-- Unvalued: the placeholder is the trigger's only text. Without these the
+	     audit never measures placeholder contrast (#208). No data-gallery-open —
+	     the valued cells above already cover the open-dropdown states. -->
+	<div data-gallery-comp="select-empty" class="cell"><Select items={selectItems} /></div>
+	<div data-gallery-comp="multiselect-empty" class="cell"><MultiSelect items={colorItems} /></div>
+	<!-- Unvalued: the placeholder is the only panel text. Without this the audit
+	     never measures placeholder contrast (same hole as #208). -->
+	<div data-gallery-comp="tabs-placeholder" class="cell"><Tabs options={tabItems} /></div>
+	<!-- No options at all: the empty state shares the placeholder's rule. -->
+	<div data-gallery-comp="tabs-empty" class="cell"><Tabs options={[]} /></div>
 	<div data-gallery-comp="menu" class="cell" data-gallery-open="[data-menu-trigger]"><Menu items={menuItems} label="Actions" /></div>
 	<div data-gallery-comp="dropdown" class="cell" data-gallery-open="[data-dropdown-trigger]"><Dropdown items={fontItems} bind:value={dropdownValue} /></div>
 	<div data-gallery-comp="toggle" class="cell"><Toggle options={toggleOptions} bind:value={toggleValue} /></div>

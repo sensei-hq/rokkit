@@ -84,6 +84,11 @@
 		...userIcons
 	})
 
+	// The trigger always carries an id (explicit `id` prop, else generated) so
+	// the open listbox can name itself after it (#206: aria-input-field-name).
+	const uid = $props.id()
+	const triggerId = $derived(id ?? uid)
+
 	// ─── Dropdown state ───────────────────────────────────────────────────────
 
 	let isOpen = $state(false)
@@ -338,7 +343,7 @@
 		bind:this={triggerRef}
 		type="button"
 		data-select-trigger
-		{id}
+		id={triggerId}
 		{disabled}
 		aria-haspopup="listbox"
 		aria-expanded={isOpen}
@@ -357,7 +362,13 @@
 	</button>
 
 	{#if isOpen}
-		<div bind:this={dropdownRef} data-select-dropdown role="listbox" aria-orientation="vertical">
+		<div
+			bind:this={dropdownRef}
+			data-select-dropdown
+			role="listbox"
+			aria-labelledby={triggerId}
+			aria-orientation="vertical"
+		>
 			{#if filterable}
 				<div data-select-filter>
 					<input

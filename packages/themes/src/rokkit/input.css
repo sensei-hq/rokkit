@@ -112,23 +112,30 @@
   @apply rounded-md px-2 py-1;
 }
 
-/* Validation state messages */
+/* Validation state messages — a 10% status tint behind full-strength status
+   text. (A named-token /opacity shortcut cannot expand in @apply (#135), and
+   element-wide opacity-10 also fades the text to near-invisible.) */
 [data-style='rokkit'] [data-field-state='success'] [data-message] {
-  @apply bg-success text-success opacity-10;
+  background-color: color-mix(in oklch, var(--success) 10%, transparent);
+  @apply text-success;
 }
 
 [data-style='rokkit'] [data-field-state='warning'] [data-message] {
-  @apply bg-warning text-warning opacity-10;
+  background-color: color-mix(in oklch, var(--warning) 10%, transparent);
+  @apply text-warning;
 }
 
 [data-style='rokkit'] [data-field-state='info'] [data-message] {
-  @apply bg-info text-info opacity-10;
+  background-color: color-mix(in oklch, var(--info) 10%, transparent);
+  @apply text-info;
 }
 
 [data-style='rokkit'] [data-field-state='error'] [data-message] {
-  @apply bg-error text-error opacity-10;
+  background-color: color-mix(in oklch, var(--error) 10%, transparent);
+  @apply text-error;
 }
 
 [data-style='rokkit'] [data-field-root][data-field-state='fail'] [data-input-root] {
-  @apply bg-error text-error opacity-10;
+  background-color: color-mix(in oklch, var(--error) 10%, transparent);
+  @apply border-error;
 }

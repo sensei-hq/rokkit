@@ -55,14 +55,6 @@
   @apply text-ink-mute border-paper-mute border bg-transparent bg-none;
 }
 
-[data-style='zen-sumi'] [data-select-tag-remove] {
-  @apply text-ink-mute;
-}
-
-[data-style='zen-sumi'] [data-select-tag-remove]:hover {
-  @apply text-ink-mute;
-}
-
 /* =============================================================================
    Dropdown Panel — paper bg, hairline border, no shadow
    ============================================================================= */
@@ -94,6 +86,19 @@
   [data-select-dropdown]:focus-within
   [data-select-option][data-selected='true'] {
   @apply text-primary border-primary border-l-2 bg-none;
+}
+
+/* Focused or hovered selected option: the rule above out-specifies the
+   focus/hover rule, leaving text-primary on the paper-mute interaction fill
+   (4.4:1 in dark mode, #209). Restate the state with the pseudo-class so the
+   text rides the fill; the selection still shows via the border + check. */
+[data-style='zen-sumi']
+  [data-select-dropdown]:focus-within
+  [data-select-option][data-selected='true']:hover:not(:disabled),
+[data-style='zen-sumi']
+  [data-select-dropdown]:focus-within
+  [data-select-option][data-selected='true']:focus:not(:disabled) {
+  @apply text-ink;
 }
 
 /* Check mark */

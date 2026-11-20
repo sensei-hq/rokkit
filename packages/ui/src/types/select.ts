@@ -80,7 +80,10 @@ export interface SelectProps extends SelectBaseProps, ItemSnippets {
 	/** Called when selection changes */
 	onchange?: (value: unknown, item: unknown) => void
 
-	/** Rendered on the trigger button, so a `<label for>` can target it (#194) */
+	/**
+	 * Rendered on the trigger button, so a `<label for>` can target it (#194).
+	 * Falls back to a generated id so the open listbox can name itself after the trigger (#206).
+	 */
 	id?: string
 }
 
@@ -100,7 +103,10 @@ export interface MultiSelectProps extends SelectBaseProps, ItemSnippets {
 	/** Called when selection changes */
 	onchange?: (values: unknown[], items: unknown[]) => void
 
-	/** Rendered on the trigger button, so a `<label for>` can target it (#197, #194 pattern) */
+	/**
+	 * Rendered on the trigger button, so a `<label for>` can target it (#197, #194 pattern).
+	 * Falls back to a generated id so the open listbox can name itself after the trigger (#206).
+	 */
 	id?: string
 }
 

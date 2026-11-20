@@ -1,5 +1,150 @@
 # Project Journal
 
+## 2026-11-20 — Frosted selected-option tint text + gradient verification (follow-up)
+
+The axe-INCOMPLETE pairings (rokkit/frosted selected labels) verified by
+direct computation on live computed styles. Rokkit's gradient fill +
+on-primary passes everywhere: 4.94–7.13 across all skins × modes (near-white
+4.94 light default matches the 4fd0 journal figure). Frosted's unfocused
+selected label FAILED: text-primary on the 40% primary tint reads 2.6–2.7:1
+both modes — the documented "translucent tints take ink" rule. Fix: option
+text, check, icon and description on the tint all take text-ink (now
+8.3–8.7:1); the focused state already resolved to ink via cascade and is
+unchanged (5.9–6.3:1).
+
+Permanent pin: new `select-selected-contrast.browser.spec.ts` (100 tests:
+focused + unfocused-selected labels, all styles × app-aligned skins × modes,
+real focus so :focus-within holds). Shared math/tokens factored into
+`contrast-lib.ts` with the empty spec refactored onto it. Skins had to match
+the APP's config (default IS the zen-sumi family) — the first cut used the
+preset's bare slate/orange defaults and "failed" minimal at 1.72, a different
+universe (that bare-default failure is real but out of scope; noted for a
+preset-level follow-up). This also permanently covers #209's pairing and the
+hover twin the interaction gate synthesizes but axe cannot see.
+
+## 2026-11-20 — Opacity fades on select-empty + tabs placeholder/empty (follow-up)
+
+**select-empty:** the filterable Select's "No results" message sat at base
+`opacity: 0.6` over ink-mute — axe 3.18–4.07:1 in all 10 style×mode combos
+(same defect as #208). Fix: opacity deleted; ink-mute on the dropdown ground
+passes everywhere. It cannot render at rest (needs a typed filter), so the
+gallery gates can never see it — pinned by new
+`select-empty-contrast.browser.spec.ts` (55 tests: 5 styles × skins × modes,
+opacity exactly 1 + WCAG ratio over the composited ground; rokkit's gradient
+ground bounded by both stops with the outside-range assertion). Red→green;
+axe-verified post-fix via a temporary filterable gallery cell (reverted).
+
+**tabs placeholder/empty:** base faded both to 0.6; the placeholder (inherited
+ink) failed in light mode at 4.49:1 in all five styles. Fix: opacity deleted,
+both take explicit per-style text-ink-mute (nothing colored them before).
+Pinned by two gallery cells (`tabs-placeholder` unvalued, `tabs-empty`
+no-options) in the theme gate; axe-verified post-fix.
+
+## 2026-11-20 — UnoCSS @apply drops same-value color; snapshot rebased (follow-up)
+
+The state-snapshot drift (658 keys, byte-identical on develop) root-caused to
+TWO things. First, three intentional Oct-28 palette commits landed after the
+last rebase (f189d4fa8) without rebasing: 4fd0cfebf (primary/accent day steps
+500→600/700 + on-color derivation), daef55a08 (dark paper-edge 400→300),
+5973a45cc (zen-sumi dark resting ink-mute). All verified intentional +
+spec-pinned; current rendering correct. (d9cbf302a's divider step has no
+measured effect on the fixture.)
+
+Second, a toolchain regression: UnoCSS 66's transformerDirectives drops a
+`color` declaration when an EARLIER utility in the same @apply expands to the
+same value — `@apply bg-primary text-primary` compiles to background-color
+alone (proven by experiment; order- and value-dependent). The Oct toolchain
+kept both, so the Kit 3 migration silently changed every same-token
+bg/border+text pair: outline buttons lost coloured text in four styles, and
+material's same-role fills fell back to inherited text. A pipeline-level scan
+of all 2055 @apply bodies found 16 dropping bodies (~40 rules, 10
+components); each fixed at the source — text-on-{role} on filled elements
+(the 1:1 same-role text was its own design bug), text-first reorder
+otherwise — plus rokkit's validation pills (`bg-{s} text-{s} opacity-10`
+faded text to near-invisible in BOTH eras; now a 10% color-mix tint behind
+full-strength status text, the #135 pattern). New `apply-no-drop.spec.js`
+expands every @apply through the real pipeline and fails on any lost
+declaration (121ms; red→green). Contrast gates green on the fixed build.
+
+## 2026-11-20 — Fixed #206 (select a11y: nested-interactive + unnamed listbox)
+
+Two axe serious (WCAG 4.1.2) from sensei's decision form (sensei#389).
+Branch `fix/axe-audit-206-209` (one commit per issue).
+
+**Nested-interactive:** MultiSelect drew each tag's remove as a focusable
+`role="button"` span INSIDE the trigger `<button>`. Fixed per the issue's
+second option: tags are now plain labels, unpicking happens in the listbox
+(toggle the option off). Moving the tags out of the trigger was rejected:
+the trigger is the themed box, so that reshapes the box model across all
+six stylesheets and renames the trigger's accessible name — too much for a
+tactical fix. Removed `removeTag`, the `action` icon spread, the
+`data-select-tag-remove` doc line, and all six `tag-remove` CSS rules (base
++ 5 styles); the `icons.remove` type stays (public API, now unused).
+SearchFilter's `data-search-tag-remove` checked clean (native button in a
+div, no nesting).
+
+**Unnamed listbox:** the open `role="listbox"` had no accessible name.
+Triggers now always carry an id (`id` prop ?? `$props.id()` fallback, the
+chart-geom pattern) and the listbox takes `aria-labelledby` to it. The two
+"omits the id attribute when absent" specs were rewritten — an always-named
+listbox supersedes #194's minimal shape; explicit ids still win (forms
+chain tests untouched). Dropdown had the identical unnamed-listbox defect
+and got the same fix (generated id only, no new prop).
+
+**Gates:** 12 new specs (TDD red→green), full suite 9176 passed, lint 0/0,
+svelte-check 0/0 ×7, e2e theme-contrast + interaction-contrast green (the
+removed `:hover` rules left no unreachable-rule complaints). state-snapshot
+fails with 658 changed keys — verified BYTE-IDENTICAL on pristine develop
+via worktree (systematic `oklch(0.641…)` → `oklch(0.555…)` primary shift):
+pre-existing palette drift, not this change; baseline untouched.
+
+**#207 (same branch):** `InputField` wrote `data-field-disabled={disabled}`,
+so an enabled field rendered `="false"` — still matching every theme's
+presence selector and fading to 40% opacity. Fixed with `|| undefined` on
+`data-field-disabled`, `data-field-required`, `data-field-empty` and
+`data-has-icon` (the `data-field-dirty` shape, and the repo's "true or
+absent" convention), plus `data-field-empty` in `InfoField`. New
+`InputField.spec.svelte.js` (9 tests); the InfoField spec that pinned
+`="false"` now asserts absence. FormRenderer's own enabled path already
+passed `undefined`, so its hasAttribute specs pass unchanged. 55/55 green.
+
+**#208 (same branch):** base `select.css` gave `[data-select-placeholder]`
+`opacity: 0.6`; over ink-mute it failed AA in **all 10** style×mode combos
+(3.19–4.07:1 by real axe 4.10.2, not just the reported zen-sumi dark
+3.98). Fix: deleted the base opacity rule (a visual fade that never
+belonged in structural base) — placeholder is now full-opacity ink-mute in
+all five styles, passing everywhere including all 5 skins. Two gate notes:
+the gallery had no unvalued select, so nothing ever measured the
+placeholder — added `select-empty` + `multiselect-empty` cells (no
+`data-gallery-open`; valued cells cover open states); and the collector
+skips opacity < 0.75, so the old placeholder was doubly invisible — the
+fix makes it measured. Pin PROVEN by sabotage: placeholder → `text-paper`
+fails the theme gate with exactly the two new keys at 1.0. rokkit's
+gradient trigger ground stays gate-blind (collector skips gradients) —
+covered by the axe probe instead (`/tmp/axeprobe/probe.mjs`, throwaway).
+
+**#209 (same branch):** zen-sumi's focus-within+selected option rule
+(0,5,0) out-specified the focus/hover rule (0,4,0), leaving text-primary
+on the paper-mute interaction fill — 4.4:1 in dark mode. Fix: restated the
+state with the pseudo-class (new (0,7,0) hover+focus rule, `text-ink`;
+selection still marked by border + check). Sibling pairing
+(unfocused-selected under focus-within, text-primary on paper) probed OK,
+so it keeps its primary text — no wider change. Axe-verified the exact
+reported scenario plus the full matrix. The interaction gate already
+covered the combo as 18 baselined keys — proved live pre-fix (all 4.4,
+all `where=zen-sumi/dark×1`) and zeroed post-fix, so all 18 keys are
+pruned (54 → 36). The gate's focus-hover rewrite exercises the new rule,
+which also covers the hover twin no pointer probe could reach (the
+CommandPalette backdrop intercepts real hovers).
+
+## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
+
+Minor (new feature: #197). Docs mapping updated first (03-forms +
+llms forms.txt), then `bun run bump -- minor --yes --no-push` (full
+local gate green, 9167 tests). PR #202 → `develop` (CI green) → PR
+#203 → `main` (CI green) → pushed tag → Publish green → npm serves
+1.16.0 (`forms`, `ui`, `latest`).
+
 ## 2026-11-18 — Fixed #193 (NaN), #194 (select id), #197 (multiselect + textarea)
 
 **#193 (merged via PR #198, closed):** cleared `InputNumber` reported

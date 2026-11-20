@@ -14,7 +14,7 @@
 }
 
 [data-style='frosted'] [data-grid-item][data-active] {
-  @apply border-primary text-primary;
+  @apply text-primary border-primary;
 }
 
 [data-style='frosted'] [data-grid-item] [data-item-icon] {

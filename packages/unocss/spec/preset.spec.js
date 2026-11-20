@@ -175,8 +175,20 @@ describe('presetRokkit', () => {
 	})
 
 	describe('preflights — dark mode CSS block', () => {
-		it('should not generate a [data-mode="dark"] block when all colors are plain strings', () => {
-			const preset = presetRokkit()
+		it('should not generate a [data-mode="dark"] block when every text role is remapped', () => {
+			// Remapping every role drops all built-in per-mode steps (they name
+			// other palettes), leaving no dark content anywhere — so no dark block.
+			const preset = presetRokkit({
+				skin: {
+					primary: 'blue',
+					accent: 'cyan',
+					success: 'lime',
+					warning: 'amber',
+					danger: 'pink',
+					error: 'rose',
+					info: 'teal'
+				}
+			})
 			const css = preset.preflights[0].getCSS()
 			expect(css).toContain(':root, [data-mode="light"]{')
 			expect(css).not.toContain('[data-mode="dark"]')
@@ -699,13 +711,17 @@ describe('presetRokkit', () => {
 			expect(css).toContain('[data-mode="dark"]')
 		})
 
-		it('does NOT emit [data-mode="dark"] block when an override has only light side', () => {
+		it('resolves a light-only user override in dark via fallback to its light value', () => {
 			const preset = presetRokkit({
 				palettes: { kami: { 50: '#f8f8f3' } },
 				overrides: { canvas: { light: 'kami.50' } }
 			})
 			const css = preset.preflights[0].getCSS()
-			expect(css).not.toContain('[data-mode="dark"]')
+			const [light, dark] = css.split('[data-mode="dark"]')
+			expect(dark, 'built-in 500s still emit a dark block').toBeDefined()
+			const lightCanvas = light.match(/--canvas:[^;]+/)?.[0]
+			expect(lightCanvas, 'light side present').toBeDefined()
+			expect(dark).toContain(lightCanvas)
 		})
 
 		it('emits [data-mode="dark"] block when an override has dark-only side', () => {
@@ -1006,12 +1022,16 @@ describe('presetRokkit', () => {
 			expect(css).toMatch(/--paper-soft:rgb/)
 		})
 
-		it('emits named tokens as palette aliases for extended roles', () => {
+		it('resolves the named token to the readable day step for extended roles', () => {
 			const preset = presetRokkit({
 				tokens: { primary: 'extended' }
 			})
 			const css = preset.preflights[0].getCSS()
-			expect(css).toContain('--primary:var(--color-primary-500)')
+			// The built-in day step (orange-700, readable) wins over the 500
+			// alias — overrides resolve after the named-token defaults, as with
+			// palette-family skins.
+			expect(css).toContain('--primary:rgb(194, 65, 12)')
+			expect(css).toContain('--color-primary-500:rgb(249, 115, 22)')
 		})
 
 		it('emits named tokens inlined for core roles in mixed mode', () => {

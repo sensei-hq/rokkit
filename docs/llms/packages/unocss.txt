@@ -112,12 +112,17 @@ const preset = presetRokkit({
 In the default `tokens: 'core'` mode the preset emits **named tokens** as complete color values for each semantic role. These use the color space configured in `colorSpace` (default `'rgb'`):
 
 ```css
---primary:       rgb(249,115,22);   /* shade 500 */
+--primary:       rgb(194,65,12);    /* orange-700 by day (readable text), orange-500 pinned by night */
 --primary-soft:  rgb(254,243,199);  /* tinted background */
 --paper:         rgb(248,250,252);  /* surface shade 50 */
 --ink:           rgb(15,23,42);     /* surface shade 900 (inverted) */
 /* ... all named tokens ... */
 ```
+
+Text roles (`primary`, `accent`, `success`, `warning`, `danger`, `error`,
+`info`) take the weakest day shade that clears AA on paper — 700 almost
+everywhere (600 for violet/indigo, 800 for yellow) — so bare
+`presetRokkit({})` reads without any config, like the palette families.
 
 These named tokens are consumed by `@rokkit/themes` CSS and all component utility classes (`bg-primary`, `text-ink`, `bg-paper`, etc.).
 

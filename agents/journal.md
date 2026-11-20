@@ -1,6 +1,31 @@
 # Project Journal
 
-## 2026-11-20 — Contrast leftovers: table-empty, graph unresolved, bare defaults (follow-up)
+## 2026-11-20 — Bare preset defaults read at AA (follow-up)
+
+Bare `presetRokkit({})` — the documented one-line setup — painted text roles
+at 500 in light mode: 1.75–4.41:1 on paper (orange 2.56, sky 2.53, green
+2.08, yellow 1.75, red 3.44, cyan 2.22). The palette families got per-mode
+steps in 4fd0cfebf; the built-ins never did. Fix mirrors families exactly:
+each built-in skin carries measured day steps (700 almost everywhere, 600
+for violet/indigo at 5.20/5.74, 800 for yellow since 700 lands at 4.49)
+with night pinned at 500 — so dark rendering is pixel-identical and only
+light text deepens (fills move with text, on-colours follow, as with
+families).
+
+Plumbing: loadConfig splits built-in skins (skins stay roles-only) and
+threads steps into skinOverrides; single-skin keeps built-in steps only for
+roles still on the built-in palette (a remapped role names other steps);
+user-named skins replace wholesale. tokenVars resolves refs against
+defaultColors under config palettes (previously only config palettes, which
+made bare override refs throw) — matching tokenValue, which always merged.
+New `builtin-skins.spec.js` (14 tests: contrast, on-colours, plumbing,
+night-pinning); three preset/colors specs rewritten to the new intended
+contracts (dark block now exists for bare; light-only fallback documented).
+Full suite + browser + e2e green; app (families) unaffected by construction.
+Follow-ups left open: bare configs have no real dark mode (no flip — the
+dark block only pins 500s), and non-default built-ins map no status roles.
+
+## 2026-11-20 — Contrast leftovers: table-empty, graph unresolved (follow-up)
 
 **table-empty:** TreeTable's "No data" sat at base `opacity: 0.6` over
 ink-mute — axe 3.23/4.07 in all 10 combos (same defect as #208). Fix:

@@ -278,4 +278,16 @@ describe('FormRenderer — child snippet override', () => {
 
 		expect(container.querySelector('[data-custom-child]')).toBeTruthy()
 	})
+
+	it('renders the custom child snippet for an array element that opts in (#205)', () => {
+		const layout = {
+			type: 'vertical',
+			elements: [{ scope: '#/rows', label: 'Rows', override: true }]
+		}
+		const { container } = render(FormRendererTest, {
+			props: { withChild: true, data: { rows: [] }, schema, layout }
+		})
+
+		expect(container.querySelector('[data-custom-child]')).toBeTruthy()
+	})
 })

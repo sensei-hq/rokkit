@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest'
-import { STYLES, CASES, applyConfig, measureText, fmt } from './contrast-lib.js'
+import { STYLES, CASES, applyConfig, assertTokensApplied, measureText, fmt, freezeMotion } from './contrast-lib.js'
 
 /**
  * A selected option's label in an open Select/MultiSelect reads at AA (4.5:1)
@@ -19,9 +19,7 @@ const sheet = document.createElement('style')
 
 beforeAll(() => {
 	document.head.appendChild(sheet)
-	const still = document.createElement('style')
-	still.textContent = '*{transition:none!important}'
-	document.head.appendChild(still)
+	freezeMotion()
 })
 
 afterEach(() => {
@@ -74,6 +72,7 @@ function checkSelected(mode: string, what: string) {
 describe.each(Object.entries(STYLES))('%s select, selected option', (style, css) => {
 	it.each(CASES)('$skin skin, $mode mode: focused-selected reads at 4.5', ({ mode, tokens }) => {
 		applyConfig(sheet, { style, css, mode, tokens })
+		assertTokensApplied(style)
 		const { selected } = mount()
 		selected.focus()
 		expect(document.activeElement).toBe(selected)
@@ -84,6 +83,7 @@ describe.each(Object.entries(STYLES))('%s select, selected option', (style, css)
 		'$skin skin, $mode mode: unfocused-selected under focus-within reads at 4.5',
 		({ mode, tokens }) => {
 			applyConfig(sheet, { style, css, mode, tokens })
+			assertTokensApplied(style)
 			const { selected, other } = mount()
 			other.focus()
 			expect(document.activeElement).toBe(other)

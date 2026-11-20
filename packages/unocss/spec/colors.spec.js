@@ -47,8 +47,24 @@ describe('rootPreflights', () => {
 		return rootPreflights(themeFor(colormap, config, 'light'), colormap, config, extra)[0].getCSS()
 	}
 
-	it('is the :root light block, then the extra vars, with no dark block for single palettes', () => {
-		const out = css({ skin: { primary: 'sky' } }, ['--font-mono:M'])
+	it('is the :root light block, then the extra vars, with no dark block once every role is remapped', () => {
+		// Remapping every text role drops all built-in per-mode steps (they name
+		// other palettes), leaving no dark content — so no dark block. A single
+		// remap keeps the other roles' dark sides (see builtin-skins.spec.js).
+		const out = css(
+			{
+				skin: {
+					primary: 'blue',
+					accent: 'cyan',
+					success: 'lime',
+					warning: 'amber',
+					danger: 'pink',
+					error: 'rose',
+					info: 'teal'
+				}
+			},
+			['--font-mono:M']
+		)
 		expect(out.startsWith(':root, [data-mode="light"]{')).toBe(true)
 		expect(out).toContain(':root{--font-mono:M}')
 		expect(out).not.toContain('[data-mode="dark"]')

@@ -1,5 +1,17 @@
 # Project Journal
 
+## 2026-11-20 — Opacity fades on select-empty + tabs placeholder/empty (follow-up)
+
+**select-empty:** the filterable Select's "No results" message sat at base
+`opacity: 0.6` over ink-mute — axe 3.18–4.07:1 in all 10 style×mode combos
+(same defect as #208). Fix: opacity deleted; ink-mute on the dropdown ground
+passes everywhere. It cannot render at rest (needs a typed filter), so the
+gallery gates can never see it — pinned by new
+`select-empty-contrast.browser.spec.ts` (55 tests: 5 styles × skins × modes,
+opacity exactly 1 + WCAG ratio over the composited ground; rokkit's gradient
+ground bounded by both stops with the outside-range assertion). Red→green;
+axe-verified post-fix via a temporary filterable gallery cell (reverted).
+
 ## 2026-11-20 — UnoCSS @apply drops same-value color; snapshot rebased (follow-up)
 
 The state-snapshot drift (658 keys, byte-identical on develop) root-caused to

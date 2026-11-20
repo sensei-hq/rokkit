@@ -96,3 +96,10 @@
 [data-style='zen-sumi'] [data-tabs-content] {
   @apply text-ink-mute;
 }
+
+/* Empty / placeholder — muted status text at full opacity (a 0.6 fade here
+   failed AA, same defect as the select placeholder #208). */
+[data-style='zen-sumi'] [data-tabs-empty],
+[data-style='zen-sumi'] [data-tabs-placeholder] {
+  @apply text-ink-mute;
+}

@@ -12,6 +12,12 @@ opacity exactly 1 + WCAG ratio over the composited ground; rokkit's gradient
 ground bounded by both stops with the outside-range assertion). Red→green;
 axe-verified post-fix via a temporary filterable gallery cell (reverted).
 
+**tabs placeholder/empty:** base faded both to 0.6; the placeholder (inherited
+ink) failed in light mode at 4.49:1 in all five styles. Fix: opacity deleted,
+both take explicit per-style text-ink-mute (nothing colored them before).
+Pinned by two gallery cells (`tabs-placeholder` unvalued, `tabs-empty`
+no-options) in the theme gate; axe-verified post-fix.
+
 ## 2026-11-20 — UnoCSS @apply drops same-value color; snapshot rebased (follow-up)
 
 The state-snapshot drift (658 keys, byte-identical on develop) root-caused to

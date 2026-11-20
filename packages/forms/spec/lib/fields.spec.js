@@ -178,6 +178,38 @@ describe('fields', () => {
 			expect(combined).toEqual(combinedSchemaLayout)
 		})
 
+		it('should keep the layout keys on an array element (#205)', () => {
+			const schema = {
+				type: 'object',
+				properties: {
+					areas: { type: 'array', items: { type: 'string', enum: ['api', 'app'] } }
+				}
+			}
+			const layout = {
+				type: 'vertical',
+				elements: [
+					{
+						scope: '#/areas',
+						label: 'Areas',
+						description: 'Pick several',
+						override: true,
+						props: { placeholder: 'Pick' }
+					}
+				]
+			}
+			const [element] = getSchemaWithLayout(schema, layout).elements
+			// As a basic element does: layout keys reach the element's props.
+			expect(element.props).toMatchObject({
+				label: 'Areas',
+				description: 'Pick several',
+				override: true,
+				placeholder: 'Pick',
+				type: 'array',
+				options: ['api', 'app']
+			})
+			expect(element.props.schema).toBeDefined()
+		})
+
 		it('should combine the schema and layout for nested array', () => {
 			const schema = {
 				type: 'object',

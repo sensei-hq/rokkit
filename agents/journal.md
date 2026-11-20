@@ -1,5 +1,17 @@
 # Project Journal
 
+## 2026-11-20 — Fixed #205 (array element drops layout keys)
+
+`combineArrayElementsWithSchema` built array elements from schema props
+only, dropping `label`, `description`, `override` and `element.props` (so a
+#197 multiselect drew unlabeled and the `child` snippet never ran for it).
+Fix mirrors the basic combiner: layout extras first (omitting the
+structural `schema` sub-layout too), then schema props minus `items`, the
+enum→options carry, `element.props`, and the computed sub-`schema` last.
+Pinned at both levels: fields.spec asserts the issue's repro shape,
+FormRenderer-branches asserts the child snippet renders for an opted-in
+array. Full suite 9188, lint clean.
+
 ## 2026-11-20 — Released v1.16.1 (axe audit: #206–#209 + follow-ups)
 
 Patch. Branch `fix/axe-audit-206-209`, one commit per issue (10 fix commits):

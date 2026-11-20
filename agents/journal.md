@@ -1,5 +1,12 @@
 # Project Journal
 
+## 2026-11-20 — Contrast leftovers: table-empty, graph unresolved, bare defaults (follow-up)
+
+**table-empty:** TreeTable's "No data" sat at base `opacity: 0.6` over
+ink-mute — axe 3.23/4.07 in all 10 combos (same defect as #208). Fix:
+opacity deleted. Pinned by a `treetable-empty` gallery cell (empty TreeTable)
+in the theme gate; axe-verified post-fix.
+
 ## 2026-11-20 — Released v1.16.1 (axe audit: #206–#209 + follow-ups)
 
 Patch. Branch `fix/axe-audit-206-209`, one commit per issue (10 fix commits):

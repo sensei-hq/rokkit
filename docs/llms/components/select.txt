@@ -76,6 +76,7 @@ The **trigger** shows the selected option's `icon` (as `data-select-value-icon`)
 | `maxRows` | `number` | `8` | Visible rows before dropdown scrolls |
 | `icons` | `{ opened?, closed?, checked? }` | — | Override expand/check icons |
 | `onchange` | `(value, item) => void` | — | Called on selection |
+| `id` | `string` | generated | Rendered on the trigger (a `<label for>` target); the open listbox names itself after the trigger via `aria-labelledby` |
 | `class` | `string` | `''` | Additional CSS classes on root `<div>` |
 
 ## Field mapping (complete)

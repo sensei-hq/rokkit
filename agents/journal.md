@@ -1,5 +1,37 @@
 # Project Journal
 
+## 2026-11-20 — Fixed #206 (select a11y: nested-interactive + unnamed listbox)
+
+Two axe serious (WCAG 4.1.2) from sensei's decision form (sensei#389).
+Branch `fix/axe-audit-206-209` (one commit per issue).
+
+**Nested-interactive:** MultiSelect drew each tag's remove as a focusable
+`role="button"` span INSIDE the trigger `<button>`. Fixed per the issue's
+second option: tags are now plain labels, unpicking happens in the listbox
+(toggle the option off). Moving the tags out of the trigger was rejected:
+the trigger is the themed box, so that reshapes the box model across all
+six stylesheets and renames the trigger's accessible name — too much for a
+tactical fix. Removed `removeTag`, the `action` icon spread, the
+`data-select-tag-remove` doc line, and all six `tag-remove` CSS rules (base
++ 5 styles); the `icons.remove` type stays (public API, now unused).
+SearchFilter's `data-search-tag-remove` checked clean (native button in a
+div, no nesting).
+
+**Unnamed listbox:** the open `role="listbox"` had no accessible name.
+Triggers now always carry an id (`id` prop ?? `$props.id()` fallback, the
+chart-geom pattern) and the listbox takes `aria-labelledby` to it. The two
+"omits the id attribute when absent" specs were rewritten — an always-named
+listbox supersedes #194's minimal shape; explicit ids still win (forms
+chain tests untouched). Dropdown had the identical unnamed-listbox defect
+and got the same fix (generated id only, no new prop).
+
+**Gates:** 12 new specs (TDD red→green), full suite 9176 passed, lint 0/0,
+svelte-check 0/0 ×7, e2e theme-contrast + interaction-contrast green (the
+removed `:hover` rules left no unreachable-rule complaints). state-snapshot
+fails with 658 changed keys — verified BYTE-IDENTICAL on pristine develop
+via worktree (systematic `oklch(0.641…)` → `oklch(0.555…)` primary shift):
+pre-existing palette drift, not this change; baseline untouched.
+
 ## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
 
 Minor (new feature: #197). Docs mapping updated first (03-forms +

@@ -52,14 +52,6 @@
   @apply from-paper-edge to-paper-mute text-ink-mute border-ink-soft border bg-gradient-to-b;
 }
 
-[data-style='rokkit'] [data-select-tag-remove] {
-  @apply text-ink-mute;
-}
-
-[data-style='rokkit'] [data-select-tag-remove]:hover {
-  @apply text-ink;
-}
-
 /* =============================================================================
    Dropdown Panel
    ============================================================================= */

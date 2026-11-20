@@ -66,14 +66,6 @@
   background-color: color-mix(in oklch, var(--paper-mute) 15%, transparent);
 }
 
-[data-style='frosted'] [data-select-tag-remove] {
-  @apply text-ink-mute;
-}
-
-[data-style='frosted'] [data-select-tag-remove]:hover {
-  @apply text-ink;
-}
-
 /* =============================================================================
    Dropdown Panel
    ============================================================================= */

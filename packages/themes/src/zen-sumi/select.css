@@ -55,14 +55,6 @@
   @apply text-ink-mute border-paper-mute border bg-transparent bg-none;
 }
 
-[data-style='zen-sumi'] [data-select-tag-remove] {
-  @apply text-ink-mute;
-}
-
-[data-style='zen-sumi'] [data-select-tag-remove]:hover {
-  @apply text-ink-mute;
-}
-
 /* =============================================================================
    Dropdown Panel — paper bg, hairline border, no shadow
    ============================================================================= */

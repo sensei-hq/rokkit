@@ -43,6 +43,10 @@
 
 	const icons = $derived({ ...DEFAULT_STATE_ICONS.selector, ...userIcons })
 
+	// The trigger always carries an id so the open panel can name itself
+	// after it (#206: aria-input-field-name).
+	const triggerId = $props.id()
+
 	// ─── State ────────────────────────────────────────────────────────────────
 
 	let isOpen = $state(false)
@@ -140,6 +144,7 @@
 		bind:this={triggerRef}
 		type="button"
 		data-dropdown-trigger
+		id={triggerId}
 		{disabled}
 		aria-haspopup="listbox"
 		aria-expanded={isOpen}
@@ -155,7 +160,12 @@
 	</button>
 
 	{#if isOpen}
-		<div bind:this={panelRef} data-dropdown-panel role="listbox">
+		<div
+			bind:this={panelRef}
+			data-dropdown-panel
+			role="listbox"
+			aria-labelledby={triggerId}
+		>
 			{#each wrapper.flatView as node (node.key)}
 				{@const proxy = node.proxy}
 				{@const isActive = proxy.value === value}

@@ -40,11 +40,15 @@ function combineArrayElementsWithSchema(element, attribute) {
 		...attribute,
 		...pick(['component'], element),
 		props: {
+			// Layout keys (label, description, override, wrapper, …) first, as
+			// the basic combiner does — an array element used to drop them all.
+			...omit(['scope', 'props', 'component', 'key', 'schema'], element),
 			...omit(['items'], attribute.props),
 			// An array of enum members is a multi-choice: carry the enum as
 			// `options` (the string-enum rule in elements.js does the same),
 			// so resolveInputType can route it to a multiselect.
 			...(Array.isArray(itemEnum) && !attribute.props.options ? { options: itemEnum } : {}),
+			...element.props,
 			schema
 		}
 	}

@@ -99,10 +99,6 @@
   display: contents;
 }
 
-[data-select-placeholder] {
-  opacity: 0.6;
-}
-
 [data-select-arrow] {
   flex-shrink: 0;
   transition: transform 150ms ease;

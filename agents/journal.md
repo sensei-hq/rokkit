@@ -42,6 +42,21 @@ absent" convention), plus `data-field-empty` in `InfoField`. New
 `="false"` now asserts absence. FormRenderer's own enabled path already
 passed `undefined`, so its hasAttribute specs pass unchanged. 55/55 green.
 
+**#208 (same branch):** base `select.css` gave `[data-select-placeholder]`
+`opacity: 0.6`; over ink-mute it failed AA in **all 10** style×mode combos
+(3.19–4.07:1 by real axe 4.10.2, not just the reported zen-sumi dark
+3.98). Fix: deleted the base opacity rule (a visual fade that never
+belonged in structural base) — placeholder is now full-opacity ink-mute in
+all five styles, passing everywhere including all 5 skins. Two gate notes:
+the gallery had no unvalued select, so nothing ever measured the
+placeholder — added `select-empty` + `multiselect-empty` cells (no
+`data-gallery-open`; valued cells cover open states); and the collector
+skips opacity < 0.75, so the old placeholder was doubly invisible — the
+fix makes it measured. Pin PROVEN by sabotage: placeholder → `text-paper`
+fails the theme gate with exactly the two new keys at 1.0. rokkit's
+gradient trigger ground stays gate-blind (collector skips gradients) —
+covered by the axe probe instead (`/tmp/axeprobe/probe.mjs`, throwaway).
+
 ## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
 
 Minor (new feature: #197). Docs mapping updated first (03-forms +

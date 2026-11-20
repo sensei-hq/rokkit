@@ -7,7 +7,7 @@
 }
 
 [data-style='rokkit'] [data-step-item][data-step-state='current'] [data-step-number] {
-  @apply bg-paper-mute border-primary text-primary ring-3 ring-primary/20;
+  @apply text-primary bg-paper-mute border-primary ring-3 ring-primary/20;
 }
 
 [data-style='rokkit'] [data-step-item][data-step-state='upcoming'] [data-step-number] {

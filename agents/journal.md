@@ -1,5 +1,31 @@
 # Project Journal
 
+## 2026-11-20 — UnoCSS @apply drops same-value color; snapshot rebased (follow-up)
+
+The state-snapshot drift (658 keys, byte-identical on develop) root-caused to
+TWO things. First, three intentional Oct-28 palette commits landed after the
+last rebase (f189d4fa8) without rebasing: 4fd0cfebf (primary/accent day steps
+500→600/700 + on-color derivation), daef55a08 (dark paper-edge 400→300),
+5973a45cc (zen-sumi dark resting ink-mute). All verified intentional +
+spec-pinned; current rendering correct. (d9cbf302a's divider step has no
+measured effect on the fixture.)
+
+Second, a toolchain regression: UnoCSS 66's transformerDirectives drops a
+`color` declaration when an EARLIER utility in the same @apply expands to the
+same value — `@apply bg-primary text-primary` compiles to background-color
+alone (proven by experiment; order- and value-dependent). The Oct toolchain
+kept both, so the Kit 3 migration silently changed every same-token
+bg/border+text pair: outline buttons lost coloured text in four styles, and
+material's same-role fills fell back to inherited text. A pipeline-level scan
+of all 2055 @apply bodies found 16 dropping bodies (~40 rules, 10
+components); each fixed at the source — text-on-{role} on filled elements
+(the 1:1 same-role text was its own design bug), text-first reorder
+otherwise — plus rokkit's validation pills (`bg-{s} text-{s} opacity-10`
+faded text to near-invisible in BOTH eras; now a 10% color-mix tint behind
+full-strength status text, the #135 pattern). New `apply-no-drop.spec.js`
+expands every @apply through the real pipeline and fails on any lost
+declaration (121ms; red→green). Contrast gates green on the fixed build.
+
 ## 2026-11-20 — Fixed #206 (select a11y: nested-interactive + unnamed listbox)
 
 Two axe serious (WCAG 4.1.2) from sensei's decision form (sensei#389).

@@ -69,7 +69,7 @@
 }
 
 [data-style='material'] [data-table-row][data-selected='true'] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 /* Keyboard-focused row + synthesised TreeTable group row */

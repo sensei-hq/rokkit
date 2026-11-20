@@ -7,7 +7,7 @@
 }
 
 [data-style='zen-sumi'] [data-step-item][data-step-state='current'] [data-step-number] {
-  @apply bg-transparent border-primary text-primary bg-none;
+  @apply text-primary bg-transparent border-primary bg-none;
 }
 
 [data-style='zen-sumi'] [data-step-item][data-step-state='upcoming'] [data-step-number] {

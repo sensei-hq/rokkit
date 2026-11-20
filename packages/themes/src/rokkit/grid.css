@@ -22,7 +22,7 @@
 
 /* Active / selected tile */
 [data-style='rokkit'] [data-grid] [data-grid-item][data-active] {
-  @apply border-primary bg-primary text-primary;
+  @apply border-primary bg-primary text-on-primary;
 }
 
 [data-style='rokkit'] [data-grid] [data-grid-item][data-active]:hover:not(:disabled) {

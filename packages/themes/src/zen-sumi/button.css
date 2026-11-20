@@ -52,19 +52,19 @@
 }
 
 [data-style='zen-sumi'] [data-button][data-style='outline'][data-variant='primary'] {
-  @apply border-primary text-primary border bg-transparent;
+  @apply text-primary border-primary border bg-transparent;
 }
 
 [data-style='zen-sumi'] [data-button][data-style='outline'][data-variant='secondary'] {
-  @apply border-accent text-accent border bg-transparent;
+  @apply text-accent border-accent border bg-transparent;
 }
 
 [data-style='zen-sumi'] [data-button][data-style='outline'][data-variant='accent'] {
-  @apply border-accent text-accent border bg-transparent;
+  @apply text-accent border-accent border bg-transparent;
 }
 
 [data-style='zen-sumi'] [data-button][data-style='outline'][data-variant='danger'] {
-  @apply border-danger text-danger border bg-transparent;
+  @apply text-danger border-danger border bg-transparent;
 }
 
 /* =============================================================================

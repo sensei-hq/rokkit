@@ -42,7 +42,7 @@
 
 /* Active state — full highlight when list has focus */
 [data-style='material'] [data-list]:focus-within [data-list-item][data-active='true'] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 /* Active + hover/focus */
@@ -95,7 +95,7 @@
 }
 
 [data-style='material'] [data-list] [data-list-item][data-active='true'] [data-item-badge] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 /* =============================================================================
@@ -124,7 +124,7 @@
    ============================================================================= */
 
 [data-style='material'] [data-list] [data-list-item][data-selected='true'] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 [data-style='material'] [data-list]:focus-within [data-list-item][data-selected='true'] {

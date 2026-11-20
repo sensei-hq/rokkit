@@ -1,7 +1,35 @@
-import { DEFAULT_THEME_MAPPING } from '@rokkit/core'
+import { DEFAULT_THEME_MAPPING, NAMED_TOKEN_ROLE_MAP } from '@rokkit/core'
 import { BUILTIN_SKINS } from './builtin-skins.js'
 
 const DEFAULT_SKIN = { ...DEFAULT_THEME_MAPPING }
+
+/**
+ * Built-in skins split once (they are static): roles for `skins`, readable
+ * steps for `skinOverrides`. See builtin-skins.js for the step table.
+ */
+const BUILTIN_SPLIT = Object.fromEntries(
+	Object.entries(BUILTIN_SKINS).map(([name, s]) => [name, splitSkin(s)])
+)
+const BUILTIN_ROLES = Object.fromEntries(
+	Object.entries(BUILTIN_SPLIT).map(([name, s]) => [name, s.roles])
+)
+const BUILTIN_OVERRIDES = Object.fromEntries(
+	Object.entries(BUILTIN_SPLIT).map(([name, s]) => [name, s.overrides])
+)
+
+/**
+ * The built-in default's readable steps, kept only for roles still mapped to
+ * the built-in palette — a remapped role names another palette, whose steps
+ * the built-in table cannot know.
+ */
+function builtinSingleOverrides(userRoles) {
+	return Object.fromEntries(
+		Object.entries(BUILTIN_OVERRIDES.default).filter(([token]) => {
+			const role = NAMED_TOKEN_ROLE_MAP[token] ?? token
+			return (userRoles[role] ?? BUILTIN_ROLES.default[role]) === BUILTIN_ROLES.default[role]
+		})
+	)
+}
 
 export const DEFAULT_CONFIG = {
 	palettes: {},
@@ -71,10 +99,13 @@ export function loadConfig(userConfig) {
 		palettes:   pick(cfg.palettes, DEFAULT_CONFIG.palettes),
 		colorSpace: pick(cfg.colorSpace, DEFAULT_CONFIG.colorSpace),
 		skin:       { ...DEFAULT_SKIN, ...single.roles },
-		skins:      { ...BUILTIN_SKINS, ...userSkins },
-		// Per-skin token overrides: `skin` for the single skin, then each named skin.
+		skins:      { ...BUILTIN_ROLES, ...userSkins },
+		// Per-skin token overrides: `skin` for the single skin, then each named
+		// skin. A user-named skin replaces its built-in wholesale (roles and
+		// steps — it names other palettes); untouched built-ins keep theirs.
 		skinOverrides: {
-			skin: single.overrides,
+			skin: { ...builtinSingleOverrides(single.roles), ...single.overrides },
+			...BUILTIN_OVERRIDES,
 			...Object.fromEntries(Object.entries(named).map(([name, s]) => [name, s.overrides]))
 		},
 		// Whether the consumer explicitly opted into multi-skin mode. Built-in

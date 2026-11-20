@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest'
-import { STYLES, CASES, applyConfig, measureText, fmt } from './contrast-lib.js'
+import { STYLES, CASES, applyConfig, assertTokensApplied, measureText, fmt, freezeMotion } from './contrast-lib.js'
 
 /**
  * The "No results" message in a filterable Select with no match reads at AA
@@ -15,9 +15,7 @@ const sheet = document.createElement('style')
 
 beforeAll(() => {
 	document.head.appendChild(sheet)
-	const still = document.createElement('style')
-	still.textContent = '*{transition:none!important}'
-	document.head.appendChild(still)
+	freezeMotion()
 })
 
 afterEach(() => {
@@ -42,6 +40,7 @@ function mount() {
 describe.each(Object.entries(STYLES))('%s select, no-match filter', (style, css) => {
 	it.each(CASES)('$skin skin, $mode mode: empty message reads at 4.5', ({ mode, tokens }) => {
 		applyConfig(sheet, { style, css, mode, tokens })
+		assertTokensApplied(style)
 		const { empty } = mount()
 		const m = measureText(empty, mode)
 		expect(m.opacity, 'empty message must not be faded').toBe('1')

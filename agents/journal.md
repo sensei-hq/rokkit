@@ -32,6 +32,16 @@ fails with 658 changed keys — verified BYTE-IDENTICAL on pristine develop
 via worktree (systematic `oklch(0.641…)` → `oklch(0.555…)` primary shift):
 pre-existing palette drift, not this change; baseline untouched.
 
+**#207 (same branch):** `InputField` wrote `data-field-disabled={disabled}`,
+so an enabled field rendered `="false"` — still matching every theme's
+presence selector and fading to 40% opacity. Fixed with `|| undefined` on
+`data-field-disabled`, `data-field-required`, `data-field-empty` and
+`data-has-icon` (the `data-field-dirty` shape, and the repo's "true or
+absent" convention), plus `data-field-empty` in `InfoField`. New
+`InputField.spec.svelte.js` (9 tests); the InfoField spec that pinned
+`="false"` now asserts absence. FormRenderer's own enabled path already
+passed `undefined`, so its hasAttribute specs pass unchanged. 55/55 green.
+
 ## 2026-11-19 — Released v1.16.0 (#193, #194, #197)
 
 Minor (new feature: #197). Docs mapping updated first (03-forms +

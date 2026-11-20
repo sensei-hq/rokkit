@@ -69,13 +69,12 @@ describe('InfoField', () => {
 		expect(root.getAttribute('data-field-empty')).toBe('true')
 	})
 
-	it('should set data-field-empty to false when value is present', () => {
+	it('omits data-field-empty when value is present (#207)', () => {
 		const props = $state({ name: 'status', value: 'active' })
 		const { container } = render(InfoField, { props })
 
 		const root = container.querySelector('[data-field-root]')
-		// Svelte renders data-field-empty={false} as attribute with value "false"
-		expect(root.getAttribute('data-field-empty')).toBe('false')
+		expect(root.hasAttribute('data-field-empty')).toBe(false)
 	})
 
 	it('should render label when provided', () => {

@@ -73,11 +73,11 @@
 	class={className}
 	data-field-state={status ?? messageState}
 	data-field-type={type}
-	data-field-required={required}
-	data-field-disabled={disabled}
+	data-field-required={required || undefined}
+	data-field-disabled={disabled || undefined}
 	data-field-dirty={dirty || undefined}
-	data-field-empty={value === null || value === undefined}
-	data-has-icon={icon !== null && icon !== undefined}
+	data-field-empty={(value === null || value === undefined) || undefined}
+	data-has-icon={(icon !== null && icon !== undefined) || undefined}
 	data-field-layout={variant}
 >
 	<div data-field aria-label={description ?? label ?? name}>

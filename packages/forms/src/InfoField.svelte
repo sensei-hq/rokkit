@@ -14,7 +14,7 @@
 	data-field-root
 	class={className}
 	data-field-type="info"
-	data-field-empty={value === null || value === undefined}
+	data-field-empty={(value === null || value === undefined) || undefined}
 >
 	<div data-field aria-label={description ?? label ?? name}>
 		{#if label}

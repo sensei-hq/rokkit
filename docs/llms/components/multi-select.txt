@@ -56,7 +56,7 @@ Every option renders a checkbox indicator (`data-select-checkbox`) followed by t
 
 The checkbox is always present — it is not a data field. All other fields above are data-driven.
 
-The **trigger** shows selected items as `data-select-tag` chips (each with a `data-select-tag-remove` button), or a `data-select-count` indicator (`N selected`) when the count exceeds `maxDisplay`, or a `data-select-placeholder` when nothing is selected. This is hardcoded — not snippet-overridable.
+The **trigger** shows selected items as `data-select-tag` chips (plain labels — a control nested in the trigger `<button>` would trip axe `nested-interactive`, so unpicking happens in the listbox), or a `data-select-count` indicator (`N selected`) when the count exceeds `maxDisplay`, or a `data-select-placeholder` when nothing is selected. This is hardcoded — not snippet-overridable.
 
 ## Props
 
@@ -72,8 +72,9 @@ The **trigger** shows selected items as `data-select-tag` chips (each with a `da
 | `maxDisplay` | `number` | `3` | Max tags shown before count indicator |
 | `align` | `'start'\|'end'` | `'start'` | Dropdown alignment relative to trigger |
 | `direction` | `'up'\|'down'` | `'down'` | Dropdown direction |
-| `icons` | `{ opened?, closed?, checked?, remove? }` | — | Override expand/check/remove icons |
+| `icons` | `{ opened?, closed?, checked? }` | — | Override expand/check icons (`remove?` is accepted but no longer rendered — tags carry no remove button since #206) |
 | `onchange` | `(values[], items[]) => void` | — | Called on each toggle |
+| `id` | `string` | generated | Rendered on the trigger (a `<label for>` target); the open listbox names itself after the trigger via `aria-labelledby` |
 | `class` | `string` | `''` | Additional CSS classes on root `<div>` |
 
 ## Field mapping (complete)
@@ -192,7 +193,6 @@ Outer structure:
 | `data-select-tags` | tags container span |
 | `data-select-tag` | individual selected-item chip |
 | `data-select-tag-text` | chip label text |
-| `data-select-tag-remove` | chip remove button (role="button") |
 | `data-select-count` | count indicator (`N selected`) when exceeding `maxDisplay` |
 | `data-select-placeholder` | placeholder span (when nothing selected) |
 | `data-select-arrow` | dropdown arrow icon span |

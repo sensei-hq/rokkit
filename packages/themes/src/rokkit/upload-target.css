@@ -22,7 +22,7 @@
 
 /* Drag-over highlight */
 [data-style='rokkit'] [data-upload-target][data-dragging] {
-  @apply border-primary bg-primary text-primary;
+  @apply border-primary bg-primary text-on-primary;
 }
 
 /* =============================================================================

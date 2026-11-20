@@ -67,7 +67,7 @@
 
 /* Primary — tonal primary container (Material You style) */
 [data-style='material'] [data-card][data-variant='primary'] {
-  @apply bg-primary border-primary text-primary border bg-none shadow-sm;
+  @apply bg-primary border-primary text-on-primary border bg-none shadow-sm;
 }
 
 [data-style='material'] [data-card][data-variant='primary'] [data-card-header],
@@ -76,12 +76,12 @@
 }
 
 [data-style='material'] [data-card][data-variant='primary'] [data-card-body] {
-  @apply text-primary;
+  @apply text-on-primary;
 }
 
 /* Secondary — tonal secondary container */
 [data-style='material'] [data-card][data-variant='secondary'] {
-  @apply bg-accent-soft border-accent text-accent border bg-none shadow-sm;
+  @apply text-accent bg-accent-soft border-accent border bg-none shadow-sm;
 }
 
 [data-style='material'] [data-card][data-variant='secondary'] [data-card-header],

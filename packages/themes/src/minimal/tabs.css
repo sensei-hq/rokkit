@@ -149,3 +149,10 @@
 [data-style='minimal'] [data-tabs-content] {
   @apply text-ink-mute;
 }
+
+/* Empty / placeholder — muted status text at full opacity (a 0.6 fade here
+   failed AA, same defect as the select placeholder #208). */
+[data-style='minimal'] [data-tabs-empty],
+[data-style='minimal'] [data-tabs-placeholder] {
+  @apply text-ink-mute;
+}

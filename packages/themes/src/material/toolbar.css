@@ -49,11 +49,11 @@
 
 /* Active/pressed state */
 [data-style='material'] [data-toolbar-item][data-active='true'] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 [data-style='material'] [data-toolbar-item][data-active='true']:hover:not(:disabled) {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 /* =============================================================================

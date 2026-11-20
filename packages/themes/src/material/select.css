@@ -54,14 +54,6 @@
   @apply bg-paper-mute text-ink rounded-full bg-none shadow-sm;
 }
 
-[data-style='material'] [data-select-tag-remove] {
-  @apply text-ink-mute rounded-full;
-}
-
-[data-style='material'] [data-select-tag-remove]:hover {
-  @apply text-ink bg-paper-mute;
-}
-
 /* =============================================================================
    Dropdown Panel
    ============================================================================= */

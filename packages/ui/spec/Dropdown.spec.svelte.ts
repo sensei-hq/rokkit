@@ -298,6 +298,21 @@ describe('Dropdown', () => {
 		expect(panel?.getAttribute('role')).toBe('listbox')
 	})
 
+	it('trigger always carries an id (#206)', () => {
+		const { container } = render(Dropdown, { items })
+		const trigger = container.querySelector('[data-dropdown-trigger]') as HTMLButtonElement
+		expect(trigger.id).toBeTruthy()
+	})
+
+	it('names the open panel after the trigger (#206)', async () => {
+		const { container } = render(Dropdown, { items })
+		await openDropdown(container)
+		const trigger = container.querySelector('[data-dropdown-trigger]') as HTMLButtonElement
+		const panel = container.querySelector('[data-dropdown-panel]')!
+		expect(trigger.id).toBeTruthy()
+		expect(panel.getAttribute('aria-labelledby')).toBe(trigger.id)
+	})
+
 	// ─── Custom Class ───────────────────────────────────────────────
 
 	it('applies custom class to root', () => {

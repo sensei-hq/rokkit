@@ -53,7 +53,7 @@
 }
 
 [data-style='material'] [data-dropdown-option][data-active='true'] {
-  @apply bg-primary text-primary bg-none;
+  @apply bg-primary text-on-primary bg-none;
 }
 
 [data-style='material'] [data-dropdown-separator] {

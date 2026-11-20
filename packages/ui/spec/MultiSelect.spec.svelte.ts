@@ -184,16 +184,32 @@ describe('MultiSelect', () => {
 		expect(container.querySelector('[data-select-count]')).toBeNull()
 	})
 
-	it('tag remove button removes item', async () => {
-		const onchange = vi.fn()
+	it('tags are non-interactive labels — no nested remove control (#206)', () => {
 		const { container } = render(MultiSelect, {
 			items: flatItems,
-			value: ['apple', 'banana'],
-			onchange
+			value: ['apple', 'banana']
 		})
-		const removeBtn = container.querySelector('[data-select-tag-remove]')!
-		await fireEvent.click(removeBtn)
-		expect(onchange).toHaveBeenCalledWith(['banana'], [flatItems[1]])
+		const tags = container.querySelectorAll('[data-select-tag]')
+		expect(tags.length).toBe(2)
+		// axe nested-interactive: no focusable control may live inside the trigger button,
+		// so tags carry no remove control — unpicking happens in the listbox.
+		expect(container.querySelector('[data-select-tag-remove]')).toBeNull()
+		for (const tag of tags) {
+			expect(tag.hasAttribute('tabindex')).toBe(false)
+			expect(tag.hasAttribute('role')).toBe(false)
+		}
+	})
+
+	it('trigger contains no focusable descendants (#206)', () => {
+		const { container } = render(MultiSelect, {
+			items: flatItems,
+			value: ['apple', 'banana']
+		})
+		const trigger = container.querySelector('[data-select-trigger]')!
+		const focusable = trigger.querySelectorAll(
+			'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"], [role="link"]'
+		)
+		expect(focusable.length).toBe(0)
 	})
 
 	// ─── Grouped Options ────────────────────────────────────────────
@@ -416,8 +432,46 @@ describe('MultiSelect trigger id (#197, #194 pattern)', () => {
 		expect(trigger.id).toBe('tags')
 	})
 
-	it('omits the id attribute when absent', () => {
+	it('generates a trigger id when absent (#206)', () => {
 		const { container } = render(MultiSelect, { items, value: [] })
-		expect(container.querySelector('[data-select-trigger]')!.hasAttribute('id')).toBe(false)
+		const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+		expect(trigger.id).toBeTruthy()
+	})
+
+	it('generates unique trigger ids across instances (#206)', () => {
+		const first = render(MultiSelect, { items, value: [] })
+		const second = render(MultiSelect, { items, value: [] })
+		const a = (first.container.querySelector('[data-select-trigger]') as HTMLButtonElement).id
+		const b = (second.container.querySelector('[data-select-trigger]') as HTMLButtonElement).id
+		expect(a).toBeTruthy()
+		expect(b).toBeTruthy()
+		expect(a).not.toBe(b)
+	})
+})
+
+describe('MultiSelect listbox naming (#206)', () => {
+	const items = [
+		{ label: 'Red', value: 'red' },
+		{ label: 'Green', value: 'green' }
+	]
+
+	async function open(container: HTMLElement) {
+		await fireEvent.click(container.querySelector('[data-select-trigger]')!)
+	}
+
+	it('names the open listbox after the trigger id when provided', async () => {
+		const { container } = render(MultiSelect, { items, value: [], id: 'tags' })
+		await open(container)
+		const dropdown = container.querySelector('[data-select-dropdown]')!
+		expect(dropdown.getAttribute('aria-labelledby')).toBe('tags')
+	})
+
+	it('names the open listbox after the generated trigger id when absent', async () => {
+		const { container } = render(MultiSelect, { items, value: [] })
+		await open(container)
+		const trigger = container.querySelector('[data-select-trigger]') as HTMLButtonElement
+		const dropdown = container.querySelector('[data-select-dropdown]')!
+		expect(trigger.id).toBeTruthy()
+		expect(dropdown.getAttribute('aria-labelledby')).toBe(trigger.id)
 	})
 })

@@ -656,6 +656,11 @@
   color: var(--ink-mute);
 }
 
+/* Under unresolved the verb rides ink: ink-mute at the row's 65% dim reads ~4.1:1. */
+[data-style='material'] [data-graph-design-row][data-unresolved] [data-graph-design-verb] {
+  color: var(--ink);
+}
+
 [data-style='material'] [data-graph-design-row],
 [data-style='material'] [data-graph-design-link],
 [data-style='material'] [data-graph-design-strong],

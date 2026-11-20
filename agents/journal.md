@@ -12,6 +12,58 @@ Pinned at both levels: fields.spec asserts the issue's repro shape,
 FormRenderer-branches asserts the child snippet renders for an opted-in
 array. Full suite 9188, lint clean.
 
+## 2026-11-20 — Bare preset defaults read at AA (follow-up)
+
+Bare `presetRokkit({})` — the documented one-line setup — painted text roles
+at 500 in light mode: 1.75–4.41:1 on paper (orange 2.56, sky 2.53, green
+2.08, yellow 1.75, red 3.44, cyan 2.22). The palette families got per-mode
+steps in 4fd0cfebf; the built-ins never did. Fix mirrors families exactly:
+each built-in skin carries measured day steps (700 almost everywhere, 600
+for violet/indigo at 5.20/5.74, 800 for yellow since 700 lands at 4.49)
+with night pinned at 500 — so dark rendering is pixel-identical and only
+light text deepens (fills move with text, on-colours follow, as with
+families).
+
+Plumbing: loadConfig splits built-in skins (skins stay roles-only) and
+threads steps into skinOverrides; single-skin keeps built-in steps only for
+roles still on the built-in palette (a remapped role names other steps);
+user-named skins replace wholesale. tokenVars resolves refs against
+defaultColors under config palettes (previously only config palettes, which
+made bare override refs throw) — matching tokenValue, which always merged.
+New `builtin-skins.spec.js` (14 tests: contrast, on-colours, plumbing,
+night-pinning); three preset/colors specs rewritten to the new intended
+contracts (dark block now exists for bare; light-only fallback documented).
+Full suite + browser + e2e green; app (families) unaffected by construction.
+Follow-ups left open: bare configs have no real dark mode (no flip — the
+dark block only pins 500s), and non-default built-ins map no status roles.
+
+## 2026-11-20 — Contrast leftovers: table-empty, graph unresolved (follow-up)
+
+**table-empty:** TreeTable's "No data" sat at base `opacity: 0.6` over
+ink-mute — axe 3.23/4.07 in all 10 combos (same defect as #208). Fix:
+opacity deleted. Pinned by a `treetable-empty` gallery cell (empty TreeTable)
+in the theme gate; axe-verified post-fix.
+
+**graph unresolved:** design rows with `data-unresolved` dim to 60% as an
+"unplaced" signal — but ink text landed at 4.47:1 and the ink-mute verb at
+3.2:1 (light; axe misattributed the verb at 4.47, direct computation showed
+3.2). Dark verb failed too (4.08). Fix keeps the dim-as-signal: row opacity
+0.6→0.65 (measured threshold: ink clears 4.5 from 0.65 up) and the verb rides
+ink under unresolved in all five styles. Pinned by
+`graph-unresolved-contrast.browser.spec.ts` (50 tests). The drill-trail `›`
+separator fade stays: it's a decorative ::before (WCAG-exempt).
+
+**harness hardening (contrast-lib):** debugging the graph spec exposed four
+vacuity traps, all fixed in the lib: (1) `measureText` ignored element
+opacity — faded rows measured at full strength; now blends both sides toward
+the composite above the outermost faded element (never the hardcoded
+fallback, which understated light ratios); (2) entry animations freeze —
+fresh dropdowns read at opacity 0 without `animation:none` (`freezeMotion`,
+mirrors the e2e freezer); (3) preflight lacked the button reset, so UA
+button-face gray leaked behind button text; (4) `assertTokensApplied` fails
+loudly when tokens don't resolve (an applyConfig signature drift silently
+zeroed every ratio). Skins match the APP's config (default IS zen-sumi).
+
 ## 2026-11-20 — Released v1.16.1 (axe audit: #206–#209 + follow-ups)
 
 Patch. Branch `fix/axe-audit-206-209`, one commit per issue (10 fix commits):

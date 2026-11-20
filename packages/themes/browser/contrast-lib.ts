@@ -38,8 +38,15 @@ export const SKINS: Record<string, Record<string, unknown>> = {
 	)
 }
 
-/** The consumer's reset (UnoCSS/Tailwind preflight): border-box, solid zero borders. */
-export const PREFLIGHT = '*,::before,::after{box-sizing:border-box;border:0 solid}'
+/**
+ * The consumer's reset (UnoCSS/Tailwind preflight): border-box, solid zero
+ * borders — plus the button reset. Without it the UA button-face gray
+ * (~#efefef) sits behind button text and every button measurement reads the
+ * wrong ground (dark text on UA gray fails at ~1.0).
+ */
+export const PREFLIGHT =
+	'*,::before,::after{box-sizing:border-box;border:0 solid}' +
+	'button{background-color:transparent;background-image:none;color:inherit;font:inherit}'
 
 /** The token vars `presetRokkit` installs for a config: `:root` light, `[data-mode="dark"]`. */
 export function tokenCss(userConfig: Record<string, unknown>) {
@@ -172,22 +179,98 @@ import baseCss from '../dist/base.css?raw'
 export function applyConfig(sheet: HTMLStyleElement, cfg: { style: string; css: string; mode: string; tokens: string }) {
 	document.body.dataset.style = cfg.style
 	document.body.dataset.mode = cfg.mode
+	// The page ground is paper (as in the app): without it the ground walk
+	// falls back to pure white / near-black and every translucent stack
+	// measures against the wrong ground.
+	document.body.style.background = 'var(--paper)'
 	sheet.textContent = `${PREFLIGHT}\n${cfg.tokens}\n${baseCss}\n${cfg.css}`
 }
 
 /**
- * Measure flat text: its opacity, opaque color, and WCAG ratio over every
- * ground behind it (one, or one per gradient stop). For gradients also reports
- * whether the text lightness sits strictly outside the stop range — when it
- * does, the minimum over the interpolation is at an endpoint.
+ * Kill transitions AND animations. Entry animations (the select dropdown
+ * fades 0→1 over 150ms) leave a freshly mounted fixture at opacity 0 in the
+ * same frame — without this, every dropdown measurement reads the unopened
+ * state. Mirrors the e2e freezer exactly.
  */
+export function freezeMotion() {
+	const still = document.createElement('style')
+	still.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}'
+	document.head.appendChild(still)
+}
+
+/**
+ * Fail loudly when the harness itself is broken: no tokens (a typo'd skin or
+ * an applyConfig signature drift) makes every ratio vacuous — black text on a
+ * fallback ground passes light mode at 21:1 and fails dark at 1.1:1, both
+ * meaningless. Every spec calls this after applyConfig.
+ */
+export function assertTokensApplied(style: string) {
+	const ink = getComputedStyle(document.body).getPropertyValue('--ink').trim()
+	if (!ink) throw new Error(`tokens not applied for style ${style}: --ink is empty`)
+	const paper = getComputedStyle(document.body).getPropertyValue('--paper').trim()
+	if (!paper) throw new Error(`tokens not applied for style ${style}: --paper is empty`)
+}
+
+/**
+ * Measure flat text: its opacity, opaque color, and WCAG ratio over every
+ * ground behind it (one, or one per gradient stop). Element opacity along the
+ * ancestor chain fades the whole rendering toward the page, so it blends BOTH
+ * sides — ignoring it passed a 60%-faded row at full strength. For gradients
+ * also reports whether the text lightness sits strictly outside the stop
+ * range — when it does, the minimum over the interpolation is at an endpoint.
+ */
+type ChainLink = { opacity: number; bg: number[] }
+
+/** Opacity + background paint from `el` up to (not including) documentElement. */
+function paintChain(el: Element): ChainLink[] {
+	const chain: ChainLink[] = []
+	for (let n: Element | null = el; n && n !== document.documentElement; n = n.parentElement) {
+		const c = getComputedStyle(n)
+		chain.push({ opacity: parseFloat(c.opacity), bg: toRGBA(c.backgroundColor) })
+	}
+	return chain
+}
+
+/**
+ * The fade context: combined opacity from `el` through the outermost faded
+ * ancestor, and the composite strictly above that ancestor (body paper in
+ * these fixtures — never the hardcoded fallback, which understates light
+ * ratios). A faded rendering blends BOTH text and ground toward it.
+ */
+function fadeContext(el: Element, pageBg: number[]) {
+	const chain = paintChain(el)
+	const fadedAt = chain.findLastIndex((l) => l.opacity < 0.999)
+	if (fadedAt < 0) return { faded: 1, below: pageBg }
+	const faded = chain.slice(0, fadedAt + 1).reduce((a, l) => a * l.opacity, 1)
+	let below = pageBg
+	for (let i = chain.length - 1; i > fadedAt; i--) {
+		const bg = chain[i].bg
+		if (bg[3] > 0) below = bg[3] >= 0.999 ? [bg[0], bg[1], bg[2]] : over(bg, below)
+	}
+	return { faded, below }
+}
+
+/** WCAG ratio of text over one ground with color alpha and element fade applied. */
+function fadedRatio(
+	flat: number[],
+	alpha: number,
+	ground: number[],
+	fade: { faded: number; below: number[] }
+) {
+	const local = alpha >= 0.999 ? flat : over([...flat, alpha], ground)
+	const f = fade.faded >= 0.999 ? local : over([...local, fade.faded], fade.below)
+	const g = fade.faded >= 0.999 ? ground : over([...ground, fade.faded], fade.below)
+	return contrast(f, g)
+}
+
 export function measureText(el: Element, mode: string) {
 	const cs = getComputedStyle(el)
 	const fg = toRGBA(cs.color)
 	const pageBg = mode === 'dark' ? [17, 17, 17] : [255, 255, 255]
 	const { grounds, gradient } = textGrounds(el, pageBg)
+	const fade = fadeContext(el, pageBg)
 	const flat = [fg[0], fg[1], fg[2]]
-	const ratios = grounds.map((g) => contrast(flat, g))
+	const ratios = grounds.map((g) => fadedRatio(flat, fg[3], g, fade))
 	const textL = luminance(flat)
 	const stopLs = grounds.map((g) => luminance(g))
 	const outside = stopLs.every((l) => l < textL) || stopLs.every((l) => l > textL)

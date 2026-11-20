@@ -151,8 +151,12 @@ function varsForMode(theme, colormap, config) {
 
 /** An override block's tokens for one mode, palette refs resolved through the config. */
 function tokenVars(overrides, config, mode) {
+	// Built-in Tailwind palettes resolve under config palettes (which win on
+	// collision) — mirroring tokenValue, so the built-in skins' own step
+	// overrides (`orange.700`) resolve for bare configs that declare no
+	// palettes. Previously-throwing unknown names still throw.
 	/* v8 ignore next — loadConfig always ensures palettes is {} */
-	return resolveTokens(overrides, config.palettes ?? {}, config.colorSpace, mode)
+	return resolveTokens(overrides, { ...defaultColors, ...config.palettes }, config.colorSpace, mode)
 }
 
 /**
@@ -219,7 +223,7 @@ export function rootPreflights(theme, colormap, config, extraVars) {
  */
 function skinVars(name, mapping, config, mode) {
 	const roles = withoutAliases(mapping)
-	/* v8 ignore next — loadConfig gives every user skin an overrides block; built-ins have none */
+	/* v8 ignore next — loadConfig gives every skin an overrides block (possibly empty) */
 	const overrides = config.skinOverrides?.[name] ?? {}
 	return {
 		...varsForMode(themeFor(mapping, config, mode), roles, config),
@@ -242,7 +246,7 @@ export function skinPreflights(config) {
 		.filter(([name]) => name !== DEFAULT_SKIN_NAME)
 		.map(([name, mapping]) => {
 			const lightBlock = `[data-skin='${name}']{${toCssBlock(skinVars(name, mapping, config, 'light'))}}`
-			/* v8 ignore next — loadConfig gives every user skin an overrides block; built-ins have none */
+			/* v8 ignore next — loadConfig gives every skin an overrides block (possibly empty) */
 			const needsDark = hasDualPaletteMapping(withoutAliases(mapping)) || declaresDark(config.skinOverrides?.[name] ?? {})
 			const dark = needsDark
 				? `[data-mode='dark'][data-skin='${name}']{${toCssBlock(skinVars(name, mapping, config, 'dark'))}}`

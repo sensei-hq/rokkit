@@ -17,7 +17,7 @@
 	import { page } from '$app/state'
 	import { vibe, commands } from '@rokkit/states'
 	import {
-		Button, Badge, Pill, Card, List, Tree, Table, Tabs, Select, MultiSelect,
+		Button, Badge, Pill, Card, List, Tree, Table, TreeTable, Tabs, Select, MultiSelect,
 		Menu, Dropdown, Toggle, Switch, ProgressBar, Range, Rating, Timeline,
 		Stepper, BreadCrumbs, Toolbar, StatusList, Message, Tooltip, Avatar,
 		Divider, Swatch, Code, Carousel, ChatHistory, FloatingNavigation,
@@ -280,6 +280,9 @@
 		<Tree items={treeItems} fields={{ label: 'name', value: 'id' }} bind:value={treeValue} />
 	</div>
 	<div data-gallery-comp="table" class="cell"><Table data={tableData} caption="Products" /></div>
+	<!-- Empty: a TreeTable with no rows renders only the "No data" message.
+	     Without this the audit never measures empty-state contrast. -->
+	<div data-gallery-comp="treetable-empty" class="cell"><TreeTable data={[]} columns={[{ key: 'name', label: 'Name' }]} /></div>
 	<div data-gallery-comp="tabs" class="cell"><Tabs options={tabItems} bind:value={tabValue} /></div>
 	<!--
 		`data-gallery-open` names the trigger the audit must click to expose this

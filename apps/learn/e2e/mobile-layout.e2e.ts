@@ -15,7 +15,7 @@ const PHONE = { width: 390, height: 844 }
 test.use({ viewport: PHONE, isMobile: true, hasTouch: true })
 
 /** Elements that escape the viewport horizontally and that no scroll container reaches. */
-function escapees(page: Page) {
+function escapees(page: Page, viewportWidth = PHONE.width) {
 	return page.evaluate((vw) => {
 		const found: { el: Element; id: string; left: number; right: number }[] = []
 		for (const el of document.querySelectorAll('body *')) {
@@ -41,7 +41,7 @@ function escapees(page: Page) {
 			found.push({ el, id: el.tagName.toLowerCase() + attrs, left: Math.round(box.left), right: Math.round(box.right) })
 		}
 		return found.map(({ id, left, right }) => `${id} ${left}..${right}`)
-	}, PHONE.width)
+	}, viewportWidth)
 }
 
 const routes = [
@@ -63,6 +63,37 @@ for (const path of routes) {
 		expect(await escapees(page)).toEqual([])
 	})
 }
+
+/**
+ * Narrower phones and a portrait tablet. /app/tree-table carries the longest demo query,
+ * which used to push the conversation header's "Browse" link off the side; /app/date at
+ * 768px used to keep the three-pane desktop shell and squeeze the canvas to ~90px.
+ */
+const otherWidths = [
+	{ path: '/app/tree-table', width: 360 },
+	{ path: '/app/list', width: 360 },
+	{ path: '/guides/getting-started', width: 360 },
+	{ path: '/', width: 360 },
+	{ path: '/app/date', width: 768 },
+	{ path: '/guides/getting-started', width: 768 },
+	{ path: '/', width: 768 }
+]
+
+for (const { path, width } of otherWidths) {
+	test(`${path} fits a ${width}px screen`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 })
+		await gotoHydrated(page, path)
+		await page.waitForLoadState('networkidle')
+		expect(await escapees(page, width)).toEqual([])
+	})
+}
+
+test('the /app canvas gets the full width beside the rail on a portrait tablet', async ({ page }) => {
+	await page.setViewportSize({ width: 768, height: 1024 })
+	await gotoHydrated(page, '/app/date')
+	const canvas = await page.locator('main.canvas').boundingBox()
+	expect(canvas?.width).toBeGreaterThanOrEqual(768 - 50)
+})
 
 test('the guide reading pane gets the full phone width', async ({ page }) => {
 	await gotoHydrated(page, '/guides/getting-started')

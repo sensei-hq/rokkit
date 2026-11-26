@@ -51,10 +51,20 @@
 	[data-mode-picker] {
 		display: grid;
 		gap: 16px;
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
 		padding: 32px;
+		/* An explicit width: under `margin: 0 auto` in the flex-column page the
+		   picker would size to fit-content, and auto-fit resolves the track count
+		   against max-width (4 tracks) — four 260px cards on a 390px phone. */
+		width: 100%;
+		box-sizing: border-box;
 		max-width: 1060px;
 		margin: 0 auto;
+	}
+	@media (max-width: 720px) {
+		[data-mode-picker] {
+			padding: 20px 16px;
+		}
 	}
 	[data-mode-card] {
 		display: flex;

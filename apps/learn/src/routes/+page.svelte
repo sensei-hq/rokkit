@@ -1065,4 +1065,79 @@
 		font: 500 11px var(--font-mono);
 		color: var(--ink-mute);
 	}
+
+	/* ─── Narrow screens ─────────────────────────────────────────── */
+
+	/* Tablet: the two-column hero and chat-embed stack; four-up grids go two-up. */
+	@media (max-width: 1024px) {
+		.hero,
+		.chat-embed {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 48px;
+		}
+
+		.hero-mark {
+			width: 100%;
+			max-width: 420px;
+			justify-self: center;
+			overflow: hidden;
+		}
+
+		.points-grid,
+		.packages-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 32px 24px;
+		}
+	}
+
+	/* Phone: one column throughout, 16px gutters, display type scaled down. */
+	@media (max-width: 720px) {
+		.hero {
+			padding: 40px 16px 48px;
+		}
+
+		.four-points,
+		.themed-tabs,
+		.chat-embed,
+		.packages,
+		.cta {
+			padding: 48px 16px;
+		}
+
+		.hero h1 {
+			font-size: 44px;
+		}
+
+		.hero-mark {
+			height: 300px;
+		}
+
+		.brushstroke {
+			width: 100%;
+			height: auto;
+		}
+
+		.section-header h2 {
+			font-size: 28px;
+		}
+
+		.cta h2 {
+			font-size: 30px;
+		}
+
+		.section-header.inline {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.points-grid,
+		.packages-grid,
+		.tabs-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.cta-actions {
+			flex-wrap: wrap;
+		}
+	}
 </style>

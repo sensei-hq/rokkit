@@ -129,6 +129,23 @@ test('expanding the /app history on a phone overlays it instead of squeezing con
 	expect(canvas?.width).toBeGreaterThanOrEqual(PHONE.width - 50)
 })
 
+/**
+ * Overflow is not the only failure: a header too wide for one row keeps everything on
+ * screen by flex-shrinking the wordmark to nothing (seen at 768px). Every width from
+ * phone to small laptop must keep the brand at its natural width.
+ */
+for (const width of [360, 768, 820, 1024, 1100]) {
+	test(`the header keeps the wordmark whole at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 })
+		await page.goto('/guides')
+		const brand = page.locator('[data-site-header] .brand-link')
+		const box = await brand.boundingBox()
+		const natural = await brand.evaluate((el) => (el.firstElementChild as Element).scrollWidth)
+		expect(box?.width).toBeGreaterThanOrEqual(natural)
+		expect(natural).toBeGreaterThan(60)
+	})
+}
+
 test('every site nav link is reachable on a phone', async ({ page }) => {
 	await gotoHydrated(page, '/')
 	for (const name of ['Explore', 'Guides', 'Ask Rokkit']) {

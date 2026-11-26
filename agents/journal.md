@@ -11666,3 +11666,24 @@ prop goes into rokkit. Branch `feat/timeline-tone-dot`.
 Sensei's relay lane row carries a short host tag ("in Cursor"); its hover text names the
 host in full. Pill takes `title` → the `title` attribute. Pill llms doc gained the
 `tone` / `variant` / `size` rows #181 left out. Branch `feat/pill-title`, red → green.
+
+## 2026-11-26 — Learn site: mobile and tablet layouts
+
+Every one of the 134 site routes overflowed at 390px. Audited with a script that flags
+any element escaping the viewport unless a user-scrollable ancestor holds it
+(`overflow: hidden` clipping counts as broken). Branch `fix/mobile-layout`.
+
+- Header two rows at <=800px; labels drop <=960px; wordmark `flex-shrink: 0` (it
+  shrank to 0px at 768 — overflow audits cannot see squashing, so a separate test).
+- Guides: TOC drops <=1024px; <=720px rail behind "Browse guides", closes on navigate.
+- /app: history starts collapsed <=1024px (`HISTORY_RAIL_LAYOUT`); <=900px the
+  conversation stacks over the canvas, expanded history overlays.
+- Gotcha: a `display:grid` with `repeat(auto-fit, …)` + `margin: 0 auto` inside a
+  flex column sizes to fit-content, and auto-fit counts tracks against max-width —
+  give it `width: 100%` (ModePicker had four 260px cards on a phone).
+- Gate: `e2e/mobile-layout.e2e.ts` (27 tests, 360/390/768/820/1024/1100). Red commits
+  41615d5a8, ba2edd5d0, 230d7c7b2 → green 050bb38a1. `bun run check` green (9202).
+- `guides.e2e.ts` "rail takes zen-sumi's List look in dark" was red on develop: the test
+  still expected `--ink`, but 5973a45cc deliberately rests dark items at `--ink-mute`
+  (8.87:1 on the rail). Test now expects ink-mute by night and names the token it got.
+  Full e2e 232/232.

@@ -288,6 +288,14 @@
 	const demoDocs = $derived(shell.demoType ? findById(shell.demoType)?.docs : undefined)
 	const currentMeta = $derived(shell.demoType ? findById(shell.demoType) : undefined)
 
+	/**
+	 * Below this width the 280px history leaves the canvas too little room beside the
+	 * 400px conversation, so it starts as the 48px rail. At or under 900px the
+	 * conversation also stacks over the canvas — the `@media (max-width: 900px)`
+	 * block in this file's styles.
+	 */
+	const HISTORY_RAIL_LAYOUT = '(max-width: 1024px)'
+
 	// The 13 demos that ship with a hand-rolled canvas-body branch in
 	// this layout (rich variant/tweak logic). All other catalog entries
 	// fall through to the generic dynamic-mount branch — they just
@@ -1377,6 +1385,9 @@ ${tabsTag}`
 
 		const collapsed = params.get('collapsed')
 		if (collapsed === 'true' || collapsed === '1') shell.collapsed = true
+		// Phones and tablets have no room for the 280px history beside the conversation:
+		// start it as the 48px rail (see HISTORY_RAIL_LAYOUT).
+		if (window.matchMedia(HISTORY_RAIL_LAYOUT).matches) shell.collapsed = true
 
 		const q = params.get('q')
 		if (q) {
@@ -3235,9 +3246,12 @@ ${tabsTag}`
 		display: flex;
 		align-items: baseline;
 		gap: 6px;
+		/* Shrinks so a long query ellipsizes instead of pushing "Browse" out. */
+		min-width: 0;
 	}
 
 	.chat-sub {
+		min-width: 0;
 		font: 500 10.5px var(--font-mono);
 		color: var(--ink-soft);
 		letter-spacing: 0.02em;
@@ -3290,6 +3304,7 @@ ${tabsTag}`
 		align-items: center;
 		gap: 5px;
 		margin-left: auto;
+		flex-shrink: 0;
 		font: 500 11px var(--font-ui);
 		color: var(--ink-mute);
 		text-decoration: none;
@@ -3867,4 +3882,68 @@ ${tabsTag}`
 		white-space: nowrap;
 	}
 
+	/* Phone and portrait tablet: the 48px history rail on the left, the
+	   conversation stacked over the canvas on the right. Each pane keeps its own
+	   scroll. The history starts collapsed here (HISTORY_RAIL_LAYOUT); expanded,
+	   it overlays instead of squeezing. */
+	@media (max-width: 900px) {
+		.stage {
+			position: relative;
+			display: grid;
+			grid-template-columns: 48px minmax(0, 1fr);
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+
+		.stage > :global([data-koanchat-history]) {
+			grid-column: 1;
+			grid-row: 1 / -1;
+		}
+
+		.stage > :global([data-koanchat-history]:not([data-collapsed])) {
+			position: absolute;
+			inset-block: 0;
+			left: 0;
+			width: min(280px, 85vw);
+			z-index: 20;
+			box-shadow: 0 8px 24px color-mix(in oklch, var(--ink) 18%, transparent);
+		}
+
+		.chat-left {
+			grid-column: 2;
+			width: auto;
+			max-height: 42dvh;
+			border-right: 0;
+			border-bottom: 1px solid var(--paper-edge);
+		}
+
+		.canvas {
+			grid-column: 2;
+		}
+
+		.canvas-view-toggle {
+			position: static;
+			align-self: flex-end;
+			margin: 10px 12px 0;
+		}
+
+		.canvas-head {
+			padding: 16px 16px 12px;
+		}
+
+		.canvas-body.thinking {
+			padding: 24px 16px;
+		}
+
+		.canvas-body.response,
+		.canvas-body.catalog,
+		.canvas-body.api,
+		.canvas-body.code,
+		.canvas-body.docs {
+			padding-inline: 16px;
+		}
+
+		.welcome-hero {
+			padding: 32px 16px 24px;
+		}
+	}
 </style>

@@ -14,7 +14,11 @@
 	// change (pathname differs), leaving same-page hash navigation (TOC anchor
 	// clicks) untouched.
 	let mainEl = $state<HTMLElement | null>(null)
+	// Phone only: the rail is hidden behind the "Browse guides" toggle so the reading
+	// pane gets the full width. Picking a guide closes it again.
+	let railOpen = $state(false)
 	afterNavigate(({ from, to }) => {
+		railOpen = false
 		if (to && from?.url.pathname !== to.url.pathname) mainEl?.scrollTo({ top: 0 })
 	})
 
@@ -38,7 +42,18 @@
 </script>
 
 <div class="guides-shell">
-	<aside class="rail" aria-label="Guides table of contents">
+	<button
+		type="button"
+		class="rail-toggle"
+		aria-expanded={railOpen}
+		aria-controls="guides-rail"
+		onclick={() => (railOpen = !railOpen)}
+	>
+		<span class={railOpen ? 'i-mdi:close' : 'i-mdi:menu'} aria-hidden="true"></span>
+		Browse guides
+	</button>
+
+	<aside id="guides-rail" class="rail" data-open={railOpen || undefined} aria-label="Guides table of contents">
 		<div class="search-slot"><Search /></div>
 		<List items={railItems} value={activeSlug} label="Guides" />
 	</aside>
@@ -102,5 +117,63 @@
 		min-height: 0;
 		padding: 32px 16px 64px;
 		border-left: 1px solid var(--paper-edge);
+	}
+
+	.rail-toggle {
+		display: none;
+	}
+
+	/* Tablet: the "on this page" column goes first — the rail and the reading
+	   pane matter more than an in-page outline. */
+	@media (max-width: 1024px) {
+		.guides-shell {
+			grid-template-columns: 240px 1fr;
+		}
+		.page-toc {
+			display: none;
+		}
+	}
+
+	/* Phone: one column. The rail becomes a panel over the reading pane, opened
+	   from the "Browse guides" bar. */
+	@media (max-width: 720px) {
+		.guides-shell {
+			grid-template-columns: 1fr;
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+
+		.rail-toggle {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 16px;
+			border: 0;
+			border-bottom: 1px solid var(--paper-edge);
+			background: var(--paper-soft);
+			color: var(--ink);
+			font: 500 13px var(--font-ui);
+			text-align: left;
+			cursor: pointer;
+		}
+
+		/* Rail and reading pane share the second row; the open rail sits on top. */
+		.rail,
+		.content {
+			grid-area: 2 / 1;
+		}
+
+		.rail {
+			display: none;
+			z-index: 10;
+			border-right: 0;
+		}
+
+		.rail[data-open] {
+			display: flex;
+		}
+
+		.content {
+			padding: 20px 16px 48px;
+		}
 	}
 </style>

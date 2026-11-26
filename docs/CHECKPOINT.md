@@ -1,19 +1,20 @@
 # Checkpoint
 
-**Slice:** v1.16.0 released. Docs + bump (aeb38ce12) + PR #202
-(develop) + PR #203 (main) + tag push + Publish green + npm
-verified (forms/ui/latest = 1.16.0).
+**Slice:** learn site mobile/tablet layouts — branch `fix/mobile-layout`
+(red 41615d5a8, ba2edd5d0, 230d7c7b2 → green 050bb38a1).
 
 **Done:**
-- Release flow (second run under branch protection, no issues).
-- Journal records the release.
+- Header, guides, /app, /chat, home responsive at 360/390/768px.
+- `e2e/mobile-layout.e2e.ts` (27 tests) green; 134-route audit clean at
+  360/390/768/1440; `bun run check` green.
 
-**Remaining:** D13/D20/D23 maintainer decisions; F1–F3 PoC runs;
-implement the 16 follow-up changes.
+**Remaining:** user review; push + PR to develop.
 
-**Next command:** none — awaiting user direction.
+**Next command:** `git push -u origin fix/mobile-layout && gh pr create --base develop`
 
-**Open questions (user):**
-- D13: export test-only modules or delete? D20/D23 dedicated specs?
+- Stale guides dark-rail e2e updated to the deliberate ink-mute design; full
+  e2e 232/232.
+
+**Open questions (user):** none.
 
 **Known-broken:** none.

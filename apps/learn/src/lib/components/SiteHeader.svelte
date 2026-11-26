@@ -80,7 +80,7 @@
 		<Toggle
 			variant="group"
 			size="sm"
-			class="site-header-toggle"
+			class="site-header-toggle site-header-density"
 			options={siteDensities}
 			fields={{ value: 'id' }}
 			value={vibe.density}
@@ -115,6 +115,7 @@
 	}
 
 	.brand-link {
+		flex-shrink: 0;
 		display: inline-flex;
 		align-items: center;
 		text-decoration: none;
@@ -149,6 +150,7 @@
 		background: var(--paper-soft);
 		font: 500 12px var(--font-ui);
 		color: var(--ink);
+		white-space: nowrap;
 		cursor: pointer;
 		transition:
 			background 120ms ease,
@@ -255,5 +257,41 @@
 
 	[data-site-header] :global(.site-header-toggle [data-toggle-icon]) {
 		color: inherit;
+	}
+
+	/* Tablet: one row only fits once the mono field labels drop out. */
+	@media (max-width: 960px) {
+		[data-site-header-label] {
+			display: none;
+		}
+	}
+
+	/* Phone and portrait tablet: two rows — brand + style + mode on top, the nav on
+	   its own row below. The density switch drops out too: there is no room for it
+	   and density is a desktop refinement. */
+	@media (max-width: 800px) {
+		[data-site-header] {
+			flex-wrap: wrap;
+			row-gap: 8px;
+			column-gap: 10px;
+			padding: 10px 16px 0;
+		}
+
+		[data-site-header] :global([data-site-nav]) {
+			order: 10;
+			flex: 1 0 100%;
+			overflow-x: auto;
+			padding-bottom: 6px;
+		}
+
+		[data-site-header-div],
+		[data-site-header] :global(.site-header-density) {
+			display: none;
+		}
+
+		[data-site-header-style-picker] {
+			left: auto;
+			right: 0;
+		}
 	}
 </style>

@@ -43,6 +43,7 @@
 	[data-site-nav] a {
 		color: var(--ink-mute);
 		text-decoration: none;
+		white-space: nowrap;
 		padding: 4px 0;
 		border-bottom: 1.5px solid transparent;
 		transition:

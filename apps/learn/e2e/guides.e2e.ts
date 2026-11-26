@@ -24,7 +24,8 @@ test('guide reading pane scroll resets on switching guides', async ({ page }) =>
 /**
  * The rail is the rokkit List — grouped by category, not collapsible, links by href — and its
  * look comes from zen-sumi's List styles, not from rail css. Group headings are mono micro-labels
- * and items read as 13px ink body text, in both modes.
+ * and items read as 13px body text — ink by day, ink-mute by night (full ink on sumi paper
+ * glares as a rail of near-white labels; see 5973a45cc and themes' list-css.spec.js).
  */
 const railStyles = (page: import('@playwright/test').Page) =>
 	page.evaluate(() => {
@@ -57,7 +58,8 @@ const railStyles = (page: import('@playwright/test').Page) =>
 				size: i.fontSize,
 				weight: i.fontWeight,
 				padding: i.padding,
-				colorIsInk: i.color === token('--ink')
+				/** Which text token the item resolves to — names the token, so a miss says what it got. */
+				color: ['--ink', '--ink-mute', '--ink-soft'].find((t) => i.color === token(t)) ?? i.color
 			}
 		}
 	})
@@ -99,7 +101,7 @@ for (const mode of ['light', 'dark'] as const) {
 				size: '13px',
 				weight: '400',
 				padding: '6px 8px',
-				colorIsInk: true
+				color: mode === 'dark' ? '--ink-mute' : '--ink'
 			}
 		})
 	})

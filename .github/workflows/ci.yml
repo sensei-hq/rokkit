@@ -53,7 +53,10 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Run code coverage
         run: bun run coverage
-      - uses: qltysh/qlty-action/coverage@08a0a862c159eae9b9003081da6663d96efef637 # v2
+      # Suspended 2026-11-26: the Qlty account is out of analysis minutes. Resume by
+      # setting the repository variable QLTY_ENABLED=true (Settings → Variables).
+      - if: ${{ vars.QLTY_ENABLED == 'true' }}
+        uses: qltysh/qlty-action/coverage@08a0a862c159eae9b9003081da6663d96efef637 # v2
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: coverage/lcov.info

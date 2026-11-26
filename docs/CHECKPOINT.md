@@ -12,9 +12,9 @@
 
 **Next command:** `git push -u origin fix/mobile-layout && gh pr create --base develop`
 
-**Open questions (user):**
-- Fix the pre-existing zen-sumi dark rail colour (test expects `--ink`, renders
-  ~ink-soft) in the theme, or update the test's expectation?
+- Stale guides dark-rail e2e updated to the deliberate ink-mute design; full
+  e2e 232/232.
 
-**Known-broken:** `guides.e2e.ts` "rail takes zen-sumi's List look in dark" —
-fails on develop too, unrelated to this slice.
+**Open questions (user):** none.
+
+**Known-broken:** none.

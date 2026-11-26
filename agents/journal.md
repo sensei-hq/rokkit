@@ -11683,5 +11683,7 @@ any element escaping the viewport unless a user-scrollable ancestor holds it
   give it `width: 100%` (ModePicker had four 260px cards on a phone).
 - Gate: `e2e/mobile-layout.e2e.ts` (27 tests, 360/390/768/820/1024/1100). Red commits
   41615d5a8, ba2edd5d0, 230d7c7b2 → green 050bb38a1. `bun run check` green (9202).
-- Pre-existing on develop (not this change): `guides.e2e.ts` "rail takes zen-sumi's
-  List look in dark" — rail items render oklch(0.78) vs `--ink` oklch(0.94).
+- `guides.e2e.ts` "rail takes zen-sumi's List look in dark" was red on develop: the test
+  still expected `--ink`, but 5973a45cc deliberately rests dark items at `--ink-mute`
+  (8.87:1 on the rail). Test now expects ink-mute by night and names the token it got.
+  Full e2e 232/232.

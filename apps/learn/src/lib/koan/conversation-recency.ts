@@ -29,8 +29,9 @@ export function bucketConversations(
 ): ConversationBuckets {
 	const pool = conversations.filter((c) => inScope(c, surface, mode))
 	const sorted = [...pool].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
-	const now = new SvelteDate()
-	const todayStart = startOfDay(now)
+	// A plain Date: `SvelteDate` adds no reactivity in a one-shot read, and it subclasses
+	// the Date captured at import, so it ignores a faked clock.
+	const todayStart = startOfDay(new Date())
 	const yesterdayStart = todayStart - DAY
 
 	const buckets: ConversationBuckets = { today: [], yesterday: [], earlier: [] }

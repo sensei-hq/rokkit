@@ -1,0 +1,55 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "button-group",
+  "title": "ButtonGroup",
+  "description": "Visually attached cluster of related buttons — split actions or segmented filters.",
+  "keywords": [
+    "button-group",
+    "btn-group",
+    "split-button",
+    "cluster",
+    "related-buttons",
+    "attached-buttons"
+  ],
+  "category": "navigation",
+  "icon": "組",
+  "tool": {
+    "name": "mount_button_group",
+    "description": "Mount a ButtonGroup gallery on the canvas.",
+    "parameters": {
+      "size": "sm | md | lg"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [],
+  "api": {
+    "props": [
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "default": "'md'",
+        "desc": "Size variant — propagates down to child buttons via data-size"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "default": "''",
+        "desc": "Extra CSS classes"
+      },
+      {
+        "name": "children",
+        "type": "Snippet",
+        "desc": "Buttons to render inside the group"
+      }
+    ],
+    "events": [],
+    "attrs": [
+      {
+        "selector": "[data-button-group]",
+        "desc": "Root container (role=\"group\"; carries data-size)"
+      }
+    ]
+  }
+}

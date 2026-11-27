@@ -1,0 +1,64 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "frame",
+  "title": "Frame",
+  "description": "Generic header / body / footer container — the canonical card-shaped UI block primitive.",
+  "keywords": ["frame", "card", "container", "header", "footer", "panel", "surface", "layout"],
+  "category": "layout",
+  "icon": "框",
+  "tool": {
+    "name": "mount_frame",
+    "description": "Mount a Frame header/body/footer container demo on the canvas.",
+    "parameters": {
+      "flush": "boolean — remove body padding so the inner artifact controls its own"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [],
+  "api": {
+    "props": [
+      {
+        "name": "header",
+        "type": "Snippet",
+        "desc": "Top slot — title, action chips, status badges"
+      },
+      {
+        "name": "children",
+        "type": "Snippet",
+        "desc": "Main body content"
+      },
+      {
+        "name": "footer",
+        "type": "Snippet",
+        "desc": "Bottom slot — metadata, actions, secondary controls"
+      },
+      {
+        "name": "flush",
+        "type": "boolean",
+        "default": "false",
+        "desc": "Zero body padding so the inner artifact (chart, <pre>, table) controls its own"
+      }
+    ],
+    "events": [],
+    "attrs": [
+      {
+        "selector": "[data-frame]",
+        "desc": "Root container"
+      },
+      {
+        "selector": "[data-frame-header]",
+        "desc": "Header wrapper (present only when header snippet given)"
+      },
+      {
+        "selector": "[data-frame-body]",
+        "desc": "Body wrapper — carries data-flush when flush is set"
+      },
+      {
+        "selector": "[data-frame-footer]",
+        "desc": "Footer wrapper (present only when footer snippet given)"
+      }
+    ]
+  }
+}

@@ -24,4 +24,17 @@ describe('defineDemo', () => {
 			docs: '# Docs'
 		})
 	})
+
+	it('drops the $schema pointer that meta.json carries for editors', () => {
+		const load = () => Promise.resolve({ default: (() => {}) as never })
+		const withSchema = { ...card, $schema: '../../demo-card.schema.json' } as DemoCard
+		const meta = defineDemo(withSchema, { load, snippets: '', docs: '' })
+		expect(meta).not.toHaveProperty('$schema')
+	})
+
+	it('leaves snippets out for a demo that has none', () => {
+		const load = () => Promise.resolve({ default: (() => {}) as never })
+		const meta = defineDemo(card, { load, docs: '' })
+		expect(meta).not.toHaveProperty('snippets')
+	})
 })

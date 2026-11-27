@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "combo",
   "title": "Combobox",
   "description": "Filterable Select — type to narrow the options. The same Select component with the `filterable` flag flipped.",

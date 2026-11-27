@@ -1,0 +1,78 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "timeline",
+  "title": "Timeline",
+  "description": "View-only vertical steps — completed / active flags + an optional content snippet per step.",
+  "keywords": [
+    "timeline",
+    "steps",
+    "changelog",
+    "history",
+    "process",
+    "milestones",
+    "progress-view"
+  ],
+  "category": "data",
+  "icon": "時",
+  "tool": {
+    "name": "mount_timeline",
+    "description": "Mount a Timeline on the canvas.",
+    "parameters": {
+      "items": "array of step objects with label/subtext/completed/active"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [],
+  "api": {
+    "props": [
+      {
+        "name": "items",
+        "type": "unknown[]",
+        "default": "[]",
+        "desc": "Step data with `label`, optional `subtext`, `icon`, `completed`, `active`"
+      },
+      {
+        "name": "fields",
+        "type": "Record<string, string>",
+        "desc": "Remap data keys to component fields"
+      },
+      {
+        "name": "icons",
+        "type": "{ completed?: string }",
+        "desc": "Override the completed-step icon"
+      },
+      {
+        "name": "content",
+        "type": "Snippet<[item, index]>",
+        "desc": "Custom content rendered inside each step body"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "default": "''",
+        "desc": "Extra CSS classes"
+      }
+    ],
+    "events": [],
+    "attrs": [
+      {
+        "selector": "[data-timeline]",
+        "desc": "Root container (role=\"list\")"
+      },
+      {
+        "selector": "[data-timeline-item]",
+        "desc": "Each step (carries data-completed, data-active)"
+      },
+      {
+        "selector": "[data-timeline-circle]",
+        "desc": "The numbered/icon circle"
+      },
+      {
+        "selector": "[data-timeline-connector]",
+        "desc": "Vertical guide line between steps"
+      }
+    ]
+  }
+}

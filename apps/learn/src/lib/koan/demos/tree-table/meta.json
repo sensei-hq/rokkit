@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "tree-table",
   "title": "Tree Table",
   "description": "Hierarchical rows in a sortable grid. One column owns the chevron + indent; sort applies per-sibling so parents and children stay attached.",

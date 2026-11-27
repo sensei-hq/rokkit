@@ -519,7 +519,8 @@ human and by Playwright, which is the point: a layout bug or a bad token is obvi
 page and invisible in a unit test.
 
 Built to the established Koan demo contract — `apps/learn/src/lib/koan/demos/graph/` with
-`index.svelte`, `meta.ts`, `docs.md`, plus the Explorer / Controls / Conversation / store files
+`index.svelte`, `meta.ts` (a `defineDemo` call naming the loader), `meta.json` (the card,
+checked against `demo-card.schema.json`), `snippets.md`, `docs.md`, plus the Explorer / Controls / Conversation / store files
 the chart and sparkline demos use. Registered in `catalog.ts`, and in `shell.svelte.ts` +
 `conversations.svelte.ts` (`DEMO_ROUTE`, `ShellDemoType`, `pickDemoKind`) — the registration
 points #147 established. That yields both routes for free:
@@ -527,7 +528,8 @@ points #147 established. That yields both routes for free:
 - **`/components/graph`** — static, prerendered, indexable reference page
 - **`/app/graph`** — the interactive Koan explorer
 
-`meta.ts` carries the full `api` block (`props`, `events`, `attrs`) and `snippets`. The `attrs`
+`meta.json` carries the full `api` block (`props`, `events`, `attrs`); `snippets.md` the
+Source-tab examples. The `attrs`
 list is not decoration here: it is the published contract for every data-attribute in the
 theming section, and it is what a consumer reads to write an override rule.
 

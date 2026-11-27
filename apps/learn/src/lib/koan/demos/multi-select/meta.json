@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "multi-select",
   "title": "Multi-Select",
   "description": "Pick many values from a dropdown. Selected items render as chips inside the trigger; click a chip to remove.",

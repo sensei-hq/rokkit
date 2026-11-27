@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "demo-card.schema.json",
+  "title": "Koan demo card",
+  "description": "A demo's meta.json — DemoCard in types.ts. The loader stays in meta.ts, the Source-tab snippets in snippets.md and the docs in docs.md. Keep this in step with DemoMeta.",
+  "type": "object",
+  "required": ["id", "title", "description", "keywords", "category", "icon"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "category": {
+      "enum": ["theme", "navigation", "layout", "feedback", "forms", "data", "content", "guide"]
+    },
+    "icon": { "type": "string", "minLength": 1 },
+    "tool": {
+      "type": "object",
+      "required": ["name", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "description": { "type": "string" },
+        "parameters": { "type": "object" }
+      }
+    },
+    "inline": {
+      "type": "object",
+      "required": ["capable"],
+      "additionalProperties": false,
+      "properties": {
+        "capable": { "type": "boolean" },
+        "propSchema": { "type": "object" },
+        "defaultProps": { "type": "object" }
+      }
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "mode"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "mode": { "enum": ["dynamic", "route"] },
+          "props": { "type": "object" }
+        }
+      }
+    },
+    "props": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/propSchema" }
+    },
+    "api": {
+      "type": "object",
+      "required": ["props"],
+      "additionalProperties": false,
+      "properties": {
+        "props": { "type": "array", "items": { "$ref": "#/definitions/apiProp" } },
+        "events": { "type": "array", "items": { "$ref": "#/definitions/apiEvent" } },
+        "attrs": { "type": "array", "items": { "$ref": "#/definitions/apiAttr" } }
+      }
+    }
+  },
+  "definitions": {
+    "propSchema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "options", "default"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "enum" },
+            "options": { "type": "array", "items": { "type": "string" } },
+            "default": { "type": "string" },
+            "label": { "type": "string" },
+            "desc": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "default"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "boolean" },
+            "default": { "type": "boolean" },
+            "label": { "type": "string" },
+            "desc": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "default"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "string" },
+            "default": { "type": "string" },
+            "label": { "type": "string" },
+            "desc": { "type": "string" },
+            "placeholder": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "default"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "number" },
+            "default": { "type": "number" },
+            "label": { "type": "string" },
+            "desc": { "type": "string" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "step": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "apiProp": {
+      "type": "object",
+      "required": ["name", "type", "desc"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "default": { "type": "string" },
+        "desc": { "type": "string" },
+        "bindable": { "type": "boolean" }
+      }
+    },
+    "apiEvent": {
+      "type": "object",
+      "required": ["name", "signature", "desc"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "signature": { "type": "string" },
+        "desc": { "type": "string" }
+      }
+    },
+    "apiAttr": {
+      "type": "object",
+      "required": ["selector", "desc"],
+      "additionalProperties": false,
+      "properties": {
+        "selector": { "type": "string" },
+        "desc": { "type": "string" }
+      }
+    }
+  }
+}

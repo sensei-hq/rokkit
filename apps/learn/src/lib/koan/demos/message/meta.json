@@ -1,0 +1,84 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "message",
+  "title": "Message",
+  "description": "Inline alert message — info / success / warning / error, optional dismiss, optional auto-timeout.",
+  "keywords": ["message", "messages", "alert", "banner", "inline", "notice", "feedback"],
+  "category": "feedback",
+  "icon": "言",
+  "tool": {
+    "name": "mount_message",
+    "description": "Mount a Message gallery — four severity kinds, dismissible, rich content.",
+    "parameters": {
+      "type": "info | success | warning | error",
+      "text": "message body"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [],
+  "api": {
+    "props": [
+      {
+        "name": "type",
+        "type": "'info' | 'success' | 'warning' | 'error'",
+        "default": "'error'",
+        "desc": "Severity kind — drives colour and icon"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "desc": "Shorthand text content (children takes precedence)"
+      },
+      {
+        "name": "icons",
+        "type": "{ info?, success?, warning?, error? }",
+        "desc": "Override per-type icon classes"
+      },
+      {
+        "name": "dismissible",
+        "type": "boolean",
+        "default": "false",
+        "desc": "Show close button"
+      },
+      {
+        "name": "timeout",
+        "type": "number",
+        "default": "4000 | 0",
+        "desc": "Auto-dismiss ms; 0 disables. Defaults to 0 when dismissible."
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "default": "''",
+        "desc": "Extra CSS classes"
+      }
+    ],
+    "events": [
+      {
+        "name": "ondismiss",
+        "signature": "() => void",
+        "desc": "Fires on close-button click or timeout"
+      }
+    ],
+    "attrs": [
+      {
+        "selector": "[data-message]",
+        "desc": "Root container (carries data-type)"
+      },
+      {
+        "selector": "[data-message-icon]",
+        "desc": "Severity icon span"
+      },
+      {
+        "selector": "[data-message-body]",
+        "desc": "Text content area"
+      },
+      {
+        "selector": "[data-message-close]",
+        "desc": "Dismiss button (when dismissible)"
+      }
+    ]
+  }
+}

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "select",
   "title": "Select",
   "description": "Single-pick dropdown. Field-mapped items, keyboard nav, bound value. The flat single-pick counterpart to MultiSelect.",

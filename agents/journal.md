@@ -11707,3 +11707,18 @@ chart, learn) cherry-picked onto it; conversations store + #224 done inline.
   `.svelte-kit` and `.claude/` (agent worktrees inflated "All files" to 24%).
 - Gates: `qlty smells --all` 0 (×3), coverage 99.09% lines / thresholds pass, lint 0/0,
   `bun run check` 9390 passed.
+
+## 2026-11-27 — Every demo card in meta.json, schema-checked
+
+Follow-up to #225. Branch `chore/demo-meta-files`. The 42 remaining inline demo metas
+moved to `meta.json` + `snippets.md` (sparkline has none) + a `defineDemo` `meta.ts`,
+converted by a one-off spec that round-tripped each card through JSON and each snippet
+list through `parseSnippets` before writing. The demo-meta snapshot matched unchanged.
+
+- A JSON import widens `"feedback"` to `string`, so `satisfies DemoCard` cannot check the
+  unions. `src/lib/koan/demo-card.schema.json` (closed objects, DemoPropSchema as oneOf)
+  is the type check: `spec/koan/demo-card-schema.spec.ts` validates every meta.json with
+  ajv and pins the rejects. Each meta.json carries `$schema` for editor completion;
+  `defineDemo` strips it and leaves `snippets` out when a demo has no snippets.md.
+- Keep the schema in step with `DemoMeta` in types.ts — nothing generates it.
+- Red f828e5401 → green 12b2c0460. Gates: check 9515, e2e 291, lint 0/0, qlty 0.

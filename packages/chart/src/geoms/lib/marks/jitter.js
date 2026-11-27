@@ -15,10 +15,7 @@ export function buildJitterMarks({ data, plot, channels, options = {}, alpha, ty
 	const raw = buildSwarm(
 		data,
 		{ x: channels.x, y: channels.y, fill: fillField },
-		xScale,
-		yScale,
-		colors,
-		{ method: options.method, r: options.r, side: options.side }
+		{ xScale, yScale, colors, method: options.method, r: options.r, side: options.side }
 	)
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	const colorField = channels.color

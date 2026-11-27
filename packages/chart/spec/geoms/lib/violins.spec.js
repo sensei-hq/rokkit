@@ -24,7 +24,11 @@ const colors = new Map([
 ])
 
 describe('buildViolins — non-grouped (fill === x)', () => {
-	const violins = buildViolins(dataSimple, { x: 'class', fill: 'class' }, xScale, yScale, colors)
+	const violins = buildViolins(
+		dataSimple,
+		{ x: 'class', fill: 'class' },
+		{ xScale, yScale, colors }
+	)
 
 	it('returns one violin per datum', () => {
 		expect(violins).toHaveLength(2)
@@ -62,16 +66,14 @@ describe('buildViolins — non-grouped (fill === x)', () => {
 		const result = buildViolins(
 			dataSimple,
 			{ x: 'class', fill: 'class' },
-			xScale,
-			yScale,
-			emptyColors
+			{ xScale, yScale, colors: emptyColors }
 		)
 		expect(result[0].fill).toBe('#aaa')
 	})
 })
 
 describe('buildViolins — grouped (fill !== x)', () => {
-	const violins = buildViolins(dataGrouped, { x: 'class', fill: 'drv' }, xScale, yScale, colors)
+	const violins = buildViolins(dataGrouped, { x: 'class', fill: 'drv' }, { xScale, yScale, colors })
 
 	it('returns one violin per datum', () => {
 		expect(violins).toHaveLength(3)
@@ -109,9 +111,17 @@ describe('buildViolins — grouped (fill !== x)', () => {
 	it('grouped violins are narrower than non-grouped', () => {
 		// halfMax is proportional to sub-band width in grouped mode
 		// Check by comparing cx spread: grouped sub-violins are closer together
-		const grouped = buildViolins(dataGrouped, { x: 'class', fill: 'drv' }, xScale, yScale, colors)
+		const grouped = buildViolins(
+			dataGrouped,
+			{ x: 'class', fill: 'drv' },
+			{ xScale, yScale, colors }
+		)
 		const compactGrouped = grouped.filter((v) => v.data.class === 'compact')
-		const single = buildViolins(dataSimple, { x: 'class', fill: 'class' }, xScale, yScale, colors)
+		const single = buildViolins(
+			dataSimple,
+			{ x: 'class', fill: 'class' },
+			{ xScale, yScale, colors }
+		)
 		// Grouped cx values span a sub-band; single cx is centered on full band
 		const groupedSpread = Math.abs(compactGrouped[1].cx - compactGrouped[0].cx)
 		const singleBw = xScale.bandwidth()

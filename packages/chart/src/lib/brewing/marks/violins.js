@@ -6,28 +6,15 @@ import { literalColor, markEntry } from '../colors.js'
 const DENSITY_AT = { iqr_min: 0.08, q1: 0.55, median: 1.0, q3: 0.55, iqr_max: 0.08 }
 const ANCHOR_ORDER = ['iqr_max', 'q3', 'median', 'q1', 'iqr_min']
 
-/**
- * Builds a closed violin shape path for each group.
- * Input rows must have { q1, median, q3, iqr_min, iqr_max } from applyBoxStat.
- *
- * When `fill` differs from `x`, violins are sub-grouped within each x-band
- * (one narrower violin per fill value per x category, like grouped bars).
- * Violin body uses the lighter fill shade; outline uses the darker stroke shade.
- *
- * @param {Object[]} data
- * @param {{ x?: string, fill?: string, pattern?: string }} channels
- *   `fill` drives violin interior and outline (defaults to x-field).
- * @param {import('d3-scale').ScaleBand} xScale
- * @param {import('d3-scale').ScaleLinear} yScale
- * @param {Map} colors
- * @returns {Array}
- */
 // Build the silhouette points for one violin. `side` selects half vs full:
 //  'right'  → density bulges right of the centre line, flat edge at cx
 //  'left'   → density bulges left, flat edge at cx
 //  'center' → symmetric (both sides) — the default
 function violinPoints(cx, halfMax, d, yScale, side) {
-	const right = ANCHOR_ORDER.map((key) => ({ x: cx + halfMax * DENSITY_AT[key], y: yScale(d[key]) }))
+	const right = ANCHOR_ORDER.map((key) => ({
+		x: cx + halfMax * DENSITY_AT[key],
+		y: yScale(d[key])
+	}))
 	const left = [...ANCHOR_ORDER].reverse().map((key) => ({
 		x: cx - halfMax * DENSITY_AT[key],
 		y: yScale(d[key])
@@ -39,16 +26,28 @@ function violinPoints(cx, halfMax, d, yScale, side) {
 	return [...right, ...left, right[0]]
 }
 
-export function buildViolins(
-	data,
-	channels,
-	xScale,
-	yScale,
-	colors,
-	place = (x, y) => ({ x, y }),
-	side = 'center',
-	patterns
-) {
+/**
+ * Builds a closed violin shape path for each group.
+ * Input rows must have { q1, median, q3, iqr_min, iqr_max } from applyBoxStat.
+ *
+ * When `fill` differs from `x`, violins are sub-grouped within each x-band
+ * (one narrower violin per fill value per x category, like grouped bars).
+ * Violin body uses the lighter fill shade; outline uses the darker stroke shade.
+ *
+ * @param {Object[]} data
+ * @param {{ x?: string, fill?: string, pattern?: string }} channels
+ *   `fill` drives violin interior and outline (defaults to x-field).
+ * @param {Object} opts
+ * @param {Function} opts.xScale
+ * @param {Function} opts.yScale
+ * @param {Map<unknown, {fill: string, stroke: string}>} [opts.colors]
+ * @param {(x: number, y: number) => {x: number, y: number}} [opts.place]
+ * @param {'left'|'right'|'center'} [opts.side]
+ * @param {Map<unknown, string>} [opts.patterns]
+ * @returns {Array}
+ */
+export function buildViolins(data, channels, opts) {
+	const { xScale, yScale, colors, place = (x, y) => ({ x, y }), side = 'center', patterns } = opts
 	const { x: xf, fill: ff, pattern: pf } = channels
 	// A literal fill colours every violin directly; a field sub-groups within each x-band.
 	const lit = literalColor(ff)

@@ -15,10 +15,7 @@ export function buildBoxMarks({ data, plot, channels, options = {}, alpha, type 
 	const boxes = buildBoxes(
 		data,
 		{ x: channels.x, fill: fillField, pattern: channels.pattern },
-		xScale,
-		yScale,
-		colors,
-		{ side: options.side, width: options.width, patterns: plot.patterns }
+		{ xScale, yScale, colors, side: options.side, width: options.width, patterns: plot.patterns }
 	)
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	const colorField = channels.color

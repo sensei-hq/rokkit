@@ -17,11 +17,13 @@ export function buildArcMarks({ data, plot, channels, options = {}, alpha, type 
 	const arcs = buildArcs(
 		data,
 		{ color: interiorField, y: channels.y, pattern: channels.pattern },
-		plot.colors,
-		plot.innerWidth,
-		plot.innerHeight,
-		{ innerRadius: options.innerRadius ?? 0 },
-		plot.patterns
+		{
+			colors: plot.colors,
+			width: plot.innerWidth,
+			height: plot.innerHeight,
+			innerRadius: options.innerRadius ?? 0,
+			patterns: plot.patterns
+		}
 	)
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	return arcs.map((arc) => ({ ...arc, alpha: a }))

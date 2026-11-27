@@ -14,11 +14,7 @@ export function buildLineMarks({ data, plot, channels, options = {}, alpha, type
 	const segs = buildLines(
 		data,
 		{ x: channels.x, y: channels.y, color: lineColor },
-		xScale,
-		yScale,
-		colors,
-		options.curve,
-		plot.place.bind(plot)
+		{ xScale, yScale, colors, curve: options.curve, place: plot.place.bind(plot) }
 	)
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	return segs.map((seg) => ({ ...seg, alpha: a }))

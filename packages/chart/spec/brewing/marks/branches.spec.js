@@ -17,7 +17,11 @@ const stat = { q1: 25, median: 50, q3: 75, iqr_min: 10, iqr_max: 90 }
 
 describe('buildBoxes — non-band and grouped width', () => {
 	it('a linear x scale uses a 20px default band, centred on the x position', () => {
-		const [box] = buildBoxes([{ x: 5, ...stat }], { x: 'x' }, linearX, yScale, new Map())
+		const [box] = buildBoxes(
+			[{ x: 5, ...stat }],
+			{ x: 'x' },
+			{ xScale: linearX, yScale, colors: new Map() }
+		)
 		expect(box.cx).toBe(50)
 		expect(box.width).toBe(12)
 		expect(box.whiskerWidth).toBe(6)
@@ -31,10 +35,7 @@ describe('buildBoxes — non-band and grouped width', () => {
 				{ x: 'a', g: 'q', ...stat }
 			],
 			{ x: 'x', fill: 'g' },
-			xBand,
-			yScale,
-			new Map(),
-			{ width: 0.5 }
+			{ xScale: xBand, yScale, colors: new Map(), width: 0.5 }
 		)
 		// sub-band = 50 → box = 25, whisker = 25 * 0.53
 		expect(boxes.map((b) => b.width)).toEqual([25, 25])
@@ -48,22 +49,26 @@ describe('buildPoints — symbol map miss', () => {
 		const [withMiss] = buildPoints(
 			[{ x: 1, y: 1, s: 'unknown' }],
 			{ x: 'x', y: 'y', symbol: 's' },
-			linearX,
-			yScale,
-			new Map(),
-			null,
-			new Map([['known', 'square']]),
-			4
+			{
+				xScale: linearX,
+				yScale,
+				colors: new Map(),
+				sizeScale: null,
+				symbolMap: new Map([['known', 'square']]),
+				defaultRadius: 4
+			}
 		)
 		const [circle] = buildPoints(
 			[{ x: 1, y: 1, s: 'known' }],
 			{ x: 'x', y: 'y', symbol: 's' },
-			linearX,
-			yScale,
-			new Map(),
-			null,
-			new Map([['known', 'circle']]),
-			4
+			{
+				xScale: linearX,
+				yScale,
+				colors: new Map(),
+				sizeScale: null,
+				symbolMap: new Map([['known', 'circle']]),
+				defaultRadius: 4
+			}
 		)
 		expect(withMiss.symbolPath).toBe(circle.symbolPath)
 	})
@@ -77,10 +82,7 @@ describe('buildSwarm — non-band and left swarm', () => {
 				{ x: 5, y: 10 }
 			],
 			{ x: 'x', y: 'y' },
-			linearX,
-			yScale,
-			new Map(),
-			{ method: 'swarm', r: 2 }
+			{ xScale: linearX, yScale, colors: new Map(), method: 'swarm', r: 2 }
 		)
 		// centre = 50; the second identical point dodges right by 2r
 		expect(pts.map((p) => p.cx)).toEqual([50, 54])
@@ -89,17 +91,21 @@ describe('buildSwarm — non-band and left swarm', () => {
 
 	it('a linear x scale that cannot place a value centres the band at 0', () => {
 		const holey = (v) => (v === 'nope' ? undefined : linearX(v))
-		const [p] = buildSwarm([{ x: 'nope', y: 10 }], { x: 'x', y: 'y' }, holey, yScale, new Map(), {
-			method: 'swarm'
-		})
+		const [p] = buildSwarm(
+			[{ x: 'nope', y: 10 }],
+			{ x: 'x', y: 'y' },
+			{ xScale: holey, yScale, colors: new Map(), method: 'swarm' }
+		)
 		expect(p.cx).toBe(0)
 	})
 
 	it('a band scale that does not know the category starts its band at 0', () => {
 		const xBand = scaleBand().domain(['a']).range([100, 200])
-		const [p] = buildSwarm([{ x: 'zzz', y: 10 }], { x: 'x', y: 'y' }, xBand, yScale, new Map(), {
-			method: 'swarm'
-		})
+		const [p] = buildSwarm(
+			[{ x: 'zzz', y: 10 }],
+			{ x: 'x', y: 'y' },
+			{ xScale: xBand, yScale, colors: new Map(), method: 'swarm' }
+		)
 		expect(p.cx).toBe(50)
 	})
 
@@ -112,10 +118,7 @@ describe('buildSwarm — non-band and left swarm', () => {
 				{ x: 'a', y: 10 }
 			],
 			{ x: 'x', y: 'y' },
-			xBand,
-			yScale,
-			new Map(),
-			{ method: 'swarm', r: 2, side: 'left' }
+			{ xScale: xBand, yScale, colors: new Map(), method: 'swarm', r: 2, side: 'left' }
 		)
 		expect(pts.map((p) => p.cx)).toEqual([50, 46, 42])
 	})
@@ -123,7 +126,11 @@ describe('buildSwarm — non-band and left swarm', () => {
 
 describe('buildViolins — non-band', () => {
 	it('a linear x scale uses a 40px band centred on the x position', () => {
-		const [v] = buildViolins([{ x: 5, ...stat }], { x: 'x' }, linearX, yScale, new Map())
+		const [v] = buildViolins(
+			[{ x: 5, ...stat }],
+			{ x: 'x' },
+			{ xScale: linearX, yScale, colors: new Map() }
+		)
 		expect(v.cx).toBe(50)
 		expect(v.fill).toBe('#aaa')
 		expect(v.d).toMatch(/^M51.44,10C/)

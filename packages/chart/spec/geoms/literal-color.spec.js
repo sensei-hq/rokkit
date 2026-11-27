@@ -33,7 +33,11 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 			{ x: 5, y: 80 }
 		]
 		const xLin = scaleLinear().domain([0, 10]).range([0, 200])
-		const pts = buildPoints(data, { x: 'x', y: 'y', color: LIT }, xLin, yLin, palette, null)
+		const pts = buildPoints(
+			data,
+			{ x: 'x', y: 'y', color: LIT },
+			{ xScale: xLin, yScale: yLin, colors: palette, sizeScale: null }
+		)
 		expect(pts).toHaveLength(2)
 		expect(pts.every((p) => p.fill === LIT && p.stroke === LIT)).toBe(true)
 	})
@@ -44,7 +48,11 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 			{ cat: 'A', v: 20 },
 			{ cat: 'B', v: 15 }
 		]
-		const res = buildSwarm(data, { x: 'cat', y: 'v', fill: LIT }, xBand, yLin, palette)
+		const res = buildSwarm(
+			data,
+			{ x: 'cat', y: 'v', fill: LIT },
+			{ xScale: xBand, yScale: yLin, colors: palette }
+		)
 		expect(res).toHaveLength(3)
 		expect(res.every((r) => r.fill === LIT && r.stroke === LIT)).toBe(true)
 	})
@@ -68,19 +76,31 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 			{ label: 'A', value: 30 },
 			{ label: 'B', value: 70 }
 		]
-		const arcs = buildArcs(data, { color: LIT, y: 'value' }, palette, 100, 100)
+		const arcs = buildArcs(
+			data,
+			{ color: LIT, y: 'value' },
+			{ colors: palette, width: 100, height: 100 }
+		)
 		expect(arcs.every((a) => a.fill === LIT && a.stroke === LIT)).toBe(true)
 		expect(new Set(arcs.map((a) => a.key)).size).toBe(arcs.length)
 	})
 
 	it('Box honors a literal fill', () => {
-		const boxes = buildBoxes(quartiles, { x: 'cat', fill: LIT }, xBand, yLin, palette)
+		const boxes = buildBoxes(
+			quartiles,
+			{ x: 'cat', fill: LIT },
+			{ xScale: xBand, yScale: yLin, colors: palette }
+		)
 		expect(boxes).toHaveLength(2)
 		expect(boxes.every((b) => b.fill === LIT && b.stroke === LIT)).toBe(true)
 	})
 
 	it('Violin honors a literal fill', () => {
-		const violins = buildViolins(quartiles, { x: 'cat', fill: LIT }, xBand, yLin, palette)
+		const violins = buildViolins(
+			quartiles,
+			{ x: 'cat', fill: LIT },
+			{ xScale: xBand, yScale: yLin, colors: palette }
+		)
 		expect(violins).toHaveLength(2)
 		expect(violins.every((v) => v.fill === LIT && v.stroke === LIT)).toBe(true)
 	})

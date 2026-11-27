@@ -17,19 +17,19 @@ describe('buildLines — single series (no color channel)', () => {
 	]
 
 	it('returns one line entry', () => {
-		const lines = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const lines = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		expect(lines).toHaveLength(1)
 	})
 
 	it('has a valid SVG path string d', () => {
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		expect(typeof line.d).toBe('string')
 		expect(line.d.length).toBeGreaterThan(0)
 		expect(line.d).not.toContain('NaN')
 	})
 
 	it('sorts by X before drawing — path visits points in ascending x order', () => {
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		// Points sorted: month=1 (x=30), month=2 (x=60), month=3 (x=90)
 		// An unsorted path would have M30,... then M/L going backwards
 		// The sorted path starts at the leftmost x=30
@@ -38,7 +38,7 @@ describe('buildLines — single series (no color channel)', () => {
 	})
 
 	it('points array is sorted by x ascending', () => {
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		const xVals = line.points.map((p) => p.x)
 		expect(xVals[0]).toBeLessThan(xVals[1])
 		expect(xVals[1]).toBeLessThan(xVals[2])
@@ -49,8 +49,15 @@ describe('buildLines — literal color channel is one fixed color, used directly
 	it('uses the literal stroke directly, not the shared color scale', () => {
 		// The shared scale would give this line blue; the per-geom literal must win.
 		const shared = new Map([[null, { fill: '#0061bd', stroke: '#0061bd' }]])
-		const data = [{ month: 1, val: 10 }, { month: 2, val: 20 }]
-		const lines = buildLines(data, { x: 'month', y: 'val', color: 'var(--ink)' }, xScale, yScale, shared)
+		const data = [
+			{ month: 1, val: 10 },
+			{ month: 2, val: 20 }
+		]
+		const lines = buildLines(
+			data,
+			{ x: 'month', y: 'val', color: 'var(--ink)' },
+			{ xScale, yScale, colors: shared }
+		)
 		expect(lines).toHaveLength(1)
 		expect(lines[0].stroke).toBe('var(--ink)')
 	})
@@ -63,7 +70,7 @@ describe('buildLines — null y is a gap (not zero)', () => {
 			{ month: 2, val: null },
 			{ month: 3, val: 30 }
 		]
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		// The gap splits the line into two subpaths (two Move commands) — the absent
 		// period is not drawn onto the 0 baseline.
 		expect((line.d.match(/M/g) ?? []).length).toBe(2)
@@ -76,7 +83,7 @@ describe('buildLines — null y is a gap (not zero)', () => {
 			{ month: 2, val: 0 },
 			{ month: 3, val: 30 }
 		]
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors })
 		expect((line.d.match(/M/g) ?? []).length).toBe(1)
 	})
 })
@@ -90,13 +97,21 @@ describe('buildLines — multi-series (with color channel)', () => {
 	]
 
 	it('returns one entry per color group', () => {
-		const lines = buildLines(data, { x: 'month', y: 'val', color: 'drv' }, xScale, yScale, colors)
+		const lines = buildLines(
+			data,
+			{ x: 'month', y: 'val', color: 'drv' },
+			{ xScale, yScale, colors }
+		)
 		expect(lines).toHaveLength(2)
 		expect(lines.map((l) => l.key).sort()).toEqual(['4', 'f'])
 	})
 
 	it('each group path is sorted by x', () => {
-		const lines = buildLines(data, { x: 'month', y: 'val', color: 'drv' }, xScale, yScale, colors)
+		const lines = buildLines(
+			data,
+			{ x: 'month', y: 'val', color: 'drv' },
+			{ xScale, yScale, colors }
+		)
 		for (const line of lines) {
 			const xVals = line.points.map((p) => p.x)
 			expect(xVals[0]).toBeLessThanOrEqual(xVals[1])
@@ -104,14 +119,22 @@ describe('buildLines — multi-series (with color channel)', () => {
 	})
 
 	it('each group path has no NaN', () => {
-		const lines = buildLines(data, { x: 'month', y: 'val', color: 'drv' }, xScale, yScale, colors)
+		const lines = buildLines(
+			data,
+			{ x: 'month', y: 'val', color: 'drv' },
+			{ xScale, yScale, colors }
+		)
 		for (const line of lines) {
 			expect(line.d).not.toContain('NaN')
 		}
 	})
 
 	it('applies stroke color from colors map', () => {
-		const lines = buildLines(data, { x: 'month', y: 'val', color: 'drv' }, xScale, yScale, colors)
+		const lines = buildLines(
+			data,
+			{ x: 'month', y: 'val', color: 'drv' },
+			{ xScale, yScale, colors }
+		)
 		const fLine = lines.find((l) => l.key === 'f')
 		expect(fLine.stroke).toBe('#4e79a7')
 	})
@@ -126,7 +149,7 @@ describe('buildLines — band scale X (categorical months)', () => {
 	]
 
 	it('centers points on band midpoint', () => {
-		const [line] = buildLines(data, { x: 'month', y: 'val' }, xBand, yScale, colors)
+		const [line] = buildLines(data, { x: 'month', y: 'val' }, { xScale: xBand, yScale, colors })
 		const janX = xBand('Jan') + xBand.bandwidth() / 2
 		const janPoint = line.points.find((p) => Math.abs(p.x - janX) < 0.01)
 		expect(janPoint).toBeDefined()
@@ -134,10 +157,22 @@ describe('buildLines — band scale X (categorical months)', () => {
 })
 
 describe('buildLines — orientation flip', () => {
-	const data = [{ x: 1, y: 10 }, { x: 2, y: 20 }, { x: 3, y: 30 }]
+	const data = [
+		{ x: 1, y: 10 },
+		{ x: 2, y: 20 },
+		{ x: 3, y: 30 }
+	]
 	it('routes points through place() so a flip transposes the path + points', () => {
-		const vertical = buildLines(data, { x: 'x', y: 'y' }, xScale, yScale, colors, 'linear')
-		const flipped = buildLines(data, { x: 'x', y: 'y' }, xScale, yScale, colors, 'linear', (x, y) => ({ x: y, y: x }))
+		const vertical = buildLines(
+			data,
+			{ x: 'x', y: 'y' },
+			{ xScale, yScale, colors, curve: 'linear' }
+		)
+		const flipped = buildLines(
+			data,
+			{ x: 'x', y: 'y' },
+			{ xScale, yScale, colors, curve: 'linear', place: (x, y) => ({ x: y, y: x }) }
+		)
 		expect(flipped[0].d).not.toBe(vertical[0].d)
 		expect(flipped[0].points[0].x).toBeCloseTo(vertical[0].points[0].y)
 		expect(flipped[0].points[0].y).toBeCloseTo(vertical[0].points[0].x)
@@ -151,7 +186,7 @@ describe('buildLines — curve interpolation', () => {
 		{ month: 3, val: 20 }
 	]
 	const pathFor = (curve) =>
-		buildLines(data, { x: 'month', y: 'val' }, xScale, yScale, colors, curve)[0].d
+		buildLines(data, { x: 'month', y: 'val' }, { xScale, yScale, colors, curve })[0].d
 
 	it('draws a stepped path for curve="step"', () => {
 		// curveStep emits axis-aligned segments, so the path is pure H/V moves with

@@ -18,19 +18,31 @@ const data = [
 
 describe('buildSwarm', () => {
 	it('returns one placed point per datum', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { method: 'jitter', r: 2 })
+		const pts = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, method: 'jitter', r: 2 }
+		)
 		expect(pts).toHaveLength(4)
 	})
 
 	it('maps cy through yScale and colors by group', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { method: 'jitter', r: 2 })
+		const pts = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, method: 'jitter', r: 2 }
+		)
 		const first = pts.find((p) => p.data.val === 10)
 		expect(first.cy).toBeCloseTo(yScale(10))
 		expect(first.fill).toBe('#4e79a7')
 	})
 
 	it('keeps every point within its category band', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { method: 'jitter', r: 2 })
+		const pts = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, method: 'jitter', r: 2 }
+		)
 		const bw = xScale.bandwidth()
 		for (const p of pts) {
 			const bandStart = xScale(p.data.cat)
@@ -40,8 +52,16 @@ describe('buildSwarm', () => {
 	})
 
 	it('jitter layout is deterministic across calls', () => {
-		const a = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { method: 'jitter', r: 2 })
-		const b = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { method: 'jitter', r: 2 })
+		const a = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, method: 'jitter', r: 2 }
+		)
+		const b = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, method: 'jitter', r: 2 }
+		)
 		expect(a.map((p) => p.cx)).toEqual(b.map((p) => p.cx))
 	})
 
@@ -49,8 +69,8 @@ describe('buildSwarm', () => {
 		// A tight cluster forces horizontal dodging.
 		const cluster = Array.from({ length: 8 }, (_, i) => ({ cat: 'A', val: 50 + i * 0.2 }))
 		const opts = { method: 'swarm', r: 4 }
-		const a = buildSwarm(cluster, { x: 'cat', y: 'val' }, xScale, yScale, colors, opts)
-		const b = buildSwarm(cluster, { x: 'cat', y: 'val' }, xScale, yScale, colors, opts)
+		const a = buildSwarm(cluster, { x: 'cat', y: 'val' }, { xScale, yScale, colors, ...opts })
+		const b = buildSwarm(cluster, { x: 'cat', y: 'val' }, { xScale, yScale, colors, ...opts })
 		expect(a.map((p) => p.cx)).toEqual(b.map((p) => p.cx)) // deterministic
 		for (let i = 0; i < a.length; i++) {
 			for (let j = i + 1; j < a.length; j++) {
@@ -65,8 +85,8 @@ describe('buildSwarm', () => {
 		// collapse to the center — verify they spread and the layout is deterministic.
 		const dense = Array.from({ length: 20 }, () => ({ cat: 'A', val: 50 }))
 		const opts = { method: 'swarm', r: 8 }
-		const a = buildSwarm(dense, { x: 'cat', y: 'val' }, xScale, yScale, colors, opts)
-		const b = buildSwarm(dense, { x: 'cat', y: 'val' }, xScale, yScale, colors, opts)
+		const a = buildSwarm(dense, { x: 'cat', y: 'val' }, { xScale, yScale, colors, ...opts })
+		const b = buildSwarm(dense, { x: 'cat', y: 'val' }, { xScale, yScale, colors, ...opts })
 		expect(a.map((p) => p.cx)).toEqual(b.map((p) => p.cx)) // deterministic
 		const distinct = new Set(a.map((p) => Math.round(p.cx * 100)))
 		expect(distinct.size).toBeGreaterThanOrEqual(5) // not collapsed to one x
@@ -77,22 +97,26 @@ describe('buildSwarm — side (raincloud half)', () => {
 	const centerOf = (xVal) => (xScale(xVal) ?? 0) + xScale.bandwidth() / 2
 
 	it('side=right confines points to the right half of the band', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { side: 'right' })
+		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, { xScale, yScale, colors, side: 'right' })
 		for (const p of pts) expect(p.cx).toBeGreaterThanOrEqual(centerOf(p.data.cat) - 1e-6)
 	})
 
 	it('side=left confines points to the left half of the band', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { side: 'left' })
+		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, { xScale, yScale, colors, side: 'left' })
 		for (const p of pts) expect(p.cx).toBeLessThanOrEqual(centerOf(p.data.cat) + 1e-6)
 	})
 
 	it('the swarm method also respects side', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { side: 'right', method: 'swarm' })
+		const pts = buildSwarm(
+			data,
+			{ x: 'cat', y: 'val' },
+			{ xScale, yScale, colors, side: 'right', method: 'swarm' }
+		)
 		for (const p of pts) expect(p.cx).toBeGreaterThanOrEqual(centerOf(p.data.cat) - 1e-6)
 	})
 
 	it('center (default) straddles the band centre', () => {
-		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, xScale, yScale, colors, { side: 'center' })
+		const pts = buildSwarm(data, { x: 'cat', y: 'val' }, { xScale, yScale, colors, side: 'center' })
 		const aPts = pts.filter((p) => p.data.cat === 'A')
 		const c = centerOf('A')
 		expect(aPts.some((p) => p.cx < c)).toBe(true)

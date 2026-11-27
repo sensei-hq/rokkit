@@ -64,26 +64,18 @@ export function jitterOffset(i, range) {
  * Builds point geometry for scatter/bubble charts.
  * @param {Record<string, unknown>[]} data
  * @param {{ x?: string, y?: string, color?: string, size?: string, symbol?: string }} channels
- * @param {Function} xScale
- * @param {Function} yScale
- * @param {Map} colors
- * @param {Function|null} sizeScale
- * @param {Map<unknown, string>|null} symbolMap  — maps symbol field value → shape name
- * @param {number} defaultRadius
- * @param {{ width?: number, height?: number }|null} jitter
+ * @param {Object} opts
+ * @param {Function} opts.xScale
+ * @param {Function} opts.yScale
+ * @param {Map<unknown, {fill: string, stroke: string}>} [opts.colors]
+ * @param {Function|null} [opts.sizeScale]
+ * @param {Map<unknown, string>|null} [opts.symbolMap] — maps symbol field value → shape name
+ * @param {number} [opts.defaultRadius]
+ * @param {{ width?: number, height?: number }|null} [opts.jitter]
  * @returns {{ data: Record<string, unknown>, cx: number, cy: number, r: number, fill: string, stroke: string, symbolPath: string | null, key: unknown }[]}
  */
-export function buildPoints(
-	data,
-	channels,
-	xScale,
-	yScale,
-	colors,
-	sizeScale,
-	symbolMap,
-	defaultRadius = 5,
-	jitter = null
-) {
+export function buildPoints(data, channels, opts) {
+	const { xScale, yScale, colors, sizeScale, symbolMap, defaultRadius = 5, jitter = null } = opts
 	const { x: xf, y: yf, color: cf, size: sf, symbol: symf } = channels
 	// A literal color (var()/oklch()/#hex/currentColor) is the exact fill for every point,
 	// not a field to group on — apply it directly instead of looking it up in the scale.

@@ -20,20 +20,18 @@ function hashUnit(n) {
  *
  * @param {Object[]} data - raw rows (stat=identity)
  * @param {{ x?: string, y?: string, fill?: string }} channels
- * @param {import('d3-scale').ScaleBand} xScale
- * @param {import('d3-scale').ScaleLinear} yScale
- * @param {Map<unknown, {fill:string, stroke:string}>} colors
- * @param {{ method?: 'jitter'|'swarm', r?: number, side?: 'left'|'right'|'center' }} opts
+ * @param {{ xScale: Function, yScale: Function, colors?: Map<unknown, {fill:string, stroke:string}>, method?: 'jitter'|'swarm', r?: number, side?: 'left'|'right'|'center' }} opts
  *   `side` confines points to one half of the band (for raincloud/half-plots).
  * @returns {Array<{ cx:number, cy:number, fill:string, stroke:string, data:Record<string, unknown> }>}
  */
-export function buildSwarm(data, channels, xScale, yScale, colors, opts = {}) {
+export function buildSwarm(data, channels, opts) {
+	const { xScale, yScale, colors, method = 'jitter', r = 2, side = 'center' } = opts
 	const { x: xf, y: yf, fill: ff } = channels
 	// A literal fill colours every point directly; otherwise group on the fill field.
 	const lit = literalColor(ff)
 	const field = lit ? undefined : ff
-	const { method = 'jitter', r = 2, side = 'center' } = opts
-	const bw = typeof xScale.bandwidth === 'function' ? xScale.bandwidth() : 40
+	const isBand = typeof xScale.bandwidth === 'function'
+	const bw = isBand ? xScale.bandwidth() : 40
 	// One-sided layouts get the full half-band on their side; centred straddles ±halfBand.
 	const halfBand = (bw / 2) * 0.8 // leave a small gutter
 
@@ -47,11 +45,11 @@ export function buildSwarm(data, channels, xScale, yScale, colors, opts = {}) {
 
 	const result = []
 	for (const [xVal, rows] of groups) {
-		const bandStart = typeof xScale.bandwidth === 'function' ? (xScale(xVal) ?? 0) : (xScale(xVal) ?? 0) - bw / 2
-		const center = bandStart + bw / 2
+		// A band scale returns the band's start; a continuous one returns its centre.
+		const center = (xScale(xVal) ?? 0) + (isBand ? bw / 2 : 0)
 		const offsets =
 			method === 'swarm'
-				? swarmOffsets(rows, yf, yScale, r, halfBand, side)
+				? swarmOffsets(rows, { yf, yScale, r, halfBand, side })
 				: rows.map((_, i) => jitterOffset(hashUnit(i), halfBand, side))
 
 		rows.forEach((d, i) => {
@@ -85,45 +83,55 @@ function jitterOffset(u, halfBand, side) {
  * separation) so overflow points spread across the band instead of stacking at
  * the center — a best-effort layout, not a hard non-overlap guarantee.
  * `side` confines candidates to one half of the band. Returns offsets in INPUT order.
+ *
+ * @param {Record<string, unknown>[]} rows
+ * @param {{ yf?: string, yScale: Function, r: number, halfBand: number, side?: 'left'|'right'|'center' }} opts
  */
-function swarmOffsets(rows, yf, yScale, r, halfBand, side = 'center') {
-	const order = rows
-		.map((d, i) => ({ i, cy: yScale(d[yf]) }))
-		.sort((a, b) => ascending(a.cy, b.cy))
+function swarmOffsets(rows, { yf, yScale, r, halfBand, side = 'center' }) {
+	const order = rows.map((d, i) => ({ i, cy: yScale(d[yf]) })).sort((a, b) => ascending(a.cy, b.cy))
 	const placed = []
 	const offsetByIndex = new Array(rows.length).fill(0)
-	const step = r / 2
-	const kMax = Math.ceil((2 * halfBand) / step)
-
 	for (const { i, cy } of order) {
-		let chosen = 0
-		let placedOne = false
-		let best = { offset: 0, sep: -Infinity }
-		for (let k = 0; k <= kMax; k++) {
-			const candidate =
-				side === 'right'
-					? k * step
-					: side === 'left'
-						? -k * step
-						: k === 0
-							? 0
-							: (k % 2 === 1 ? 1 : -1) * Math.ceil(k / 2) * step
-			if (Math.abs(candidate) > halfBand) continue
-			const sep = placed.length
-				? Math.min(...placed.map((p) => Math.hypot(candidate - p.offset, cy - p.cy)))
-				: Infinity
-			if (sep >= 2 * r) {
-				chosen = candidate
-				placedOne = true
-				break
-			}
-			if (sep > best.sep) best = { offset: candidate, sep }
-		}
-		// Band over capacity: fall back to the least-crowded slot (max separation)
-		// rather than stacking every overflow point at the center.
-		if (!placedOne) chosen = best.offset
-		placed.push({ offset: chosen, cy })
-		offsetByIndex[i] = chosen
+		const offset = dodgeOffset(cy, placed, { r, halfBand, side })
+		placed.push({ offset, cy })
+		offsetByIndex[i] = offset
 	}
 	return offsetByIndex
+}
+
+/**
+ * The k-th candidate offset for a beeswarm point, in order of preference: rightwards only for
+ * side='right', leftwards only for side='left', else alternating outwards from the centre
+ * (0, +step, -step, +2·step, -2·step, …).
+ */
+function candidateOffset(k, step, side) {
+	if (side === 'right') return k * step
+	if (side === 'left') return -k * step
+	if (k === 0) return 0
+	return (k % 2 === 1 ? 1 : -1) * Math.ceil(k / 2) * step
+}
+
+/** Distance from (offset, cy) to the nearest already-placed point; Infinity when none. */
+function separation(placed, offset, cy) {
+	if (!placed.length) return Infinity
+	return Math.min(...placed.map((p) => Math.hypot(offset - p.offset, cy - p.cy)))
+}
+
+/**
+ * The offset for one point: the first in-band candidate that clears every placed point by 2r.
+ * When the band is over capacity (none clears), fall back to the least-crowded slot (max
+ * separation) rather than stacking every overflow point at the centre.
+ */
+function dodgeOffset(cy, placed, { r, halfBand, side }) {
+	const step = r / 2
+	const kMax = Math.ceil((2 * halfBand) / step)
+	let best = { offset: 0, sep: -Infinity }
+	for (let k = 0; k <= kMax; k++) {
+		const candidate = candidateOffset(k, step, side)
+		if (Math.abs(candidate) > halfBand) continue
+		const sep = separation(placed, candidate, cy)
+		if (sep >= 2 * r) return candidate
+		if (sep > best.sep) best = { offset: candidate, sep }
+	}
+	return best.offset
 }

@@ -4,13 +4,11 @@ import { literalColor } from '../colors.js'
 /**
  * @param {Object[]} data
  * @param {{ x?: string, y?: string, color?: string }} channels
- * @param {Function} xScale
- * @param {Function} yScale
- * @param {Map} colors
- * @param {'linear'|'smooth'|'step'} [curve]
+ * @param {{ xScale: Function, yScale: Function, colors?: Map<unknown, {fill: string, stroke: string}>, curve?: 'linear'|'smooth'|'step', place?: (x: number, y: number) => {x: number, y: number} }} opts
  * @returns {{ d: string | null, fill: string, stroke: string, points: {x:number, y:number, data: Record<string, unknown>, i: number}[], key?: unknown }[]}
  */
-export function buildLines(data, channels, xScale, yScale, colors, curve, place = (x, y) => ({ x, y })) {
+export function buildLines(data, channels, opts) {
+	const { xScale, yScale, colors, curve, place = (x, y) => ({ x, y }) } = opts
 	const { x: xf, y: yf } = channels
 	// A literal color (var()/oklch()/hex/currentColor) is NOT a data field — it's the exact
 	// stroke the caller wants for THIS geom. Don't group the series on it, and don't fall
@@ -34,7 +32,11 @@ export function buildLines(data, channels, xScale, yScale, colors, curve, place 
 			// A null y-value is a GAP (a missing period), not a zero: break the path there
 			// (d3 `.defined`) instead of letting yScale(null) collapse it onto the 0 baseline.
 			// A genuine 0 stays defined and plots.
-			.defined((p) => Number.isFinite(p.y) && (yf === undefined || yf === null || (p.data?.[yf] !== undefined && p.data?.[yf] !== null)))
+			.defined(
+				(p) =>
+					Number.isFinite(p.y) &&
+					(yf === undefined || yf === null || (p.data?.[yf] !== undefined && p.data?.[yf] !== null))
+			)
 			.x((p) => p.x)
 			.y((p) => p.y)
 		if (curve === 'smooth') gen.curve(curveCatmullRom)

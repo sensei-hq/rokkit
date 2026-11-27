@@ -13,21 +13,18 @@ import { literalColor, markEntry } from '../colors.js'
  * @param {Object[]} data - Pre-aggregated rows with quartile fields
  * @param {{ x?: string, fill?: string, pattern?: string }} channels
  *   `fill` drives the box and whisker color (defaults to x-field).
- * @param {import('d3-scale').ScaleBand} xScale
- * @param {import('d3-scale').ScaleLinear} yScale
- * @param {Map<unknown, {fill:string, stroke:string}>} colors
- * @param {{ side?: 'left'|'right'|'center', width?: number, patterns?: Map<unknown, string> }} [opts]
+ * @param {{ xScale: import('d3-scale').ScaleBand<any>, yScale: import('d3-scale').ScaleLinear<number, number>, colors?: Map<unknown, {fill:string, stroke:string}>, side?: 'left'|'right'|'center', width?: number, patterns?: Map<unknown, string> }} opts
  *   `side` offsets the box to one half of the band; `width` is the box thickness as a
  *   fraction of the (sub-)band (for a thin raincloud box); `patterns` maps a pattern-channel
  *   value to a pattern name for texture fills. Defaults preserve the full box.
  * @returns {Array}
  */
-export function buildBoxes(data, channels, xScale, yScale, colors, opts = {}) {
+export function buildBoxes(data, channels, opts) {
+	const { xScale, yScale, colors, side = 'center', width, patterns } = opts
 	const { x: xf, fill: ff, pattern: pf } = channels
 	// A literal fill colours every box directly; a field sub-groups within each x-band.
 	const lit = literalColor(ff)
 	const field = lit ? undefined : ff
-	const { side = 'center', width, patterns } = opts
 	const bw = typeof xScale.bandwidth === 'function' ? xScale.bandwidth() : 20
 	const grouped = field && field !== xf
 	// Offset the box centre to the middle of the chosen half-lane.
@@ -81,9 +78,7 @@ export function buildBoxes(data, channels, xScale, yScale, colors, opts = {}) {
 		const fillKey = field ? d[field] : d[xf]
 		const colorEntry = markEntry(lit, fillKey, colors, { fill: '#aaa', stroke: '#666' })
 		const cx =
-			(xScale(d[xf]) ?? 0) +
-			(typeof xScale.bandwidth === 'function' ? bw / 2 : 0) +
-			laneOffset(bw)
+			(xScale(d[xf]) ?? 0) + (typeof xScale.bandwidth === 'function' ? bw / 2 : 0) + laneOffset(bw)
 		return toBox(d, { cx, boxWidth, whiskerWidth, colorEntry })
 	})
 }

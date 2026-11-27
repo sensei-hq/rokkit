@@ -9,7 +9,7 @@ import { gotoHydrated } from './helpers'
  * Only some demos have a hand-written conversation (tabs, table, list, chart, …). The
  * rest — button, card, badge, switch and most of the catalog — used to leave the pane
  * blank under its header, whether reached from /app or opened directly. Each demo route
- * must show the user's ask and a "mounted" reply naming what is on the canvas.
+ * must show the user's ask and a reply about what is on the canvas.
  */
 const routesDir = join(import.meta.dirname, '../src/routes/app')
 const demoRoutes = readdirSync(routesDir, { withFileTypes: true })
@@ -26,13 +26,12 @@ for (const slug of demoRoutes) {
 		await gotoHydrated(page, `/app/${slug}`)
 		const pane = page.locator('.chat-left')
 		await expect(pane.locator('[data-koanchat-message][data-kind="user"]').first()).toBeVisible()
-		await expect(
-			pane.locator('[data-koanchat-message][data-message-status="mounted"]').first()
-		).toBeVisible()
+		// A reply after the ask — `mounted` for most demos, `started` for the theme wizard.
+		await expect(pane.locator('[data-koanchat-message][data-kind="info"]').first()).toBeVisible()
 	})
 }
 
-test('a generic demo reply names the component and offers its variants', async ({ page }) => {
+test('a generic demo reply echoes the ask and names the component', async ({ page }) => {
 	await gotoHydrated(page, '/app/button')
 	const mounted = page.locator('.chat-left [data-message-status="mounted"]')
 	await expect(mounted).toContainText('Button')

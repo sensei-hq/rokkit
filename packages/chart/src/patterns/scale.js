@@ -40,6 +40,36 @@ function scalePathCmd(cmd, size) {
 	return [op, ...args.map((v) => (typeof v === 'number' ? v * size : v))]
 }
 
+/** Per-type scaler for {@link scaleMark}; an unknown type passes through unchanged. */
+const MARK_SCALERS = {
+	line: (mark, size) => ({
+		...mark,
+		x1: mark.x1 * size,
+		y1: mark.y1 * size,
+		x2: mark.x2 * size,
+		y2: mark.y2 * size
+	}),
+	circle: (mark, size) => ({ ...mark, cx: mark.cx * size, cy: mark.cy * size, r: mark.r * size }),
+	rect: ({ w, h, ...rest }, size) => ({
+		...rest,
+		x: rest.x * size,
+		y: rest.y * size,
+		width: w * size,
+		height: h * size
+	}),
+	polygon: (mark, size) => ({
+		...mark,
+		points: mark.points.map(([x, y]) => `${x * size},${y * size}`).join(' ')
+	}),
+	path: (mark, size) => ({
+		...mark,
+		d: mark.d
+			.map((cmd) => scalePathCmd(cmd, size))
+			.map((cmd) => cmd.join(' '))
+			.join(' ')
+	})
+}
+
 /**
  * Scale all geometric coordinates in a mark by `size`.
  * Renames rect `w`/`h` to `width`/`height` and converts polygon/path to strings.
@@ -48,34 +78,7 @@ function scalePathCmd(cmd, size) {
  * @returns {object}
  */
 export function scaleMark(mark, size) {
-	switch (mark.type) {
-		case 'line':
-			return {
-				...mark,
-				x1: mark.x1 * size,
-				y1: mark.y1 * size,
-				x2: mark.x2 * size,
-				y2: mark.y2 * size
-			}
-		case 'circle':
-			return { ...mark, cx: mark.cx * size, cy: mark.cy * size, r: mark.r * size }
-		case 'rect': {
-			const { w, h, ...rest } = mark
-			return { ...rest, x: mark.x * size, y: mark.y * size, width: w * size, height: h * size }
-		}
-		case 'polygon':
-			return { ...mark, points: mark.points.map(([x, y]) => `${x * size},${y * size}`).join(' ') }
-		case 'path':
-			return {
-				...mark,
-				d: mark.d
-					.map((cmd) => scalePathCmd(cmd, size))
-					.map((cmd) => cmd.join(' '))
-					.join(' ')
-			}
-		default:
-			return mark
-	}
+	return Object.hasOwn(MARK_SCALERS, mark.type) ? MARK_SCALERS[mark.type](mark, size) : mark
 }
 
 /**

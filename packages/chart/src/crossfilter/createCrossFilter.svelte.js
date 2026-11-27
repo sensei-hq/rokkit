@@ -30,6 +30,29 @@ function toggleCategoricalInMap(filters, dimension, value) {
 	}
 }
 
+/**
+ * Whether one dimension's filter is active: a non-empty value set, or any range.
+ * @param {Set<unknown> | [number, number] | undefined} filter
+ */
+function isFilterActive(filter) {
+	if (!filter) return false
+	if (filter instanceof Set) return filter.size > 0
+	return true // range: always active if present
+}
+
+/**
+ * Whether `value` falls outside one dimension's filter (false when there is no filter).
+ * @param {Set<unknown> | [number, number] | undefined} filter
+ * @param {unknown} value
+ */
+function isExcluded(filter, value) {
+	if (!filter) return false
+	if (filter instanceof Set) return !filter.has(value)
+	// [min, max] range
+	const [lo, hi] = filter
+	return Number(value) < lo || Number(value) > hi
+}
+
 export function createCrossFilter() {
 	// Map<dimension, Set<unknown> | [number, number]>
 	const filters = new SvelteMap()
@@ -42,12 +65,7 @@ export function createCrossFilter() {
 	 * Returns true if any filter is active on this dimension.
 	 * @param {string} dimension
 	 */
-	function isFiltered(dimension) {
-		const f = filters.get(dimension)
-		if (!f) return false
-		if (f instanceof Set) return f.size > 0
-		return true // range: always active if present
-	}
+	const isFiltered = (dimension) => isFilterActive(filters.get(dimension))
 
 	/**
 	 * Returns true if a value on this dimension is NOT in the active filter.
@@ -56,16 +74,7 @@ export function createCrossFilter() {
 	 * @param {string} dimension
 	 * @param {unknown} value
 	 */
-	function isDimmed(dimension, value) {
-		const f = filters.get(dimension)
-		if (!f) return false
-		if (f instanceof Set) {
-			return !f.has(value)
-		}
-		// [min, max] range
-		const [lo, hi] = f
-		return Number(value) < lo || Number(value) > hi
-	}
+	const isDimmed = (dimension, value) => isExcluded(filters.get(dimension), value)
 
 	/**
 	 * Toggles a categorical value for a dimension.

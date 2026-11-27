@@ -21,26 +21,12 @@ const colors = new Map([
 
 describe('buildBars', () => {
 	it('returns one rect per datum', () => {
-		const bars = buildBars(
-			data,
-			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
-		)
+		const bars = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, { xScale, yScale, colors })
 		expect(bars).toHaveLength(4)
 	})
 
 	it('groups rects within the parent band', () => {
-		const bars = buildBars(
-			data,
-			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
-		)
+		const bars = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, { xScale, yScale, colors })
 		const compactBars = bars.filter((b) => b.data.class === 'compact')
 		const bandStart = xScale('compact') ?? 0
 		const bandEnd = bandStart + xScale.bandwidth()
@@ -51,33 +37,19 @@ describe('buildBars', () => {
 	})
 
 	it('applies color fill from colors Map', () => {
-		const bars = buildBars(
-			data,
-			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
-		)
+		const bars = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, { xScale, yScale, colors })
 		const fBar = bars.find((b) => b.data.drv === 'f')
 		expect(fBar?.fill).toBe('#4e79a7')
 	})
 
 	it('bar height reflects y value', () => {
-		const bars = buildBars(
-			data,
-			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
-		)
+		const bars = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, { xScale, yScale, colors })
 		const bar29 = bars.find((b) => b.data.hwy === 29)
 		expect(bar29?.height).toBeCloseTo(200 - yScale(29), 1)
 	})
 
 	it('returns single-bar-per-x when no color channel', () => {
-		const bars = buildBars(data, { x: 'class', y: 'hwy' }, xScale, yScale, colors, 200)
+		const bars = buildBars(data, { x: 'class', y: 'hwy' }, { xScale, yScale, colors })
 		expect(bars).toHaveLength(4)
 	})
 
@@ -91,7 +63,11 @@ describe('buildBars', () => {
 		const yLin = scaleLinear().domain([-20, 25]).range([200, 0])
 		const baseline = yLin(0)
 
-		const bars = buildBars(negData, { x: 'cat', y: 'val' }, xBand, yLin, new Map(), 200)
+		const bars = buildBars(
+			negData,
+			{ x: 'cat', y: 'val' },
+			{ xScale: xBand, yScale: yLin, colors: new Map() }
+		)
 
 		const barA = bars.find((b) => b.data.cat === 'A')
 		const barB = bars.find((b) => b.data.cat === 'B')
@@ -119,10 +95,7 @@ describe('buildStackedBars', () => {
 		const bars = buildStackedBars(
 			stackData,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
+			{ xScale, yScale, colors }
 		)
 		expect(bars).toHaveLength(4)
 	})
@@ -131,10 +104,7 @@ describe('buildStackedBars', () => {
 		const bars = buildStackedBars(
 			stackData,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
+			{ xScale, yScale, colors }
 		)
 		// sort ascending by y: bars[0] = upper bar (smaller SVG y), bars[1] = lower bar
 		const compactBars = bars.filter((b) => b.data.class === 'compact').sort((a, b) => a.y - b.y)
@@ -152,12 +122,7 @@ describe('buildBars — grouped horizontal (band category via place)', () => {
 		const bars = buildBars(
 			data,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			classBand,
-			hwyLin,
-			colors,
-			200,
-			undefined,
-			swap
+			{ xScale: classBand, yScale: hwyLin, colors, place: swap }
 		)
 		expect(bars).toHaveLength(4)
 	})
@@ -166,12 +131,7 @@ describe('buildBars — grouped horizontal (band category via place)', () => {
 		const bars = buildBars(
 			data,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			classBand,
-			hwyLin,
-			colors,
-			200,
-			undefined,
-			swap
+			{ xScale: classBand, yScale: hwyLin, colors, place: swap }
 		)
 		const bar29 = bars.find((b) => b.data.hwy === 29)
 		expect(bar29?.width).toBeCloseTo(hwyLin(29), 1)
@@ -181,10 +141,21 @@ describe('buildBars — grouped horizontal (band category via place)', () => {
 describe('buildBars — orientation flip', () => {
 	const xs = scaleBand().domain(['compact', 'suv']).range([0, 300]).padding(0.2)
 	const ys = scaleLinear().domain([0, 30]).range([200, 0])
-	const cols = new Map([['f', { fill: '#a', stroke: '#a' }], ['4', { fill: '#b', stroke: '#b' }]])
+	const cols = new Map([
+		['f', { fill: '#a', stroke: '#a' }],
+		['4', { fill: '#b', stroke: '#b' }]
+	])
 	it('transposes each bar rect (width<->height) via place() when flipped', () => {
-		const vertical = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, xs, ys, cols, 200)
-		const flipped = buildBars(data, { x: 'class', y: 'hwy', color: 'drv' }, xs, ys, cols, 200, undefined, (x, y) => ({ x: y, y: x }))
+		const vertical = buildBars(
+			data,
+			{ x: 'class', y: 'hwy', color: 'drv' },
+			{ xScale: xs, yScale: ys, colors: cols }
+		)
+		const flipped = buildBars(
+			data,
+			{ x: 'class', y: 'hwy', color: 'drv' },
+			{ xScale: xs, yScale: ys, colors: cols, place: (x, y) => ({ x: y, y: x }) }
+		)
 		// The flip swaps the rect's width and height for each bar.
 		expect(flipped[0].width).toBeCloseTo(vertical[0].height)
 		expect(flipped[0].height).toBeCloseTo(vertical[0].width)

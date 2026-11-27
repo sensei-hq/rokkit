@@ -28,7 +28,10 @@ const quartiles = [
 
 describe('#146 — a literal color channel is applied directly across geoms', () => {
 	it('Point honors a literal color', () => {
-		const data = [{ x: 1, y: 50 }, { x: 5, y: 80 }]
+		const data = [
+			{ x: 1, y: 50 },
+			{ x: 5, y: 80 }
+		]
 		const xLin = scaleLinear().domain([0, 10]).range([0, 200])
 		const pts = buildPoints(data, { x: 'x', y: 'y', color: LIT }, xLin, yLin, palette, null)
 		expect(pts).toHaveLength(2)
@@ -36,21 +39,35 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 	})
 
 	it('Jitter/swarm honors a literal fill', () => {
-		const data = [{ cat: 'A', v: 10 }, { cat: 'A', v: 20 }, { cat: 'B', v: 15 }]
+		const data = [
+			{ cat: 'A', v: 10 },
+			{ cat: 'A', v: 20 },
+			{ cat: 'B', v: 15 }
+		]
 		const res = buildSwarm(data, { x: 'cat', y: 'v', fill: LIT }, xBand, yLin, palette)
 		expect(res).toHaveLength(3)
 		expect(res.every((r) => r.fill === LIT && r.stroke === LIT)).toBe(true)
 	})
 
 	it('Bar honors a literal color', () => {
-		const data = [{ cat: 'A', val: 30 }, { cat: 'B', val: 50 }]
-		const bars = buildBars(data, { x: 'cat', y: 'val', color: LIT }, xBand, yLin, palette, 200)
+		const data = [
+			{ cat: 'A', val: 30 },
+			{ cat: 'B', val: 50 }
+		]
+		const bars = buildBars(
+			data,
+			{ x: 'cat', y: 'val', color: LIT },
+			{ xScale: xBand, yScale: yLin, colors: palette }
+		)
 		expect(bars).toHaveLength(2)
 		expect(bars.every((b) => b.fill === LIT && b.stroke === LIT)).toBe(true)
 	})
 
 	it('Arc/pie honors a literal color and keeps slices distinct', () => {
-		const data = [{ label: 'A', value: 30 }, { label: 'B', value: 70 }]
+		const data = [
+			{ label: 'A', value: 30 },
+			{ label: 'B', value: 70 }
+		]
 		const arcs = buildArcs(data, { color: LIT, y: 'value' }, palette, 100, 100)
 		expect(arcs.every((a) => a.fill === LIT && a.stroke === LIT)).toBe(true)
 		expect(new Set(arcs.map((a) => a.key)).size).toBe(arcs.length)
@@ -69,7 +86,10 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 	})
 
 	it('Heatmap honors a literal fill (skips the value scale)', () => {
-		const data = [{ x: 'A', y: 'A', count: 3 }, { x: 'B', y: 'B', count: 9 }]
+		const data = [
+			{ x: 'A', y: 'A', count: 3 },
+			{ x: 'B', y: 'B', count: 9 }
+		]
 		const yBand = scaleBand().domain(['A', 'B']).range([0, 200]).padding(0)
 		const marks = buildHeatmapMarks({
 			data,
@@ -81,7 +101,10 @@ describe('#146 — a literal color channel is applied directly across geoms', ()
 	})
 
 	it('Ribbon honors a literal color on the links', () => {
-		const data = [{ source: 'A', target: 'X', value: 5 }, { source: 'B', target: 'Y', value: 3 }]
+		const data = [
+			{ source: 'A', target: 'X', value: 5 },
+			{ source: 'B', target: 'Y', value: 3 }
+		]
 		const out = buildRibbonMarks({
 			data,
 			plot: { colors: palette, innerHeight: 200, innerWidth: 300 },

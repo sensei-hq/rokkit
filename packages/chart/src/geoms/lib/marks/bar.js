@@ -22,20 +22,20 @@ export function buildBarMarks({ data, plot, channels, options = {}, alpha, type 
 		pattern: channels.pattern,
 		group: groupField
 	}
-	const place = plot.place.bind(plot)
-	const ih = plot.innerHeight
+	const shared = { xScale, yScale, colors, patterns, place: plot.place.bind(plot) }
 	const position = options.position ?? (options.stack ? 'stack' : 'dodge')
 
 	let raw
-	if (position === 'stack') {
-		raw = buildStackedBars(data, barChannels, xScale, yScale, colors, ih, patterns, place, false)
-	} else if (position === 'fill') {
-		raw = buildStackedBars(data, barChannels, xScale, yScale, colors, ih, patterns, place, true)
-	} else if (position === 'identity') {
-		raw = buildBars(data, barChannels, xScale, yScale, colors, ih, patterns, place, plot.continuousCategory, false)
+	if (position === 'stack' || position === 'fill') {
+		raw = buildStackedBars(data, barChannels, { ...shared, normalize: position === 'fill' })
 	} else {
-		// dodge (default): side-by-side sub-bands
-		raw = buildBars(data, barChannels, xScale, yScale, colors, ih, patterns, place, plot.continuousCategory, true)
+		// dodge (default): side-by-side sub-bands; identity: overlapping full-width bars
+		const { continuousCategory } = plot
+		raw = buildBars(data, barChannels, {
+			...shared,
+			continuousCategory,
+			dodge: position !== 'identity'
+		})
 	}
 
 	const a = resolveAlpha(alpha, type, plot.chartPreset)

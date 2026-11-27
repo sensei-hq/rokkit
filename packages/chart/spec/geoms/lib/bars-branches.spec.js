@@ -28,13 +28,7 @@ describe('buildBars — fallbacks', () => {
 				{ r: 1, v: 5 }
 			],
 			{ x: 'r', y: 'v' },
-			rank,
-			value,
-			undefined,
-			100,
-			undefined,
-			undefined,
-			true
+			{ xScale: rank, yScale: value, continuousCategory: true }
 		)
 		// thickness = 0.9 * step(100) = 90 → the unplaced bar is centred on 0
 		expect(bars[1].x).toBe(-45)
@@ -44,14 +38,18 @@ describe('buildBars — fallbacks', () => {
 
 	it('continuous mode: keys fall back to the x value and an empty color when no _entity / color', () => {
 		const rank = scaleLinear().domain([0, 2]).range([0, 200])
-		const bars = buildBars([{ r: 0, v: 5 }], { x: 'r', y: 'v' }, rank, value, undefined, 100, undefined, undefined, true)
+		const bars = buildBars(
+			[{ r: 0, v: 5 }],
+			{ x: 'r', y: 'v' },
+			{ xScale: rank, yScale: value, continuousCategory: true }
+		)
 		expect(bars[0].key).toBe('0::')
 		expect(bars[0].fill).toBe('#888')
 	})
 
 	it('baseline falls back to the range origin when yScale(0) is undefined', () => {
 		const y = holeyScale(scaleLinear().domain([-10, 10]).range([100, 0]), 0)
-		const bars = buildBars([{ c: 'a', v: 5 }], { x: 'c', y: 'v' }, band, y, undefined, 100)
+		const bars = buildBars([{ c: 'a', v: 5 }], { x: 'c', y: 'v' }, { xScale: band, yScale: y })
 		// baseline = range()[0] = 100, top = y(5) = 25
 		expect(bars[0].y).toBe(25)
 		expect(bars[0].height).toBe(75)
@@ -59,7 +57,7 @@ describe('buildBars — fallbacks', () => {
 
 	it('a value yScale cannot place collapses onto the baseline', () => {
 		const y = holeyScale(value, 7)
-		const bars = buildBars([{ c: 'a', v: 7 }], { x: 'c', y: 'v' }, band, y, undefined, 100)
+		const bars = buildBars([{ c: 'a', v: 7 }], { x: 'c', y: 'v' }, { xScale: band, yScale: y })
 		expect(bars[0].height).toBe(0)
 	})
 })
@@ -72,12 +70,20 @@ describe('buildStackedBars — fallbacks and key routing', () => {
 	]
 
 	it('a literal color paints every stacked segment directly', () => {
-		const bars = buildStackedBars(data, { x: 'c', y: 'v', color: '#123456', group: 's' }, band, value, new Map(), 100)
+		const bars = buildStackedBars(
+			data,
+			{ x: 'c', y: 'v', color: '#123456', group: 's' },
+			{ xScale: band, yScale: value, colors: new Map() }
+		)
 		expect(bars.every((b) => b.fill === '#123456' && b.stroke === '#123456')).toBe(true)
 	})
 
 	it('a missing (x, stack) cell stacks as a zero-height segment', () => {
-		const bars = buildStackedBars(data, { x: 'c', y: 'v', color: 's' }, band, value, new Map(), 100)
+		const bars = buildStackedBars(
+			data,
+			{ x: 'c', y: 'v', color: 's' },
+			{ xScale: band, yScale: value, colors: new Map() }
+		)
 		const bq = bars.find((b) => b.key === 'b::q')
 		expect(bq.height).toBe(0)
 	})
@@ -91,11 +97,7 @@ describe('buildStackedBars — fallbacks and key routing', () => {
 		const bars = buildStackedBars(
 			data,
 			{ x: 'c', y: 'v', color: 'c', pattern: 'c', group: 's' },
-			band,
-			value,
-			colors,
-			100,
-			patterns
+			{ xScale: band, yScale: value, colors, patterns }
 		)
 		expect(bars.find((b) => b.key === 'a::p').fill).toBe('red')
 		expect(bars.find((b) => b.key === 'b::p').fill).toBe('blue')
@@ -108,11 +110,12 @@ describe('buildStackedBars — fallbacks and key routing', () => {
 		const bars = buildStackedBars(
 			rows,
 			{ x: 'c', y: 'v', color: 't', pattern: 't', group: 's' },
-			band,
-			value,
-			new Map([['z', { fill: 'green', stroke: 'g' }]]),
-			100,
-			new Map([['z', 'dots']])
+			{
+				xScale: band,
+				yScale: value,
+				colors: new Map([['z', { fill: 'green', stroke: 'g' }]]),
+				patterns: new Map([['z', 'dots']])
+			}
 		)
 		// The stack dimension is `group` (s), so a color/pattern on `t` matches neither x nor
 		// the stack key: no lookup happens and the defaults apply.

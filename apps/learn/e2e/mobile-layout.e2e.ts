@@ -16,31 +16,36 @@ test.use({ viewport: PHONE, isMobile: true, hasTouch: true })
 
 /** Elements that escape the viewport horizontally and that no scroll container reaches. */
 function escapees(page: Page, viewportWidth = PHONE.width) {
+	// Runs in the page, so its helpers live inside the callback.
 	return page.evaluate((vw) => {
-		const found: { el: Element; id: string; left: number; right: number }[] = []
-		for (const el of document.querySelectorAll('body *')) {
-			const box = el.getBoundingClientRect()
-			if (box.width === 0 || box.height === 0) continue
-			if (box.right <= vw + 1 && box.left >= -1) continue
-			if (getComputedStyle(el).visibility === 'hidden') continue
-			if (found.some((f) => f.el.contains(el))) continue
-			let reachable = false
+		const inView = (box: DOMRect) => box.right <= vw + 1 && box.left >= -1
+		const visible = (el: Element, box: DOMRect) =>
+			box.width > 0 && box.height > 0 && getComputedStyle(el).visibility !== 'hidden'
+		/** A user-scrollable ancestor that itself sits on screen can bring `el` into view. */
+		const reachable = (el: Element) => {
 			for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
-				if (!/(auto|scroll)/.test(getComputedStyle(p).overflowX)) continue
-				const pb = p.getBoundingClientRect()
-				if (pb.right <= vw + 1 && pb.left >= -1) {
-					reachable = true
-					break
-				}
+				const scrolls = /(auto|scroll)/.test(getComputedStyle(p).overflowX)
+				if (scrolls && inView(p.getBoundingClientRect())) return true
 			}
-			if (reachable) continue
-			const attrs = [...el.attributes]
+			return false
+		}
+		const describe = (el: Element) =>
+			el.tagName.toLowerCase() +
+			[...el.attributes]
 				.filter((a) => a.name.startsWith('data-') || a.name === 'class')
 				.map((a) => `[${a.name}=${a.value.slice(0, 40)}]`)
 				.join('')
-			found.push({ el, id: el.tagName.toLowerCase() + attrs, left: Math.round(box.left), right: Math.round(box.right) })
+
+		const found: Element[] = []
+		const report: string[] = []
+		for (const el of document.querySelectorAll('body *')) {
+			const box = el.getBoundingClientRect()
+			if (inView(box) || !visible(el, box)) continue
+			if (found.some((f) => f.contains(el)) || reachable(el)) continue
+			found.push(el)
+			report.push(`${describe(el)} ${Math.round(box.left)}..${Math.round(box.right)}`)
 		}
-		return found.map(({ id, left, right }) => `${id} ${left}..${right}`)
+		return report
 	}, viewportWidth)
 }
 

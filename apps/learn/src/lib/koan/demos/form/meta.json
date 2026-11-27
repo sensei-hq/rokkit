@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "form",
   "title": "Schema-driven Form",
   "description": "Schema in, validated form out. FormRenderer reads a JSON-Schema-ish object and renders the right input per type, with built-in validation and dirty tracking.",

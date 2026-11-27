@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "button",
   "title": "Button",
   "description": "Text + icon trigger with disabled, loading, and link modes — the canonical interactive primitive.",

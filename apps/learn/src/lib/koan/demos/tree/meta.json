@@ -1,4 +1,5 @@
 {
+  "$schema": "../../demo-card.schema.json",
   "id": "tree",
   "title": "Tree Select",
   "description": "Hierarchical nested items with expand/collapse, keyboard navigation, and selection. Data-driven via children + field mapping.",

@@ -1,0 +1,53 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "progress",
+  "title": "ProgressBar",
+  "description": "Determinate + indeterminate progress bar — minimal two-prop API.",
+  "keywords": ["progress", "progressbar", "loader", "percentage", "completion", "indeterminate"],
+  "category": "feedback",
+  "icon": "進",
+  "tool": {
+    "name": "mount_progress",
+    "description": "Mount a ProgressBar gallery on the canvas.",
+    "parameters": {
+      "value": "number or null",
+      "max": "number"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [],
+  "api": {
+    "props": [
+      {
+        "name": "value",
+        "type": "number | null",
+        "desc": "Current value. `null` / `undefined` triggers indeterminate mode"
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": "100",
+        "desc": "Maximum value"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "default": "''",
+        "desc": "Extra CSS classes"
+      }
+    ],
+    "events": [],
+    "attrs": [
+      {
+        "selector": "[data-progress]",
+        "desc": "Root (role=\"progressbar\"; carries data-indeterminate when value is null)"
+      },
+      {
+        "selector": "[data-progress-bar]",
+        "desc": "Filled portion — width tracks the computed percentage"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1023 @@
+{
+  "$schema": "../../demo-card.schema.json",
+  "id": "graph",
+  "title": "Graph",
+  "description": "Node-link diagram explorer — ER diagrams, schema entity tables, call graphs, a dependency structure matrix and co-change overlays from the same data contract. Pluggable layouts (cluster, flow, neighborhood, points, radial, structure, sunburst, world), density, arrange, edge style and a colour|pattern channel, all driven by field-mapped data rather than a fixed schema type.",
+  "keywords": [
+    "graph",
+    "graphs",
+    "diagram",
+    "diagrams",
+    "er-diagram",
+    "erd",
+    "schema",
+    "entity",
+    "entities",
+    "relationship",
+    "relationships",
+    "nodes",
+    "edges",
+    "node-link",
+    "network",
+    "topology",
+    "call-graph",
+    "dependency",
+    "dependencies",
+    "lineage",
+    "force-directed",
+    "database",
+    "table",
+    "tables",
+    "foreign-key",
+    "dsm",
+    "dependency-matrix",
+    "dependency-structure-matrix",
+    "matrix",
+    "cycles",
+    "co-change",
+    "coupling",
+    "hidden-coupling",
+    "overlay",
+    "architecture"
+  ],
+  "category": "data",
+  "icon": "網",
+  "tool": {
+    "name": "mount_graph",
+    "description": "Mount the interactive graph explorer on the canvas — a node-link diagram with pluggable layouts. Pass `dataset` to open a specific one.",
+    "parameters": {
+      "dataset": "optional dataset: ecommerce | schema-deps | service-calls | codebase | components | cochange (defaults to ecommerce)"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [
+    {
+      "id": "er-diagram",
+      "label": "ER diagram",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "er"
+      }
+    },
+    {
+      "id": "schema-deps",
+      "label": "Schema dependencies",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "dependencies"
+      }
+    },
+    {
+      "id": "neighbourhood",
+      "label": "Neighbourhood",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "neighborhood"
+      }
+    },
+    {
+      "id": "call-graph",
+      "label": "Call tree",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "calls"
+      }
+    },
+    {
+      "id": "structure",
+      "label": "Structure",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "structure"
+      }
+    },
+    {
+      "id": "treemap",
+      "label": "Treemap",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "treemap"
+      }
+    },
+    {
+      "id": "lazy-treemap",
+      "label": "Treemap, per level",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "lazy-treemap"
+      }
+    },
+    {
+      "id": "treemap-tested",
+      "label": "Treemap, shaded by tests",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "treemap-tested"
+      }
+    },
+    {
+      "id": "sunburst",
+      "label": "Sunburst",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "sunburst"
+      }
+    },
+    {
+      "id": "matrix",
+      "label": "Dependency matrix",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "matrix"
+      }
+    },
+    {
+      "id": "coupling",
+      "label": "Hidden coupling",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "coupling"
+      }
+    },
+    {
+      "id": "cycles",
+      "label": "Import cycles",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "cycles"
+      }
+    },
+    {
+      "id": "layers",
+      "label": "Layers",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "layers"
+      }
+    },
+    {
+      "id": "layers-sample",
+      "label": "Layers, with a violation",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "layers-sample"
+      }
+    },
+    {
+      "id": "polymetric",
+      "label": "Polymetric view",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "polymetric"
+      }
+    },
+    {
+      "id": "arcs",
+      "label": "Imports vs shared commits",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "arcs"
+      }
+    },
+    {
+      "id": "arcs-sample",
+      "label": "Arcs, #169’s sample",
+      "mode": "dynamic",
+      "props": {
+        "diagram": "arcs-sample"
+      }
+    }
+  ],
+  "api": {
+    "props": [
+      {
+        "name": "nodes",
+        "type": "unknown[]",
+        "default": "[]",
+        "desc": "Any row shape — mapped by `fields`, never required to match a schema type"
+      },
+      {
+        "name": "edges",
+        "type": "unknown[]",
+        "default": "[]",
+        "desc": "Any edge shape — endpoints resolved through `fields.source` / `fields.target`"
+      },
+      {
+        "name": "fields",
+        "type": "GraphFields",
+        "default": "{}",
+        "desc": "Dotted-path map from your shape to the canonical model. Omitted keys fall back to the same-named key. `overlay` marks an edge drawn over the layout but never shaping it; `edgeWeight` reads its strength"
+      },
+      {
+        "name": "state",
+        "type": "GraphState",
+        "desc": "Share one state across Graph / EntityView / EntitiesView. Must keep stable identity — drive it with its methods, do not swap instances"
+      },
+      {
+        "name": "layout",
+        "type": "'cluster' | 'flow' | 'neighborhood' | 'points' | 'world' | LayoutFn",
+        "default": "'cluster'",
+        "desc": "A built-in by name, or your own pure (model, options) => LayoutResult. `flow` ranks by reference direction so every link leaves right and enters left"
+      },
+      {
+        "name": "density",
+        "type": "'names' | 'keys' | 'full'",
+        "default": "'keys'",
+        "desc": "How much of each node’s row list a card shows"
+      },
+      {
+        "name": "arrange",
+        "type": "'untangle' | 'a-z'",
+        "default": "'untangle'",
+        "desc": "Cluster ordering. untangle chains heavily-linked groups; a-z is area-descending"
+      },
+      {
+        "name": "groupBy",
+        "type": "'group' | 'kind'",
+        "default": "'group'",
+        "desc": "Outer grouping axis. Schema suits an ER diagram; kind suits a dependency graph, where one schema holds a table, a trigger and a procedure"
+      },
+      {
+        "name": "sizeBy",
+        "type": "'degree' | 'weight'",
+        "default": "'degree'",
+        "desc": "`points` only — what a node’s size encodes. `weight` reads GraphNode.weight, for when the picture is about a quantity rather than connectivity"
+      },
+      {
+        "name": "sizeScale",
+        "type": "'linear' | 'log'",
+        "default": "'linear'",
+        "desc": "How the measure maps onto area. `log` for a measure spanning orders of magnitude"
+      },
+      {
+        "name": "depth",
+        "type": "number",
+        "default": "1",
+        "desc": "`neighborhood` only — hops out from the focus. 1 answers “what touches this”, 2 answers “what does changing this reach”"
+      },
+      {
+        "name": "nestBy",
+        "type": "'group' | 'kind'",
+        "desc": "Subdivide each cluster by a second axis, so both facts are visible at once. Omit for one level; the same axis as groupBy is ignored"
+      },
+      {
+        "name": "edgeStyle",
+        "type": "'curved' | 'orthogonal'",
+        "default": "'curved'",
+        "desc": "Connector geometry"
+      },
+      {
+        "name": "focus",
+        "type": "string | null",
+        "default": "null",
+        "desc": "`neighborhood` only — the node to centre. Defaults to the selection"
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "desc": "Selected node id. Input and output both"
+      },
+      {
+        "name": "preset",
+        "type": "GraphPreset",
+        "desc": "createGraphPreset({ groups, shades, using }) — colour for the open-ended GROUP vocabulary. Node kinds are a closed set and are themed in CSS instead"
+      },
+      {
+        "name": "mode",
+        "type": "'light' | 'dark'",
+        "default": "'light'",
+        "desc": "Which shade ladder the group ramp resolves against"
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "desc": "Accessible name. Derived from the node/edge counts when omitted"
+      },
+      {
+        "name": "icons",
+        "type": "Record<string, string>",
+        "desc": "Icon class per node kind and row badge, merged over DEFAULT_ICONS. The built-ins name i-glyph:* entries — override to adopt a different collection"
+      },
+      {
+        "name": "onselect",
+        "type": "(id: string | null) => void",
+        "desc": "Fires when a node is activated, and with null when the selection is cleared — a controlled consumer has no other way to learn it was dropped"
+      },
+      {
+        "name": "focusPath",
+        "type": "string[]",
+        "desc": "Containment layouts (world, sunburst, structure): the subtree drawn as the whole canvas, as the DATA path. Bindable — drilling moves it; bind it (or omit it) so a re-render does not put the old path back"
+      },
+      {
+        "name": "ondrill",
+        "type": "(path: string[], node: GraphNode | null) => void | Promise<void>",
+        "desc": "The reader opened a box. `node` is the declared node at the path, null for a synthesised container. Return a promise while you load that level: the canvas shows it pending, and a rejection returns to the previous level. Not a selection — onselect is not called"
+      },
+      {
+        "name": "showEdges",
+        "type": "'all' | 'violations'",
+        "desc": "LayersDiagram: every edge, or only the ones that climb a layer. Bindable — its control moves it. On a real codebase the conformant edges drown the signal"
+      },
+      {
+        "name": "layerLabels",
+        "type": "string[]",
+        "desc": "LayersDiagram: band names by layer index. Layers come from each node’s host-assigned `layer`; rokkit computes no depth"
+      },
+      {
+        "name": "onexpand",
+        "type": "(id: string, node: GraphNode) => void",
+        "desc": "The reader expanded a group node (#166). A group is a node with `members` (ids); with the members in `nodes` they appear at once, edges among them included. A host that sends only the group can load them here"
+      },
+      {
+        "name": "oncollapse",
+        "type": "(id: string, node: GraphNode) => void",
+        "desc": "The reader collapsed a group back into one node; its members’ edges aggregate onto it again"
+      },
+      {
+        "name": "ondrillup",
+        "type": "(path: string[]) => void | Promise<void>",
+        "desc": "The reader climbed out to `path`. Answer from what you already hold (no refetch) or return a promise, same contract as ondrill"
+      }
+    ],
+    "attrs": [
+      {
+        "selector": "[data-graph-viewport]",
+        "desc": "Positioned wrapper; anchors the zoom controls over the canvas"
+      },
+      {
+        "selector": "[data-graph-paper]",
+        "desc": "Scrolling canvas — reuses the shared dotted-canvas primitive"
+      },
+      {
+        "selector": "[data-graph-extent]",
+        "desc": "The scrollable extent (#171): the scaled drawing plus padding on all four sides — exactly the viewport while the drawing fits. It clips the world, whose unscaled box would otherwise decide the scroll"
+      },
+      {
+        "selector": "[data-graph-panning]",
+        "desc": "Present on the canvas while a drag-pan is in progress"
+      },
+      {
+        "selector": "[data-graph-pending]",
+        "desc": "Present on the canvas (with aria-busy) while a drill’s level is loading — the old level stays, dimmed"
+      },
+      {
+        "selector": "[data-graph-shaded]",
+        "desc": "A containment box or wedge painted from the shade ramp by its share of `shadeBy` (0..1), its label colour measured against that step"
+      },
+      {
+        "selector": "[data-legend-shade]",
+        "desc": "The legend row for the shade: the measure, beside the ramp from none to all"
+      },
+      {
+        "selector": "[data-legend-shade-swatch]",
+        "desc": "The ramp itself, low to high, as the key"
+      },
+      {
+        "selector": "[data-edge-hidden]",
+        "desc": "Coupling nothing in the code explains — a pair the host flagged `hidden`. Heavier, in the danger colour"
+      },
+      {
+        "selector": "[data-edge-side]",
+        "desc": "Which side of the arc diagram’s axis an arc is on: `below` (left — imports) or `above` (right — shared commits)"
+      },
+      {
+        "selector": "[data-graph-hidden-only]",
+        "desc": "The ArcDiagram toggle between every pair and only the hidden ones (aria-pressed when filtering)"
+      },
+      {
+        "selector": "[data-legend-side]",
+        "desc": "An arc-diagram legend row naming one side: `below` (left) or `above` (right)"
+      },
+      {
+        "selector": "[data-legend-hidden]",
+        "desc": "The legend row for the hidden-coupling stroke"
+      },
+      {
+        "selector": "[data-graph-missing]",
+        "desc": "A polymetric box with no value for these channels (`width` / `height` / `color`): drawn at the minimum, dashed, a missing shade hatched — never passed off as a zero"
+      },
+      {
+        "selector": "[data-graph-clamped]",
+        "desc": "A polymetric box whose value passed the channel’s 95th-percentile cap: drawn at the maximum with a heavy edge on that side"
+      },
+      {
+        "selector": "[data-graph-measure]",
+        "desc": "A PolymetricTree measure picker; the value is the channel it binds (`width`, `height`, `color`)"
+      },
+      {
+        "selector": "[data-edge-conformance]",
+        "desc": "How an edge sits against the layering: `down` (conformant), `skip` (down more than one, dashed), `up` (climbs — the violation, in the danger colour), `level` (within a layer)"
+      },
+      {
+        "selector": "[data-graph-violations]",
+        "desc": "The LayersDiagram toggle between every edge and only the ones that climb (aria-pressed when filtering)"
+      },
+      {
+        "selector": "[data-graph-group]",
+        "desc": "A group node — one that stands for `members` (a cycle the host condensed)"
+      },
+      {
+        "selector": "[data-graph-collapsed]",
+        "desc": "A collapsed group: drawn as a stack, its members hidden, their edges rerouted to it"
+      },
+      {
+        "selector": "[data-graph-member-of]",
+        "desc": "A member of an expanded group; the value is the group id. Double-click folds the group back"
+      },
+      {
+        "selector": "[data-graph-group-toggle]",
+        "desc": "The inline \"Expand · N\" control on a collapsed group (role=\"button\", Enter / Space)"
+      },
+      {
+        "selector": "[data-graph-group-action]",
+        "desc": "Expand / Collapse in the drill bar for the selected group or member — the keyboard route"
+      },
+      {
+        "selector": "[data-edge-weakest]",
+        "desc": "The cheapest link to cut in a cycle — the edge flagged `weakest` by the host"
+      },
+      {
+        "selector": "[data-edge-count]",
+        "desc": "How many edges a condensed edge stands for, when a collapsed group aggregated several"
+      },
+      {
+        "selector": "[data-graph-drillable]",
+        "desc": "A containment box or wedge that opens on click / Enter / Space — a button, labelled \"Open …\""
+      },
+      {
+        "selector": "[data-graph-drill]",
+        "desc": "The drill bar in the control overlay: trail, Open, loading, error. Shown only when it has something to say"
+      },
+      {
+        "selector": "[data-graph-drill-trail]",
+        "desc": "The breadcrumb list from the root to the current level"
+      },
+      {
+        "selector": "[data-graph-drill-crumb]",
+        "desc": "One crumb — a button back to that ancestor; the current level carries aria-current"
+      },
+      {
+        "selector": "[data-graph-drill-open]",
+        "desc": "\"Open <name>\" for the selected box when it can be drilled — the keyboard route into a leaf"
+      },
+      {
+        "selector": "[data-graph-drill-error]",
+        "desc": "Why the last drill failed (role=\"alert\") — the previous level is restored"
+      },
+      {
+        "selector": "[data-graph-zoom-controls]",
+        "desc": "On-canvas zoom cluster; buttons carry data-graph-zoom=\"in|out|reset\""
+      },
+      {
+        "selector": "[data-graph-zoom-position]",
+        "desc": "Canvas corner the zoom cluster sits in (top-left|top-right|bottom-left|bottom-right), from the zoomPosition prop; top-left by default"
+      },
+      {
+        "selector": "[data-graph-world]",
+        "desc": "Scaled/translated world; declares --graph-head-h, --graph-row-h, --graph-more-h"
+      },
+      {
+        "selector": "[data-graph-layout]",
+        "desc": "Active layout name — `points` reshapes a node from a card into a dot"
+      },
+      {
+        "selector": "[data-graph-detail]",
+        "desc": "full | compact | minimal | dot — level of detail from the effective scale"
+      },
+      {
+        "selector": "[data-graph-density-controls]",
+        "desc": "On-canvas detail toggle; buttons carry data-graph-density=\"names|keys|full\""
+      },
+      {
+        "selector": "[data-graph-cluster]",
+        "desc": "One group box. Reads --group-fill / --group-stroke"
+      },
+      {
+        "selector": "[data-graph-column]",
+        "desc": "A column heading in a multi-column layout. Position, width and wording all come from the layout"
+      },
+      {
+        "selector": "[data-column-side]",
+        "desc": "in | out | focus — which side of the focus a column sits on. `focus` names the node itself, so it is styled as a proper noun"
+      },
+      {
+        "selector": "[data-column-depth]",
+        "desc": "Hops from the focus. 0 is the focus column"
+      },
+      {
+        "selector": "[data-cluster-depth]",
+        "desc": "0 for an outer box, 1 for one nested inside it. Outer boxes are emitted first, so paint order nests them with no DOM tree"
+      },
+      {
+        "selector": "[data-graph-cluster-label]",
+        "desc": "Group name + count, or name + measure where the layout sizes by one. Truncates with an ellipsis rather than hiding, so how much is readable follows the zoom"
+      },
+      {
+        "selector": "[data-graph-diagram]",
+        "desc": "A named diagram — canvas, overlay controls and footer legend. `ErDiagram`, `CallTree`, `Treemap`… each compose this over the bare `Graph`"
+      },
+      {
+        "selector": "[data-graph-diagram-canvas]",
+        "desc": "The canvas within a diagram. Takes the space the footer leaves, so a legend never covers the picture it explains"
+      },
+      {
+        "selector": "[data-graph-diagram-overlay]",
+        "desc": "Control strip over the canvas. Pointer-transparent between the controls, so the gaps still clear the selection"
+      },
+      {
+        "selector": "[data-graph-diagram-footer]",
+        "desc": "Below the canvas, in the layout flow — where the legend sits"
+      },
+      {
+        "selector": "[data-label-side]",
+        "desc": "start | end — which way a rim label runs from its dot, flipped through the left half of the circle so nothing reads upside down. Paired with the --label-angle custom property the layout sets"
+      },
+      {
+        "selector": "[data-graph-bundle]",
+        "desc": "Straight/bundled toggle for the structure view. Bundled routes each edge through the hierarchy it travels; straight is a plain chord"
+      },
+      {
+        "selector": "[data-graph-depth-controls]",
+        "desc": "How many levels of a containment tree to materialise. Buttons carry data-graph-depth=\"N\""
+      },
+      {
+        "selector": "[data-graph-edge-style]",
+        "desc": "Curved/angled connector toggle. Carries the active style as its value and aria-pressed for the non-default"
+      },
+      {
+        "selector": "[data-graph-legend]",
+        "desc": "The key. Sections are opt-in: kinds, relations, groups"
+      },
+      {
+        "selector": "[data-graph-legend-entry]",
+        "desc": "One legend row. A <button> when a handler makes it interactive, a <span> when it is a static key"
+      },
+      {
+        "selector": "[data-legend-swatch]",
+        "desc": "The mark for an entry — a kind ICON, a group colour chip, or an SVG line drawn with the stroke the edge actually uses"
+      },
+      {
+        "selector": "[data-legend-kind]",
+        "desc": "A legend row for one node kind, carrying the kind as its value"
+      },
+      {
+        "selector": "[data-legend-relation]",
+        "desc": "A legend row for one edge relation — the producer’s verb, or the coarse kind when it gave none"
+      },
+      {
+        "selector": "[data-legend-group]",
+        "desc": "A legend row for one group, carrying the group ramp so the chip matches the canvas"
+      },
+      {
+        "selector": "[data-legend-label]",
+        "desc": "The entry’s text"
+      },
+      {
+        "selector": "[data-legend-channel]",
+        "desc": "A polymetric legend row: which measure is on width, height or shade"
+      },
+      {
+        "selector": "[data-legend-channel-swatch]",
+        "desc": "The channel’s key drawn as the shape it encodes — a wide bar, a tall bar, a ramp"
+      },
+      {
+        "selector": "[data-legend-measure]",
+        "desc": "The measure bound to a channel"
+      },
+      {
+        "selector": "[data-legend-cap]",
+        "desc": "What a channel’s full extent stands for — its 95th-percentile cap"
+      },
+      {
+        "selector": "[data-graph-wedges]",
+        "desc": "The SVG arc layer a sunburst draws into — a wedge is an annulus sector and has no box, so it cannot be a positioned div"
+      },
+      {
+        "selector": "[data-graph-wedge]",
+        "desc": "One sunburst wedge. Reads the same --group-fill / --group-stroke a cluster box does, so both views of one dataset agree on a schema’s colour"
+      },
+      {
+        "selector": "[data-graph-node-shape]",
+        "desc": "card | dot — what the active layout draws a node as. The dot treatment keys on this rather than on a layout name, so `radial` inherited it by declaring the shape"
+      },
+      {
+        "selector": "[data-graph-group-tint]",
+        "desc": "Set on the canvas when `groupTint` is on — cards carry a spine in their group colour, which is how schema stays visible in a layout with no cluster boxes"
+      },
+      {
+        "selector": "[data-graph-node-id]",
+        "desc": "The node a box IS, on a containment layout where a leaf is still a box rather than a card. Makes it selectable; absent on a region, which is not a node"
+      },
+      {
+        "selector": "[data-graph-node]",
+        "desc": "Node card — a <button>"
+      },
+      {
+        "selector": "[data-node-kind]",
+        "desc": "table | view | matview | materialized_view | function | procedure | trigger | enum — sets --node-accent. matview and materialized_view are the same object under rokkit’s short name and dbd’s wire name"
+      },
+      {
+        "selector": "[data-node-group]",
+        "desc": "The node’s group name, for per-group overrides"
+      },
+      {
+        "selector": "[data-node-state]",
+        "desc": "selected | related | dim"
+      },
+      {
+        "selector": "[data-node-headonly]",
+        "desc": "Card with neither rows nor a more-row"
+      },
+      {
+        "selector": "[data-graph-node-head]",
+        "desc": "Card header strip"
+      },
+      {
+        "selector": "[data-graph-node-icon]",
+        "desc": "Kind icon"
+      },
+      {
+        "selector": "[data-graph-node-title]",
+        "desc": "Node label"
+      },
+      {
+        "selector": "[data-graph-node-kind]",
+        "desc": "Kind spelled out beside the icon (underscores rendered as spaces). Hidden below `full` detail and in the points layout"
+      },
+      {
+        "selector": "[data-graph-node-count]",
+        "desc": "Total row count"
+      },
+      {
+        "selector": "[data-graph-row]",
+        "desc": "One visible row"
+      },
+      {
+        "selector": "[data-graph-row-name]",
+        "desc": "Row name"
+      },
+      {
+        "selector": "[data-graph-row-type]",
+        "desc": "Row type — ink-mute, never ink-soft"
+      },
+      {
+        "selector": "[data-row-badge]",
+        "desc": "pk | fk | uq | nn"
+      },
+      {
+        "selector": "[data-row-badge-empty]",
+        "desc": "Spacer keeping badge-less rows aligned"
+      },
+      {
+        "selector": "[data-graph-more]",
+        "desc": "Hidden-row count / expand toggle"
+      },
+      {
+        "selector": "[data-graph-more-empty]",
+        "desc": "Set when the density filter matched NO rows — a view, procedure or enum at key density has no keys, and the count alone reads as a rendering failure"
+      },
+      {
+        "selector": "[data-graph-edge]",
+        "desc": "Routed edge group"
+      },
+      {
+        "selector": "[data-edge-kind]",
+        "desc": "reference | dependency — dependency renders dashed"
+      },
+      {
+        "selector": "[data-edge-relation]",
+        "desc": "The producer’s own verb for the edge, when it has one — dbd v2 emits reads | writes | calls | member. Absent on a plain foreign key"
+      },
+      {
+        "selector": "[data-edge-overlay]",
+        "desc": "An overlay edge (co-change, a broken layering rule) — drawn over the layout, never shaping it. Dotted in ink-mute; --edge-weight (0..1) thickens it"
+      },
+      {
+        "selector": "[data-graph-matrix]",
+        "desc": "DependencyMatrix root — role=\"group\", aria-label counts nodes, dependencies and cells above the diagonal"
+      },
+      {
+        "selector": "[data-matrix-row]",
+        "desc": "Row header (a button) — value is the node id; click / Enter / Space toggles selection"
+      },
+      {
+        "selector": "[data-matrix-band]",
+        "desc": "The row’s full-width hit area; tinted on hover and when selected"
+      },
+      {
+        "selector": "[data-matrix-col]",
+        "desc": "Rotated column heading — value is the node id"
+      },
+      {
+        "selector": "[data-matrix-state]",
+        "desc": "selected on a row / column heading; highlight on a cell in the selected node’s row or column"
+      },
+      {
+        "selector": "[data-matrix-cell]",
+        "desc": "A dependency: row depends on column. Carries data-matrix-from / -to and --cell-weight (count / max)"
+      },
+      {
+        "selector": "[data-matrix-above]",
+        "desc": "On a cell above the diagonal — a cycle or a layer reaching up. Danger-filled in every style"
+      },
+      {
+        "selector": "[data-matrix-diagonal]",
+        "desc": "The self cell of each node, drawn as a faint reading guide"
+      },
+      {
+        "selector": "[data-matrix-block]",
+        "desc": "A group’s outline on the diagonal (groupBy) — value is the group name"
+      },
+      {
+        "selector": "[data-edge-from]",
+        "desc": "Source node id — an edge’s endpoints are not otherwise recoverable from the DOM"
+      },
+      {
+        "selector": "[data-edge-to]",
+        "desc": "Target node id"
+      },
+      {
+        "selector": "[data-edge-state]",
+        "desc": "highlight | dim"
+      },
+      {
+        "selector": "[data-graph-edge-dot]",
+        "desc": "Source anchor dot (and the target anchor when arrows are off)"
+      },
+      {
+        "selector": "[data-graph-edge-arrow]",
+        "desc": "Directional arrowhead at the edge target"
+      },
+      {
+        "selector": "[data-graph-entity]",
+        "desc": "EntityView root"
+      },
+      {
+        "selector": "[data-graph-entity-head]",
+        "desc": "Entity header"
+      },
+      {
+        "selector": "[data-graph-entity-group]",
+        "desc": "Group prefix"
+      },
+      {
+        "selector": "[data-graph-entity-kind]",
+        "desc": "Kind hook on the EntitiesView cell"
+      },
+      {
+        "selector": "[data-graph-section-title]",
+        "desc": "Section heading"
+      },
+      {
+        "selector": "[data-graph-column]",
+        "desc": "One column row in EntityView"
+      },
+      {
+        "selector": "[data-graph-column-name]",
+        "desc": "Column name"
+      },
+      {
+        "selector": "[data-graph-column-note]",
+        "desc": "Column comment"
+      },
+      {
+        "selector": "[data-graph-column-badges]",
+        "desc": "Badge group in an EntityView column row — badges render as text chips here, as masked icons in a node card"
+      },
+      {
+        "selector": "[data-graph-column-type]",
+        "desc": "Base type"
+      },
+      {
+        "selector": "[data-graph-column-size]",
+        "desc": "Type size argument"
+      },
+      {
+        "selector": "[data-graph-index]",
+        "desc": "One index row"
+      },
+      {
+        "selector": "[data-graph-index-unique]",
+        "desc": "Unique marker"
+      },
+      {
+        "selector": "[data-graph-index-name]",
+        "desc": "Index name"
+      },
+      {
+        "selector": "[data-graph-relationship]",
+        "desc": "in | out — one relationship button"
+      },
+      {
+        "selector": "[data-graph-relationship-group]",
+        "desc": "Other end’s group"
+      },
+      {
+        "selector": "[data-graph-relationship-label]",
+        "desc": "Other end’s label"
+      },
+      {
+        "selector": "[data-graph-relationship-action]",
+        "desc": "Referential action"
+      },
+      {
+        "selector": "[data-graph-relationships-empty]",
+        "desc": "Shown when nothing references the entity"
+      },
+      {
+        "selector": "[data-graph-design-page]",
+        "desc": "A design view’s root — fills the box its host gives it"
+      },
+      {
+        "selector": "[data-graph-design-missing]",
+        "desc": "The page shown for a key the design does not carry"
+      },
+      {
+        "selector": "[data-graph-design-head]",
+        "desc": "Page head: the qualified name and its badges"
+      },
+      {
+        "selector": "[data-graph-design-header]",
+        "desc": "ContentHeader root — the design’s own head, with its tabs"
+      },
+      {
+        "selector": "[data-graph-design-heading]",
+        "desc": "The title line inside a head"
+      },
+      {
+        "selector": "[data-graph-design-name]",
+        "desc": "Schema prefix and title, kept on one baseline"
+      },
+      {
+        "selector": "[data-graph-design-schema]",
+        "desc": "The `schema.` lead-in to an object’s name"
+      },
+      {
+        "selector": "[data-graph-design-title]",
+        "desc": "The design’s or object’s name"
+      },
+      {
+        "selector": "[data-graph-design-stats]",
+        "desc": "ContentHeader counts line — tables · enums · refs"
+      },
+      {
+        "selector": "[data-graph-design-lead]",
+        "desc": "The first paragraph of the design note"
+      },
+      {
+        "selector": "[data-graph-design-badge]",
+        "desc": "A pill in a head or row: kind, counts, dialect"
+      },
+      {
+        "selector": "[data-graph-design-stub]",
+        "desc": "Marks a reference whose target is a stub (external, out of scope, unresolved)"
+      },
+      {
+        "selector": "[data-graph-design-body]",
+        "desc": "The scrolling body of a page"
+      },
+      {
+        "selector": "[data-graph-section]",
+        "desc": "One section of a page, named: info | fields | references | dependencies | indexes | checks | uses | used-by | values | counts | notes | schemas"
+      },
+      {
+        "selector": "[data-graph-design-count]",
+        "desc": "The `· n` after a section title"
+      },
+      {
+        "selector": "[data-graph-design-line]",
+        "desc": "OverviewView’s dialect and model-version line"
+      },
+      {
+        "selector": "[data-graph-design-cards]",
+        "desc": "OverviewView’s grid of count cards"
+      },
+      {
+        "selector": "[data-graph-design-card]",
+        "desc": "One count card, keyed by what it counts"
+      },
+      {
+        "selector": "[data-graph-design-card-icon]",
+        "desc": "The card’s kind icon"
+      },
+      {
+        "selector": "[data-graph-design-card-count]",
+        "desc": "The card’s number"
+      },
+      {
+        "selector": "[data-graph-design-card-label]",
+        "desc": "The card’s label"
+      },
+      {
+        "selector": "[data-graph-design-scroll]",
+        "desc": "Scrolls a wide table sideways rather than squeezing it"
+      },
+      {
+        "selector": "[data-graph-design-table]",
+        "desc": "The fields table and the schemas table"
+      },
+      {
+        "selector": "[data-graph-design-fields]",
+        "desc": "The fields table — scrolls sideways below its minimum width"
+      },
+      {
+        "selector": "[data-cell]",
+        "desc": "A fields-table cell: name | type | settings | default | refs | notes"
+      },
+      {
+        "selector": "[data-graph-design-list]",
+        "desc": "A list of rows: references, dependencies, values, columns"
+      },
+      {
+        "selector": "[data-graph-design-row]",
+        "desc": "One row in a list"
+      },
+      {
+        "selector": "[data-unresolved]",
+        "desc": "A dependency whose target the design does not describe — dimmed, never dropped"
+      },
+      {
+        "selector": "[data-graph-design-row-icon]",
+        "desc": "A row’s kind icon"
+      },
+      {
+        "selector": "[data-graph-design-link]",
+        "desc": "A name that opens its object"
+      },
+      {
+        "selector": "[data-graph-design-strong]",
+        "desc": "A name that cannot be opened, or the emphasised part of one"
+      },
+      {
+        "selector": "[data-graph-design-verb]",
+        "desc": "reads | writes | calls | member, or a key’s referential action"
+      },
+      {
+        "selector": "[data-graph-design-ordinal]",
+        "desc": "An enum value’s position"
+      },
+      {
+        "selector": "[data-graph-design-muted]",
+        "desc": "An absent value — the `—` in a cell"
+      },
+      {
+        "selector": "[data-graph-design-empty]",
+        "desc": "What a view says when its data is absent"
+      },
+      {
+        "selector": "[data-graph-design-sidebar]",
+        "desc": "SchemaSidebar root"
+      },
+      {
+        "selector": "[data-side]",
+        "desc": "left | right — the edge the host placed the sidebar on; its border faces the page"
+      },
+      {
+        "selector": "[data-graph-design-home]",
+        "desc": "The design’s own row, heading the sidebar"
+      },
+      {
+        "selector": "[data-active]",
+        "desc": "On the home row while no object is selected"
+      },
+      {
+        "selector": "[data-graph-design-search-box]",
+        "desc": "Wraps the sidebar search"
+      },
+      {
+        "selector": "[data-graph-design-search]",
+        "desc": "The “Find an entity…” input"
+      },
+      {
+        "selector": "[data-graph-design-chips]",
+        "desc": "The kind filter"
+      },
+      {
+        "selector": "[data-graph-design-chip]",
+        "desc": "One kind’s chip — aria-pressed while the kind is shown"
+      },
+      {
+        "selector": "[data-graph-design-chip-count]",
+        "desc": "The kind’s count on its chip"
+      },
+      {
+        "selector": "[data-graph-design-tree]",
+        "desc": "Scrolls the sidebar’s Tree"
+      },
+      {
+        "selector": "[data-graph-note]",
+        "desc": "Rendered note blocks"
+      },
+      {
+        "selector": "[data-graph-note-list]",
+        "desc": "Bullet list inside a note"
+      },
+      {
+        "selector": "[data-graph-note-code]",
+        "desc": "Inline `code` span inside a note"
+      }
+    ]
+  }
+}

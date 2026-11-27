@@ -1,0 +1,131 @@
+{
+  "id": "form",
+  "title": "Schema-driven Form",
+  "description": "Schema in, validated form out. FormRenderer reads a JSON-Schema-ish object and renders the right input per type, with built-in validation and dirty tracking.",
+  "keywords": [
+    "form",
+    "forms",
+    "input",
+    "inputs",
+    "fields",
+    "field",
+    "schema",
+    "validation",
+    "validate",
+    "sign-up",
+    "signup",
+    "register",
+    "login",
+    "contact",
+    "json-schema",
+    "data"
+  ],
+  "category": "forms",
+  "icon": "入",
+  "tool": {
+    "name": "mount_form",
+    "description": "Mount a schema-driven FormRenderer on the canvas. Use when the user wants a form built from a JSON-Schema-ish object — sign-up, contact, settings, etc.",
+    "parameters": {
+      "data": "object — bound form data",
+      "schema": "JSON-Schema-ish object with `properties`; type + format + enum + required drive rendering and validation"
+    }
+  },
+  "inline": {
+    "capable": true
+  },
+  "variants": [
+    {
+      "id": "multi-step",
+      "label": "Multi-step form",
+      "mode": "dynamic"
+    },
+    {
+      "id": "conditional",
+      "label": "Conditional fields",
+      "mode": "dynamic"
+    },
+    {
+      "id": "with-lookups",
+      "label": "Async lookups",
+      "mode": "dynamic"
+    }
+  ],
+  "api": {
+    "props": [
+      {
+        "name": "schema",
+        "type": "JsonSchema",
+        "desc": "JSON-Schema-ish object with `properties`; type + format + enum + required drive rendering"
+      },
+      {
+        "name": "data",
+        "type": "object",
+        "default": "{}",
+        "desc": "Form values",
+        "bindable": true
+      },
+      {
+        "name": "layout",
+        "type": "LayoutNode",
+        "desc": "Optional layout tree — overrides default vertical stack"
+      },
+      {
+        "name": "lookups",
+        "type": "Record<string, LookupSpec>",
+        "desc": "Async/sync lookups keyed by JSON-Schema property path"
+      },
+      {
+        "name": "validateOn",
+        "type": "'submit' | 'change' | 'blur'",
+        "default": "'submit'",
+        "desc": "When validation fires"
+      },
+      {
+        "name": "renderers",
+        "type": "Record<string, Component>",
+        "desc": "Custom renderer registry — keyed by renderer id"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "default": "false",
+        "desc": "Disable the entire form"
+      }
+    ],
+    "events": [
+      {
+        "name": "onsubmit",
+        "signature": "(data) => void",
+        "desc": "Fires when validation passes and the user submits"
+      },
+      {
+        "name": "onupdate",
+        "signature": "(data) => void",
+        "desc": "Fires on every value change"
+      },
+      {
+        "name": "oninvalid",
+        "signature": "(errors) => void",
+        "desc": "Fires when validation fails on submit"
+      }
+    ],
+    "attrs": [
+      {
+        "selector": "[data-form-root]",
+        "desc": "Root <form> container"
+      },
+      {
+        "selector": "[data-form-field]",
+        "desc": "Single-field wrapper"
+      },
+      {
+        "selector": "[data-form-group]",
+        "desc": "Fieldset wrapper for nested objects"
+      },
+      {
+        "selector": "[data-form-actions]",
+        "desc": "Submit/reset button row"
+      }
+    ]
+  }
+}

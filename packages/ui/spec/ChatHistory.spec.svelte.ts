@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, fireEvent } from '@testing-library/svelte'
+import { createRawSnippet } from 'svelte'
 import ChatHistory from '../src/components/ChatHistory.svelte'
 
 const convos = [
@@ -32,5 +33,28 @@ describe('ChatHistory', () => {
 		const { container } = render(ChatHistory, { conversations: [] })
 		expect(container.querySelectorAll('[data-chat-history-row]').length).toBe(0)
 		expect(container.querySelector('[data-chat-history]')).toBeTruthy()
+	})
+	it('shows the empty and header snippets when no conversations are passed at all', () => {
+		const empty = createRawSnippet(() => ({ render: () => '<p data-custom-empty>Nothing yet</p>' }))
+		const header = createRawSnippet(() => ({ render: () => '<h2 data-custom-header>History</h2>' }))
+		const { container } = render(ChatHistory, { empty, header })
+		expect(container.querySelector('[data-custom-header]')?.textContent).toBe('History')
+		expect(container.querySelector('[data-custom-empty]')?.textContent).toBe('Nothing yet')
+		expect(container.querySelectorAll('[data-chat-history-row]').length).toBe(0)
+	})
+	it('renders each conversation through the item snippet in place of the default row', () => {
+		const item = createRawSnippet((conversation: () => { id: string; title: string }) => ({
+			render: () => `<div data-custom-item data-id="${conversation().id}">${conversation().title}</div>`
+		}))
+		const { container } = render(ChatHistory, { conversations: convos, item })
+		const custom = [...container.querySelectorAll('[data-custom-item]')]
+		expect(custom.map((el) => el.getAttribute('data-id'))).toEqual(['a', 'b'])
+		expect(custom.map((el) => el.textContent)).toEqual(['First chat', 'Second chat'])
+		expect(container.querySelectorAll('[data-chat-history-row]').length).toBe(0)
+	})
+	it('shows a clock time instead of a relative label when relativeTime is false', () => {
+		const { container } = render(ChatHistory, { conversations: convos, relativeTime: false })
+		const time = container.querySelector('[data-chat-history-time]')
+		expect(time?.textContent).toBe(new Date('2026-01-01T12:00:00Z').toLocaleTimeString())
 	})
 })

@@ -2,47 +2,20 @@
  * checked against the catalogue; whatever does not survive turns the turn into a question
  * back to the user, never a guess. Local search, System One and an LLM all go through here.
  */
-import type { DemoPropSchema } from '#lib/koan/types.js'
 import { VIEWS, type Interpretation, type Screen } from './types'
-import { dataOf, demoById, propSchemaOf, variantOf } from './demos'
+import { dataOf, demoById, variantOf } from './demos'
+import { isRecord, withData } from './bounds'
+import { validProps } from './coerce'
 
 /** Below this confidence the chat asks back (plan open question: tuned from slice 3). */
 export const CLARIFY_BELOW = 0.5
 const MAX_OPTIONS = 4
-
-const TRUE_WORDS = new Set([true, 'true', 'yes', 'on', '1', 1])
-const FALSE_WORDS = new Set([false, 'false', 'no', 'off', '0', 0])
-
-/** One prop value as its schema allows it, or `undefined` when it does not. */
-const COERCE: Record<DemoPropSchema['type'], (value: unknown, schema: DemoPropSchema) => unknown> = {
-	boolean: (v) => (TRUE_WORDS.has(v as never) ? true : FALSE_WORDS.has(v as never) ? false : undefined),
-	enum: (v, s) => (s.type === 'enum' && s.options.includes(String(v)) ? String(v) : undefined),
-	string: (v) => (typeof v === 'string' ? v : undefined),
-	number: (v, s) => {
-		const n = typeof v === 'number' ? v : Number(v)
-		if (!Number.isFinite(n) || s.type !== 'number') return undefined
-		return Math.min(s.max ?? Infinity, Math.max(s.min ?? -Infinity, n))
-	}
-}
-
-function validProps(demo: string, props: Record<string, unknown> | undefined): Record<string, unknown> {
-	const schema = propSchemaOf(demo)
-	const out: Record<string, unknown> = {}
-	for (const [name, value] of Object.entries(props ?? {})) {
-		const rule = schema[name]
-		const coerced = rule ? COERCE[rule.type](value, rule) : undefined
-		if (coerced !== undefined) out[name] = coerced
-	}
-	return out
-}
 
 const ask = (options: Interpretation[] = []): Interpretation => ({
 	intent: 'clarify',
 	confidence: 1,
 	...(options.length ? { options } : {})
 })
-
-const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 
 /** Any view takes rows; a form also takes the single record it edits. */
 const fits = (data: unknown, view: string) => Array.isArray(data) || (view === 'form' && isRecord(data))
@@ -56,28 +29,6 @@ function reshape(i: Interpretation): Interpretation {
 	const variant = i.view === 'chart' && variantOf('chart', i.variant) ? { variant: i.variant } : {}
 	const part = i.data === undefined ? {} : { data: i.data }
 	return { intent: 'reshape', view: i.view, ...variant, ...part, confidence: i.confidence }
-}
-
-/** Demos a show may hand data to: the views a dataset can take. */
-const DATA_DEMOS = new Set<string>(VIEWS)
-const MAX_ROWS = 200
-const MAX_FIELDS = 12
-
-const flat = (v: unknown) =>
-	!isRecord(v) || (Object.keys(v).length <= MAX_FIELDS && Object.values(v).every((x) => x === null || typeof x !== 'object'))
-
-/** Data a show can use — at most MAX_ROWS flat rows, or one flat record — else undefined. */
-function bounded(data: unknown): unknown {
-	if (Array.isArray(data)) return data.length > 0 && data.length <= MAX_ROWS && data.every(flat) ? data : undefined
-	return isRecord(data) && flat(data) ? data : undefined
-}
-
-/** A show keeps generated data only for a data demo, and only within bounds. */
-function withData(i: Interpretation): Interpretation {
-	if (i.intent !== 'show' || i.data === undefined) return i
-	const data = DATA_DEMOS.has(i.demo as string) ? bounded(i.data) : undefined
-	const { data: _, ...rest } = i
-	return data === undefined ? rest : { ...rest, data }
 }
 
 /** A modify that changes nothing is a question, not a no-op. */

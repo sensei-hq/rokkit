@@ -19,16 +19,18 @@ describe('buildAreas — fallbacks', () => {
 				{ x: 1, y: 2 }
 			],
 			{ x: 'x', y: 'y' },
-			xScale,
-			yScale,
-			undefined
+			{ xScale, yScale }
 		)
 		expect(seg.fill).toBe('#888')
 		expect(seg.patternId).toBeNull()
 	})
 
 	it('falls back to #888 when the colors map is empty (single series)', () => {
-		const [seg] = buildAreas([{ x: 0, y: 1 }], { x: 'x', y: 'y' }, xScale, yScale, new Map())
+		const [seg] = buildAreas(
+			[{ x: 0, y: 1 }],
+			{ x: 'x', y: 'y' },
+			{ xScale, yScale, colors: new Map() }
+		)
 		expect(seg.fill).toBe('#888')
 	})
 
@@ -39,9 +41,7 @@ describe('buildAreas — fallbacks', () => {
 				{ x: 1, y: 2, g: 'b', p: 'lines' }
 			],
 			{ x: 'x', y: 'y', color: 'g', pattern: 'p' },
-			xScale,
-			yScale,
-			new Map()
+			{ xScale, yScale, colors: new Map() }
 		)
 		expect(segs.map((s) => s.patternId)).toEqual([null, null])
 		expect(segs.map((s) => s.fill)).toEqual(['#888', '#888'])
@@ -57,9 +57,7 @@ describe('buildStackedAreas — fallbacks', () => {
 				{ x: 1, y: 4, g: 'b' }
 			],
 			{ x: 'x', y: 'y', color: 'g' },
-			xScale,
-			yScale,
-			new Map()
+			{ xScale, yScale, colors: new Map() }
 		)
 		expect(segs.map((s) => s.key)).toEqual(['a', 'b'])
 		// 'b' has no row at x=0: its band there is [2, 2] (zero thickness on top of 'a').
@@ -73,9 +71,7 @@ describe('buildStackedAreas — fallbacks', () => {
 				{ x: 1, y: 2, g: 'a' }
 			],
 			{ x: 'x', y: 'y', color: 'g' },
-			xScale,
-			yScale,
-			new Map()
+			{ xScale, yScale, colors: new Map() }
 		)
 		expect(segs).toHaveLength(1)
 		expect(segs[0].d).toContain('NaN')
@@ -88,9 +84,7 @@ describe('buildStackedAreas — fallbacks', () => {
 				{ x: 1, y: 2, g: 'b', p: 'lines' }
 			],
 			{ x: 'x', y: 'y', color: 'g', pattern: 'p' },
-			xScale,
-			yScale,
-			undefined
+			{ xScale, yScale }
 		)
 		expect(segs.map((s) => s.patternId)).toEqual([null, null])
 		expect(segs.map((s) => s.fill)).toEqual(['#888', '#888'])

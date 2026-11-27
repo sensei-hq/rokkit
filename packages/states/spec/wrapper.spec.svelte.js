@@ -1020,6 +1020,20 @@ describe('Wrapper — multiselect: moveToValues()', () => {
 		expect(w.selected).toEqual([])
 	})
 
+	it('treats a null list as no values — the selection clears', () => {
+		const w = new Wrapper(new ProxyTree(values), { multiselect: true })
+		w.moveToValues(['a'])
+		w.moveToValues(null)
+		expect(w.selected).toEqual([])
+	})
+
+	it('reports only keys that name a row — a key with no row has no value to report', () => {
+		const w = new Wrapper(new ProxyTree(values), { multiselect: true })
+		w.moveToValues(['b'])
+		w.selectedKeys.add('99')
+		expect(w.selected).toEqual(['b'])
+	})
+
 	it('does not report a change it was told about', () => {
 		const onselectionchange = vi.fn()
 		const w = new Wrapper(new ProxyTree(values), { multiselect: true, onselectionchange })

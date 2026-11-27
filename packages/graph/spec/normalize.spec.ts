@@ -459,3 +459,17 @@ describe('normalizeGraph', () => {
 		expect(normalizeGraph(TABLES, REFS, withoutEndpointGroups).edges[0].unplaced).toBe('both')
 	})
 })
+
+describe('normalizeGraph — degenerate measures and paths', () => {
+	it('drops measures entirely when none of them is a finite number', () => {
+		const model = normalizeGraph([{ id: 'a', label: 'a', measures: { loc: 'many', churn: NaN } }], [])
+
+		expect(model.nodes[0].measures).toBeUndefined()
+	})
+
+	it('drops a path made only of separators rather than keeping an empty one', () => {
+		const model = normalizeGraph([{ id: 'a', label: 'a', path: '///' }], [])
+
+		expect(model.nodes[0].path).toBeUndefined()
+	})
+})

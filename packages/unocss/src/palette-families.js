@@ -252,7 +252,7 @@ const COOL_TONE = { base: COOL, edge: COOL_EDGE }
  * @param {string} spec.name
  * @param {string} spec.description
  * @param {Record<string, Record<number, string>>} spec.palettes
- * @param {{ base: object, edge: object }} spec.tone - WARM_TONE or COOL_TONE
+ * @param {typeof WARM_TONE} spec.tone - WARM_TONE or COOL_TONE
  * @param {[string, number, number]} spec.primary
  * @param {string} spec.secondary
  * @param {string} spec.tertiary

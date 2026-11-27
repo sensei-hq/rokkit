@@ -40,6 +40,9 @@ export default defineConfig({
 				'**/types/**',
 				'**/*.d.ts',
 				'**/markdown-plugin.ts',
+				// Data and config (tailwind.json, icons config.json, tsconfig.build.json) — no
+				// statements to run, so they only ever count as 0% lines.
+				'**/*.json',
 				'**/.worktrees/**'
 			],
 			// Per-file ratchet (enforced on the full `bun run coverage`).

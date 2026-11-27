@@ -54,6 +54,7 @@ test_patterns = [
   "**/*_spec.*",
   "**/test_*.*",
   "**/spec_*.*",
+  "**/e2e/**",
 ]
 
 [smells]

@@ -119,14 +119,21 @@ export function relativeLuminance(value, space = 'rgb') {
  * @returns {number | null}
  */
 function bareRgbLuminance(v) {
-	if (BARE_RGB_COMMA_RE.test(v)) {
-		const [r, g, b] = v.split(',').map((s) => Number(s.trim()))
-		return rgbLuminance(r, g, b)
-	}
-	if (BARE_RGB_SPACE_RE.test(v)) {
-		const [r, g, b] = v.split(/\s+/).map(Number)
-		return rgbLuminance(r, g, b)
-	}
+	const channels = bareRgbChannels(v)
+	if (!channels) return null
+	const [r, g, b] = channels.map(Number)
+	return rgbLuminance(r, g, b)
+}
+
+/**
+ * The three channels of a bare `"r,g,b"`, `"r, g, b"` or `"r g b"` triple, or null when `v`
+ * is none of those.
+ * @param {string} v
+ * @returns {string[] | null}
+ */
+function bareRgbChannels(v) {
+	if (BARE_RGB_COMMA_RE.test(v)) return v.split(',').map((s) => s.trim())
+	if (BARE_RGB_SPACE_RE.test(v)) return v.split(/\s+/)
 	return null
 }
 
@@ -280,20 +287,10 @@ export class RgbColorSpace extends ColorSpace {
 		// Hex
 		if (HEX_RE.test(value)) return `rgb(${this.fromHex(value)})`
 
-		// Bare channels: comma-separated or space-separated digits
-		// Comma-separated: "255,0,0" or "255, 0, 0"
-		if (/^\d+\s*,\s*\d+\s*,\s*\d+$/.test(value)) {
-			const parts = value.split(',').map((s) => s.trim())
-			return `rgb(${parts.join(', ')})`
-		}
-		// Space-separated: "255 0 0"
-		if (/^\d+\s+\d+\s+\d+$/.test(value)) {
-			const parts = value.trim().split(/\s+/)
-			return `rgb(${parts.join(', ')})`
-		}
-
-		// Named color or other — pass through
-		return value
+		// Bare channels ("255,0,0", "255, 0, 0", "255 0 0") are wrapped; a named color or
+		// anything else passes through
+		const channels = bareRgbChannels(value)
+		return channels ? `rgb(${channels.join(', ')})` : value
 	}
 }
 

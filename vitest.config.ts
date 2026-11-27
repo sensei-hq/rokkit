@@ -40,7 +40,15 @@ export default defineConfig({
 				'**/types/**',
 				'**/*.d.ts',
 				'**/markdown-plugin.ts',
-				'**/.worktrees/**'
+				// Data and config (tailwind.json, icons config.json, tsconfig.build.json) — no
+				// statements to run, so they only ever count as 0% lines.
+				'**/*.json',
+				// Prose and generated output: READMEs under src/, svelte-check's
+				// `.svelte-kit` copies, and agent worktrees' own checkouts.
+				'**/*.md',
+				'**/.svelte-kit/**',
+				'**/.worktrees/**',
+				'.claude/**'
 			],
 			// Per-file ratchet (enforced on the full `bun run coverage`).
 			//
@@ -78,7 +86,7 @@ export default defineConfig({
 				'packages/blocks/**/*.{js,ts}': { statements: 100, lines: 100 },
 				'packages/blocks/**/*.svelte': { statements: 93, lines: 95 },
 				'packages/chart/**/*.{js,ts}': { statements: 100, lines: 100 },
-				'packages/chart/**/*.svelte': { statements: 91, lines: 83 },
+				'packages/chart/**/*.svelte': { statements: 91, lines: 93 },
 				'packages/cli/**/*.{js,ts}': { statements: 100, lines: 100 },
 				'packages/core/**/*.{js,ts}': { statements: 100, lines: 100 },
 				'packages/data/**/*.{js,ts}': { statements: 100, lines: 100 },

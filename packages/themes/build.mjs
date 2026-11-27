@@ -109,53 +109,54 @@ async function processCSS(content, filename) {
  * Both forms are emitted so either usage pattern works.
  */
 function fixModeSelectors(css) {
-  const modePattern = /\[data-mode="(?:dark|light)"\] \[data-style="[^"]+"\]/
-
   let result = ''
   let i = 0
 
   while (i < css.length) {
     const braceOpen = css.indexOf('{', i)
-    if (braceOpen === -1) {
-      result += css.slice(i)
-      break
-    }
+    if (braceOpen === -1) return result + css.slice(i)
 
-    const selectorText = css.slice(i, braceOpen)
-
-    if (modePattern.test(selectorText)) {
-      const parts = splitTopLevelSelectors(selectorText)
-      const expanded = []
-
-      for (const part of parts) {
-        const m = part.match(/^(\s*)(\[data-mode="(?:dark|light)"\]) (\[data-style="[^"]+"\])(.*)$/)
-        if (m) {
-          const [, ws, modeSelector, styleSelector, rest] = m
-          // Compound form: [data-mode="X"][data-style="Y"]rest (same-element match)
-          expanded.push(`${ws}${modeSelector}${styleSelector}${rest}`)
-        }
-        // Always include original :is() form
-        expanded.push(part)
-      }
-
-      result += expanded.join(',') + '{'
-    } else {
-      result += selectorText + '{'
-    }
-
-    let depth = 1
-    let j = braceOpen + 1
-    while (j < css.length && depth > 0) {
-      if (css[j] === '{') depth++
-      else if (css[j] === '}') depth--
-      j++
-    }
-
-    result += css.slice(braceOpen + 1, j)
-    i = j
+    const end = blockEnd(css, braceOpen)
+    result += expandModeSelectors(css.slice(i, braceOpen)) + '{' + css.slice(braceOpen + 1, end)
+    i = end
   }
 
   return result
+}
+
+const MODE_STYLE_DESCENDANT = /\[data-mode="(?:dark|light)"\] \[data-style="[^"]+"\]/
+const MODE_STYLE_PART = /^(\s*)(\[data-mode="(?:dark|light)"\]) (\[data-style="[^"]+"\])(.*)$/
+
+/**
+ * A rule's selector list with every mode+style descendant part preceded by its compound
+ * (same-element) form; unchanged when no part pairs a mode with a style.
+ */
+function expandModeSelectors(selectorText) {
+  if (!MODE_STYLE_DESCENDANT.test(selectorText)) return selectorText
+  return splitTopLevelSelectors(selectorText).flatMap(expandModePart).join(',')
+}
+
+/**
+ * One selector part, preceded by its compound form when it is a mode+style descendant:
+ *   [data-mode="X"] [data-style="Y"]rest → [data-mode="X"][data-style="Y"]rest, then the original.
+ */
+function expandModePart(part) {
+  const m = part.match(MODE_STYLE_PART)
+  if (!m) return [part]
+  const [, ws, modeSelector, styleSelector, rest] = m
+  return [`${ws}${modeSelector}${styleSelector}${rest}`, part]
+}
+
+/** Index just past the `}` closing the block whose `{` is at `braceOpen` (or the end of css). */
+function blockEnd(css, braceOpen) {
+  let depth = 1
+  let j = braceOpen + 1
+  while (j < css.length && depth > 0) {
+    if (css[j] === '{') depth++
+    else if (css[j] === '}') depth--
+    j++
+  }
+  return j
 }
 
 /**

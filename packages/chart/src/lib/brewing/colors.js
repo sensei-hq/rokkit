@@ -4,6 +4,17 @@ import * as chromatic from 'd3-scale-chromatic'
 import { categoricalPalette as masterPalette } from '@rokkit/core'
 import { defaultPreset } from '../preset.js'
 
+/** Shapes of a CSS color literal; anything else names a data field. */
+const LITERAL_COLOR_PATTERNS = [
+	/^#([0-9a-fA-F]{3,8})$/,
+	/^(rgb|rgba|hsl|hsla|oklch|oklab|hwb|lab|lch|color)\s*\(/i,
+	// A `var(--token)` ref or `currentColor` resolves to a concrete color at paint time
+	// (and stays theme-reactive under [data-mode]), so it means "use this color", not
+	// "map the field with this name" — pass it straight through to fill/stroke.
+	/^var\(\s*--/,
+	/^currentcolor$/i
+]
+
 /**
  * Returns true if the value looks like a CSS color literal (not a field name).
  * Supports hex (#rgb, #rrggbb, #rrggbbaa), functional notations (rgb, hsl, oklch, etc.),
@@ -12,15 +23,7 @@ import { defaultPreset } from '../preset.js'
  * @returns {boolean}
  */
 export function isLiteralColor(value) {
-	if (!value || typeof value !== 'string') return false
-	if (/^#([0-9a-fA-F]{3,8})$/.test(value)) return true
-	if (/^(rgb|rgba|hsl|hsla|oklch|oklab|hwb|lab|lch|color)\s*\(/i.test(value)) return true
-	// A `var(--token)` ref or `currentColor` resolves to a concrete color at paint time
-	// (and stays theme-reactive under [data-mode]), so it means "use this color", not
-	// "map the field with this name" — pass it straight through to fill/stroke.
-	if (/^var\(\s*--/.test(value)) return true
-	if (/^currentcolor$/i.test(value)) return true
-	return false
+	return typeof value === 'string' && LITERAL_COLOR_PATTERNS.some((re) => re.test(value))
 }
 
 /**
@@ -160,7 +163,10 @@ function resolveScheme(name, schemes) {
  * @returns {{ scale: (v: number) => string, domain: [number, number], type: 'sequential' }}
  */
 export function buildSequentialScale(data, field, opts = {}) {
-	const values = data.map((d) => d[field]).filter((v) => v !== null && v !== undefined).map(Number)
+	const values = data
+		.map((d) => d[field])
+		.filter((v) => v !== null && v !== undefined)
+		.map(Number)
 	const domain = opts.colorDomain ?? extent(values)
 	const interpolator = resolveScheme(opts.colorScheme, SEQUENTIAL_SCHEMES)
 	const scale = scaleSequential(interpolator).domain(domain)
@@ -180,7 +186,10 @@ export function buildSequentialScale(data, field, opts = {}) {
  * @returns {{ scale: (v: number) => string, domain: [number, number, number], type: 'diverging' }}
  */
 export function buildDivergingScale(data, field, opts = {}) {
-	const values = data.map((d) => d[field]).filter((v) => v !== null && v !== undefined).map(Number)
+	const values = data
+		.map((d) => d[field])
+		.filter((v) => v !== null && v !== undefined)
+		.map(Number)
 	const [min, max] = extent(values)
 	const mid = opts.colorMidpoint ?? 0
 	const domain = opts.colorDomain ?? [min ?? 0, mid, max ?? 0]

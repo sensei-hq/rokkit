@@ -2,14 +2,11 @@ import { deriveSchemaFromValue, schemaAt } from '../schema.js'
 import { deriveLayoutFromValue, deriveLayoutFromSchema } from '../layout.js'
 import { getSchemaWithLayout } from '../fields.js'
 
+/** A non-null object. */
+const isObject = (value) => Boolean(value) && typeof value === 'object'
+
 const hasFields = (schema) =>
-	Boolean(
-		schema &&
-		typeof schema === 'object' &&
-		schema.properties &&
-		typeof schema.properties === 'object' &&
-		Object.keys(schema.properties).length > 0
-	)
+	isObject(schema) && isObject(schema.properties) && Object.keys(schema.properties).length > 0
 
 const hasElements = (layout) =>
 	Boolean(layout && Array.isArray(layout.elements) && layout.elements.length > 0)

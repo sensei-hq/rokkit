@@ -1,0 +1,111 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`applyRoleColor > converts a built-in palette’s values through the OKLCH adapter 1`] = `":root{--color-accent-50:oklch(0.969409 0.015121 12.0004);--color-accent-100:oklch(0.941365 0.029732 12.3743);--color-accent-200:oklch(0.892446 0.05587 9.8959);--color-accent-300:oklch(0.809663 0.106067 11.5907);--color-accent-400:oklch(0.719185 0.16894 13.4035);--color-accent-500:oklch(0.645031 0.215358 16.4242);--color-accent-600:oklch(0.585836 0.221999 17.5723);--color-accent-700:oklch(0.514255 0.197768 16.9226);--color-accent-800:oklch(0.454567 0.171253 13.6829);--color-accent-900:oklch(0.410325 0.150145 10.2562);--color-accent-950:oklch(0.270847 0.100843 12.0793);--color-accent:oklch(0.645031 0.215358 16.4242);--accent:var(--color-accent-500);--accent-soft:var(--color-accent-100);--focus-ring:var(--color-accent-500);}[data-mode="dark"]{--accent:var(--color-accent-500);--accent-soft:var(--color-accent-100);--focus-ring:var(--color-accent-500);}"`;
+
+exports[`applyRoleColor > emits a custom OKLCH palette’s shades, its 500 alias and the role’s named tokens 1`] = `":root{--color-primary-50:oklch(0.970 0.022 38);--color-primary-100:oklch(0.938 0.052 38);--color-primary-200:oklch(0.880 0.092 37);--color-primary-300:oklch(0.805 0.130 37);--color-primary-400:oklch(0.725 0.165 37);--color-primary-500:oklch(0.641 0.190 36);--color-primary-600:oklch(0.555 0.175 35);--color-primary-700:oklch(0.470 0.150 34);--color-primary-800:oklch(0.390 0.122 33);--color-primary-900:oklch(0.315 0.092 33);--color-primary-950:oklch(0.245 0.066 33);--color-primary:oklch(0.641 0.190 36);--primary:var(--color-primary-500);--on-primary:#161616;}[data-mode="dark"]{--primary:var(--color-primary-500);--on-primary:#161616;}"`;
+
+exports[`applyRoleColor > falls back to the surface shade for on-primary when the primary fill cannot be resolved 1`] = `":root{--color-surface-50:oklch(0.984151 0.003533 248.286);--color-surface-100:oklch(0.968259 0.006973 248.1132);--color-surface-200:oklch(0.92876 0.012736 255.5571);--color-surface-300:oklch(0.86898 0.019958 252.9416);--color-surface-400:oklch(0.710671 0.035208 256.8043);--color-surface-500:oklch(0.55439 0.040792 257.4293);--color-surface-600:oklch(0.445533 0.037507 257.2932);--color-surface-700:oklch(0.371696 0.039208 257.2985);--color-surface-800:oklch(0.279495 0.036888 260.0389);--color-surface-900:oklch(0.207682 0.039856 265.7581);--color-surface-950:oklch(0.128802 0.040626 264.7004);--color-surface:oklch(0.55439 0.040792 257.4293);--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);--primary:var(--color-primary-500);--on-primary:var(--color-surface-50);}[data-mode="dark"]{--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);--primary:var(--color-primary-500);--on-primary:var(--color-surface-50);}"`;
+
+exports[`applyRoleColor > fills the dark block for a { light, dark } pair 1`] = `":root{--color-surface-50:oklch(0.984824 0.00121 109.024);--color-surface-100:oklch(0.96987 0.001217 108.971);--color-surface-200:oklch(0.923174 0.002465 47.3333);--color-surface-300:oklch(0.86866 0.004207 55.783);--color-surface-400:oklch(0.716084 0.008973 56.0386);--color-surface-500:oklch(0.553401 0.011544 57.9524);--color-surface-600:oklch(0.444417 0.009543 73.6109);--color-surface-700:oklch(0.374115 0.008634 67.5007);--color-surface-800:oklch(0.268485 0.006263 34.0854);--color-surface-900:oklch(0.216115 0.006101 55.9501);--color-surface-950:oklch(0.146896 0.004113 49.1285);--color-surface:oklch(0.553401 0.011544 57.9524);--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);}[data-mode="dark"]{--color-surface-50:oklch(0.985102 0.000123 259.9819);--color-surface-100:oklch(0.967433 0.001436 284.2301);--color-surface-200:oklch(0.919727 0.004136 285.6156);--color-surface-300:oklch(0.871107 0.00555 285.7902);--color-surface-400:oklch(0.711814 0.013019 285.8969);--color-surface-500:oklch(0.551664 0.013872 285.8164);--color-surface-600:oklch(0.44186 0.014669 285.6951);--color-surface-700:oklch(0.370323 0.011924 285.7112);--color-surface-800:oklch(0.273936 0.005509 285.8788);--color-surface-900:oklch(0.210331 0.005885 285.776);--color-surface-950:oklch(0.140765 0.004403 285.7257);--color-surface:oklch(0.551664 0.013872 285.8164);--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);}"`;
+
+exports[`applyRoleColor > keeps earlier roles when another is applied, and replaces a role re-applied 1`] = `":root{--color-primary-50:oklch(0.983578 0.014224 181.2077);--color-primary-100:oklch(0.95265 0.049817 180.9366);--color-primary-200:oklch(0.909956 0.092713 180.4955);--color-primary-300:oklch(0.854881 0.125092 181.1196);--color-primary-400:oklch(0.784519 0.132544 181.9545);--color-primary-500:oklch(0.703752 0.123033 182.5436);--color-primary-600:oklch(0.600224 0.103852 184.7456);--color-primary-700:oklch(0.510937 0.08607 186.4341);--color-primary-800:oklch(0.436968 0.070538 188.2609);--color-primary-900:oklch(0.386059 0.059029 188.4626);--color-primary-950:oklch(0.277261 0.044673 192.5683);--color-primary:oklch(0.703752 0.123033 182.5436);--color-surface-50:oklch(0.984151 0.003533 248.286);--color-surface-100:oklch(0.968259 0.006973 248.1132);--color-surface-200:oklch(0.92876 0.012736 255.5571);--color-surface-300:oklch(0.86898 0.019958 252.9416);--color-surface-400:oklch(0.710671 0.035208 256.8043);--color-surface-500:oklch(0.55439 0.040792 257.4293);--color-surface-600:oklch(0.445533 0.037507 257.2932);--color-surface-700:oklch(0.371696 0.039208 257.2985);--color-surface-800:oklch(0.279495 0.036888 260.0389);--color-surface-900:oklch(0.207682 0.039856 265.7581);--color-surface-950:oklch(0.128802 0.040626 264.7004);--color-surface:oklch(0.55439 0.040792 257.4293);--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);--primary:var(--color-primary-500);--on-primary:#161616;}[data-mode="dark"]{--paper:var(--color-surface-50);--paper-soft:var(--color-surface-100);--paper-mute:var(--color-surface-200);--paper-edge:var(--color-surface-400);--primary:var(--color-primary-500);--on-primary:#161616;}"`;
+
+exports[`applyRoleColor > omits on-primary when neither the fill nor a surface override is available 1`] = `":root{--primary:var(--color-primary-500);}[data-mode="dark"]{--primary:var(--color-primary-500);}"`;
+
+exports[`palette catalogue > lists the skins and palettes as before 1`] = `
+[
+  {
+    "accent": "shu",
+    "darkSurface": "sumi",
+    "ink": "kami",
+    "label": "Zen Sumi",
+    "name": "default",
+    "primary": "shu",
+    "secondary": "murasaki",
+    "surface": "kami",
+  },
+  {
+    "accent": "sora",
+    "darkSurface": "yoru",
+    "ink": "kiri",
+    "label": "Sea Glass",
+    "name": "sea-glass",
+    "primary": "umi",
+    "secondary": "koke",
+    "surface": "kiri",
+  },
+  {
+    "accent": "momo",
+    "darkSurface": "sumi",
+    "ink": "kami",
+    "label": "Sakura Ember",
+    "name": "sakura-ember",
+    "primary": "daidai",
+    "secondary": "sakura",
+    "surface": "kami",
+  },
+  {
+    "accent": "kikyo",
+    "darkSurface": "yoru",
+    "ink": "kiri",
+    "label": "Fuji Dusk",
+    "name": "fuji-dusk",
+    "primary": "fuji",
+    "secondary": "murasaki",
+    "surface": "kiri",
+  },
+  {
+    "accent": "mizu",
+    "darkSurface": "sumi",
+    "ink": "kami",
+    "label": "Moss Garden",
+    "name": "moss-garden",
+    "primary": "koke",
+    "secondary": "umi",
+    "surface": "kami",
+  },
+]
+`;
+
+exports[`palette catalogue > lists the skins and palettes as before 2`] = `
+[
+  "kami",
+  "sumi",
+  "shu",
+  "hisui",
+  "kohaku",
+  "beni",
+  "ai",
+  "murasaki",
+  "kiri",
+  "yoru",
+  "umi",
+  "sora",
+  "koke",
+  "take",
+  "daidai",
+  "sakura",
+  "momo",
+  "fuji",
+  "kikyo",
+  "mizu",
+  "wakaba",
+  "slate",
+  "zinc",
+  "stone",
+  "sky",
+  "teal",
+  "cyan",
+  "violet",
+  "purple",
+  "indigo",
+  "rose",
+  "pink",
+  "orange",
+  "emerald",
+  "blue",
+  "amber",
+  "green",
+  "red",
+]
+`;

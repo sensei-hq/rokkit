@@ -9,9 +9,15 @@
 
 /** @typedef {[number, number]} Pt */
 
-/** z of (b - a) × (c - a): > 0 is a left (counter-clockwise) turn. */
-const cross = (/** @type {Pt} */ a, /** @type {Pt} */ b, /** @type {Pt} */ c) =>
-	(b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+/**
+ * z of (b - a) × (c - a): > 0 is a left (counter-clockwise) turn.
+ * @param {Pt} a
+ * @param {Pt} b
+ * @param {Pt} c
+ */
+function cross(a, b, c) {
+	return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+}
 
 /**
  * Hull vertices, counter-clockwise in a y-up frame, starting from the lowest-x point.

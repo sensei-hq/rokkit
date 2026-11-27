@@ -23,6 +23,16 @@
  */
 
 import { SvelteSet } from 'svelte/reactivity'
+import {
+	findByPrefix,
+	isNavigableNode,
+	keyOfValue,
+	leafKeysWithValues,
+	parentKey,
+	spanKeys,
+	stepKey,
+	valuesOfKeys
+} from './flat-nav.js'
 
 export class Wrapper {
 	// ─── Data ──────────────────────────────────────────────────────────────────
@@ -36,12 +46,7 @@ export class Wrapper {
 	// Navigable items: exclude separators, spacers, and disabled items — and, in a
 	// display-only list (selectable: false), a leaf with no link, which is no control.
 	// This is the subset that keyboard navigation moves through.
-	#navigable = $derived(
-		this.flatView.filter(
-			(n) =>
-				n.type !== 'separator' && n.type !== 'spacer' && !n.proxy.disabled && !this.#isStatic(n.proxy)
-		)
-	)
+	#navigable = $derived(this.flatView.filter((n) => isNavigableNode(n, (p) => this.#isStatic(p))))
 
 	// ─── State ──────────────────────────────────────────────────────────────────
 
@@ -92,18 +97,21 @@ export class Wrapper {
 
 	/** Move focus to the next navigable item; clamp at end. */
 	next(_path) {
-		const nav = this.#navigable
-		if (!nav.length) return
-		const idx = nav.findIndex((n) => n.key === this.#focusedKey)
-		if (idx < nav.length - 1) this.#focusedKey = nav[idx + 1].key
+		this.#step(1)
 	}
 
 	/** Move focus to the previous navigable item; clamp at start. */
 	prev(_path) {
-		const nav = this.#navigable
-		if (!nav.length) return
-		const idx = nav.findIndex((n) => n.key === this.#focusedKey)
-		if (idx > 0) this.#focusedKey = nav[idx - 1].key
+		this.#step(-1)
+	}
+
+	/**
+	 * Move focus `delta` navigable items; stay put past either end.
+	 * @param {number} delta
+	 */
+	#step(delta) {
+		const key = stepKey(this.#navigable, this.#focusedKey, delta)
+		if (key !== null) this.#focusedKey = key
 	}
 
 	/** Move focus to the first navigable item. */
@@ -140,11 +148,8 @@ export class Wrapper {
 	 * No-op at root level.
 	 */
 	#focusParent() {
-		const parts = this.#focusedKey.split('-')
-		if (parts.length > 1) {
-			parts.pop()
-			this.#focusedKey = parts.join('-')
-		}
+		const parent = parentKey(this.#focusedKey)
+		if (parent !== null) this.#focusedKey = parent
 	}
 
 	/**
@@ -246,13 +251,10 @@ export class Wrapper {
 	 */
 	moveToValue(v) {
 		if (v === undefined || v === null) return
-		for (const [key, proxy] of this.#proxyTree.lookup) {
-			if (proxy.value === v) {
-				this.#focusedKey = key
-				this.#selectedValue = v
-				return
-			}
-		}
+		const key = keyOfValue(this.#proxyTree.lookup, v)
+		if (key === null) return
+		this.#focusedKey = key
+		this.#selectedValue = v
 	}
 
 	/** Persistent list: no dropdown to close. Override in dropdown wrappers. */
@@ -328,25 +330,8 @@ export class Wrapper {
 			return
 		}
 
-		const span = this.#navigableSpan(anchorKey, key)
+		const span = spanKeys(this.#navigable, anchorKey, key)
 		if (span) this.#replaceSelection(span, key)
-	}
-
-	/**
-	 * Navigable keys from `fromKey` to `toKey` inclusive, in navigable order —
-	 * direction-agnostic, so dragging a range upwards behaves the same as
-	 * downwards. Null when either endpoint isn't navigable.
-	 *
-	 * @param {string} fromKey
-	 * @param {string} toKey
-	 * @returns {string[]|null}
-	 */
-	#navigableSpan(fromKey, toKey) {
-		const nav = this.#navigable
-		const from = nav.findIndex((n) => n.key === fromKey)
-		const to = nav.findIndex((n) => n.key === toKey)
-		if (from < 0 || to < 0) return null
-		return nav.slice(Math.min(from, to), Math.max(from, to) + 1).map((n) => n.key)
 	}
 
 	/**
@@ -381,10 +366,9 @@ export class Wrapper {
 	 */
 	moveToValues(values) {
 		if (!this.#multiselect) return
-		const wanted = values ?? []
 		this.#selectedKeys.clear()
-		for (const [key, proxy] of this.#proxyTree.lookup) {
-			if (!proxy.hasChildren && wanted.includes(proxy.value)) this.#selectedKeys.add(key)
+		for (const key of leafKeysWithValues(this.#proxyTree.lookup, values ?? [])) {
+			this.#selectedKeys.add(key)
 		}
 	}
 
@@ -400,26 +384,7 @@ export class Wrapper {
 	 * @returns {string|null}
 	 */
 	findByText(query, startAfterKey = null) {
-		const nav = this.#navigable
-		if (!nav.length) return null
-		const q = query.toLowerCase()
-		const startIdx = startAfterKey ? nav.findIndex((n) => n.key === startAfterKey) + 1 : 0
-		return this.#searchNav(nav, q, startIdx)
-	}
-
-	/**
-	 * Search navigable items for a text prefix match starting from startIdx.
-	 * @param {Array} nav
-	 * @param {string} q
-	 * @param {number} startIdx
-	 * @returns {string|null}
-	 */
-	#searchNav(nav, q, startIdx) {
-		for (let i = 0; i < nav.length; i++) {
-			const node = nav[(startIdx + i) % nav.length]
-			if (node.proxy.label.toLowerCase().startsWith(q)) return node.key
-		}
-		return null
+		return findByPrefix(this.#navigable, query, startAfterKey)
 	}
 
 	// ─── Helpers for the component ─────────────────────────────────────────────
@@ -453,11 +418,6 @@ export class Wrapper {
 	 */
 	get selected() {
 		if (!this.#multiselect) return this.#selectedValue
-		const out = []
-		for (const key of this.#selectedKeys) {
-			const proxy = this.#proxyTree.lookup.get(key)
-			if (proxy !== undefined) out.push(proxy.value)
-		}
-		return out
+		return valuesOfKeys(this.#selectedKeys, this.#proxyTree.lookup)
 	}
 }

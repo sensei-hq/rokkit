@@ -13,12 +13,20 @@ const data = [
 
 describe('buildArcs — color channel drives fill lookup', () => {
 	it('returns one arc per datum', () => {
-		const arcs = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300)
+		const arcs = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300 }
+		)
 		expect(arcs).toHaveLength(2)
 	})
 
 	it('arc has d (SVG path), fill, stroke, key', () => {
-		const [arc] = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300)
+		const [arc] = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300 }
+		)
 		expect(arc).toHaveProperty('d')
 		expect(arc).toHaveProperty('fill')
 		expect(arc).toHaveProperty('stroke')
@@ -26,14 +34,22 @@ describe('buildArcs — color channel drives fill lookup', () => {
 	})
 
 	it('uses color channel value as key for colors Map lookup', () => {
-		const arcs = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300)
+		const arcs = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300 }
+		)
 		const compact = arcs.find((a) => a.key === 'compact')
 		expect(compact).toBeDefined()
 		expect(compact.fill).toBe('#4e79a7')
 	})
 
 	it('arc d is a non-empty SVG path string with no NaN', () => {
-		const arcs = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300)
+		const arcs = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300 }
+		)
 		for (const arc of arcs) {
 			expect(typeof arc.d).toBe('string')
 			expect(arc.d.length).toBeGreaterThan(0)
@@ -45,20 +61,22 @@ describe('buildArcs — color channel drives fill lookup', () => {
 		const [arc] = buildArcs(
 			[{ segment: 'unknown', hwy: 50 }],
 			{ color: 'segment', y: 'hwy' },
-			colors,
-			300,
-			300
+			{ colors, width: 300, height: 300 }
 		)
 		expect(arc.fill).toBe('#888')
 	})
 
 	it('innerRadius option produces donut arcs', () => {
-		const solidArcs = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300, {
-			innerRadius: 0
-		})
-		const donutArcs = buildArcs(data, { color: 'segment', y: 'hwy' }, colors, 300, 300, {
-			innerRadius: 50
-		})
+		const solidArcs = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300, innerRadius: 0 }
+		)
+		const donutArcs = buildArcs(
+			data,
+			{ color: 'segment', y: 'hwy' },
+			{ colors, width: 300, height: 300, innerRadius: 50 }
+		)
 		// Donut arcs have a different path (inner cutout changes the M/A commands)
 		expect(donutArcs[0].d).not.toBe(solidArcs[0].d)
 	})
@@ -72,13 +90,13 @@ describe('buildArcs — innerRadius interpretation + clamp', () => {
 
 	it('a solid pie draws to the outer radius min(w,h)/2 (no oversized ring)', () => {
 		// 400x400 → outer radius 200
-		const [arc] = buildArcs(data, ch, colors, 400, 400, { innerRadius: 0 })
+		const [arc] = buildArcs(data, ch, { colors, width: 400, height: 400, innerRadius: 0 })
 		expect(Math.max(...arcRadii(arc.d))).toBeCloseTo(200, -1)
 	})
 
 	it('interprets innerRadius <= 1 as a fraction of the radius (responsive donut)', () => {
 		// 400x400 → R 200; fraction 0.5 → inner 100
-		const [arc] = buildArcs(data, ch, colors, 400, 400, { innerRadius: 0.5 })
+		const [arc] = buildArcs(data, ch, { colors, width: 400, height: 400, innerRadius: 0.5 })
 		const rs = arcRadii(arc.d)
 		expect(Math.max(...rs)).toBeCloseTo(200, -1)
 		expect(Math.min(...rs)).toBeCloseTo(100, 0)
@@ -86,7 +104,7 @@ describe('buildArcs — innerRadius interpretation + clamp', () => {
 
 	it('interprets innerRadius > 1 as absolute pixels', () => {
 		// 400x400 → R 200; 60px inner hole
-		const [arc] = buildArcs(data, ch, colors, 400, 400, { innerRadius: 60 })
+		const [arc] = buildArcs(data, ch, { colors, width: 400, height: 400, innerRadius: 60 })
 		const rs = arcRadii(arc.d)
 		expect(Math.max(...rs)).toBeCloseTo(200, -1)
 		expect(Math.min(...rs)).toBeCloseTo(60, 0)
@@ -96,7 +114,7 @@ describe('buildArcs — innerRadius interpretation + clamp', () => {
 		// The original bug: a fraction×px mixup produced innerRadius 11400 >> outer 200,
 		// which d3 silently swapped into a giant ring outside the circle. The clamp must
 		// keep the outer radius ~200 regardless.
-		const [arc] = buildArcs(data, ch, colors, 400, 400, { innerRadius: 11400 })
+		const [arc] = buildArcs(data, ch, { colors, width: 400, height: 400, innerRadius: 11400 })
 		expect(Math.max(...arcRadii(arc.d))).toBeLessThanOrEqual(201)
 	})
 })

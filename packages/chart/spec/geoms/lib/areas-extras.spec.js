@@ -27,9 +27,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const [area] = buildAreas(
 			unorderedData,
 			{ x: 'month', y: 'val' },
-			xBand,
-			yScale,
-			colors
+			{ xScale: xBand, yScale, colors }
 		)
 		expect(area.d).not.toContain('NaN')
 		expect(typeof area.d).toBe('string')
@@ -40,9 +38,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const [area] = buildAreas(
 			unorderedData,
 			{ x: 'month', y: 'val' },
-			xBand,
-			yScale,
-			colors
+			{ xScale: xBand, yScale, colors }
 		)
 		// First x in path should be xBand('Jan') + bandwidth/2
 		const expectedX = xBand('Jan') + xBand.bandwidth() / 2
@@ -62,9 +58,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const areas = buildAreas(
 			groupedData,
 			{ x: 'month', y: 'val', color: 'group' },
-			xBand,
-			yScale,
-			colors
+			{ xScale: xBand, yScale, colors }
 		)
 		expect(areas).toHaveLength(2)
 		for (const area of areas) {
@@ -76,10 +70,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const [area] = buildAreas(
 			unorderedData,
 			{ x: 'month', y: 'val' },
-			xBand,
-			yScale,
-			colors,
-			'smooth'
+			{ xScale: xBand, yScale, colors, curve: 'smooth' }
 		)
 		expect(area.d).not.toContain('NaN')
 	})
@@ -88,10 +79,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const [area] = buildAreas(
 			unorderedData,
 			{ x: 'month', y: 'val' },
-			xBand,
-			yScale,
-			colors,
-			'step'
+			{ xScale: xBand, yScale, colors, curve: 'step' }
 		)
 		expect(area.d).not.toContain('NaN')
 	})
@@ -105,11 +93,7 @@ describe('buildAreas — band (categorical) x scale sortByX', () => {
 		const [area] = buildAreas(
 			dataWithPat,
 			{ x: 'month', y: 'val', pattern: 'pat' },
-			xBand,
-			yScale,
-			colors,
-			undefined,
-			patterns
+			{ xScale: xBand, yScale, colors, patterns }
 		)
 		// patternKey = data[0][pf] = 'dots', patternId set
 		expect(area.patternId).not.toBeNull()
@@ -126,16 +110,15 @@ describe('buildAreas — different-field pattern (geoms/lib/areas.js lines 69-70
 	const xLinear = scaleLinear().domain([0, 3]).range([0, 300])
 
 	it('assigns patterns positionally when pf !== cf in buildAreas', () => {
-		const patterns = new Map([['Q1', 'diagonal'], ['Q2', 'dots']])
+		const patterns = new Map([
+			['Q1', 'diagonal'],
+			['Q2', 'dots']
+		])
 		// pf = 'quarter', cf = 'drv' → different fields → positional assignment (lines 69-70)
 		const areas = buildAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv', pattern: 'quarter' },
-			xLinear,
-			yScale,
-			colors,
-			undefined,
-			patterns
+			{ xScale: xLinear, yScale, colors, patterns }
 		)
 		expect(areas).toHaveLength(2)
 		// With positional assignment, both areas get patterns
@@ -153,15 +136,14 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 	const xLinear = scaleLinear().domain([0, 3]).range([0, 300])
 
 	it('assigns patterns positionally when pf !== cf', () => {
-		const patterns = new Map([['Q1', 'diagonal'], ['Q2', 'dots']])
+		const patterns = new Map([
+			['Q1', 'diagonal'],
+			['Q2', 'dots']
+		])
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv', pattern: 'quarter' },
-			xLinear,
-			yScale,
-			colors,
-			undefined,
-			patterns
+			{ xScale: xLinear, yScale, colors, patterns }
 		)
 		expect(areas).toHaveLength(2)
 		// At least one should have a pattern assigned
@@ -172,9 +154,7 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv', pattern: 'quarter' },
-			xLinear,
-			yScale,
-			colors
+			{ xScale: xLinear, yScale, colors }
 		)
 		for (const area of areas) {
 			expect(area.patternId).toBeNull()
@@ -186,9 +166,7 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv' },
-			xLinear,
-			yScale,
-			colors
+			{ xScale: xLinear, yScale, colors }
 		)
 		for (const area of areas) {
 			expect(area.patternId).toBeNull()
@@ -196,15 +174,14 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 	})
 
 	it('same-field pattern (pf === cf) uses colorKey lookup', () => {
-		const patterns = new Map([['f', 'diagonal'], ['4', 'dots']])
+		const patterns = new Map([
+			['f', 'diagonal'],
+			['4', 'dots']
+		])
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv', pattern: 'drv' },
-			xLinear,
-			yScale,
-			colors,
-			undefined,
-			patterns
+			{ xScale: xLinear, yScale, colors, patterns }
 		)
 		expect(areas).toHaveLength(2)
 		expect(areas.every((a) => a.patternId !== null)).toBe(true)
@@ -214,10 +191,7 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv' },
-			xLinear,
-			yScale,
-			colors,
-			'smooth'
+			{ xScale: xLinear, yScale, colors, curve: 'smooth' }
 		)
 		for (const area of areas) {
 			expect(area.d).not.toContain('NaN')
@@ -228,10 +202,7 @@ describe('buildStackedAreas — different-field pattern (positional assignment)'
 		const areas = buildStackedAreas(
 			data,
 			{ x: 'month', y: 'val', color: 'drv' },
-			xLinear,
-			yScale,
-			colors,
-			'step'
+			{ xScale: xLinear, yScale, colors, curve: 'step' }
 		)
 		for (const area of areas) {
 			expect(area.d).not.toContain('NaN')

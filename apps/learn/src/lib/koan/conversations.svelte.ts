@@ -9,10 +9,13 @@
  */
 
 import type { ShellDemoType } from './shell.svelte'
-import { SvelteDate } from 'svelte/reactivity'
+import { loadConversations, loadCurrentId, saveConversations, saveCurrentId } from './conversation-storage'
+import { titleFor } from './conversation-titles'
+import { bucketConversations, type ConversationBuckets } from './conversation-recency'
 
-const STORAGE_KEY = 'rokkit-conversations'
-const CURRENT_KEY = 'rokkit-current-conversation'
+export { summarizeTitle } from './conversation-titles'
+export { recencyLabel, type ConversationBuckets } from './conversation-recency'
+
 const MAX_CONVERSATIONS = 20
 
 export type ConversationId = string
@@ -79,54 +82,12 @@ export interface Conversation {
 
 // ── State ────────────────────────────────────────────────────────────────
 
-function loadFromStorage(): Conversation[] {
-	if (typeof localStorage === 'undefined') return []
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY)
-		if (!raw) return []
-		const parsed = JSON.parse(raw)
-		if (!Array.isArray(parsed)) return []
-		return parsed.filter(isValidConversation)
-	} catch {
-		return []
-	}
-}
-
-/**
- * The persisted shape, field by field. A table rather than one long `&&` chain so
- * adding a required field is an entry, and a rejected record can be traced to the
- * field that failed.
- */
-const CONVERSATION_SHAPE: Array<[string, (v: unknown) => boolean]> = [
-	['id', (v) => typeof v === 'string'],
-	['title', (v) => typeof v === 'string'],
-	['surface', (v) => v === 'app' || v === 'chat'],
-	['createdAt', (v) => typeof v === 'string'],
-	['updatedAt', (v) => typeof v === 'string'],
-	['turns', Array.isArray]
-]
-
-function isValidConversation(c: unknown): c is Conversation {
-	if (!c || typeof c !== 'object') return false
-	const o = c as Record<string, unknown>
-	return CONVERSATION_SHAPE.every(([key, isValid]) => isValid(o[key]))
-}
-
-function loadCurrentIdFromStorage(): ConversationId | null {
-	if (typeof localStorage === 'undefined') return null
-	try {
-		return localStorage.getItem(CURRENT_KEY)
-	} catch {
-		return null
-	}
-}
-
-export const conversations = $state<Conversation[]>(loadFromStorage())
+export const conversations = $state<Conversation[]>(loadConversations())
 // Restore the previously-active conversation id only if it still
 // exists in storage — protects against an orphaned id pointing at a
 // conversation that was pruned or cleared.
 const initialCurrent = (() => {
-	const stored = loadCurrentIdFromStorage()
+	const stored = loadCurrentId()
 	if (stored && conversations.some((c) => c.id === stored)) return stored
 	return null
 })()
@@ -150,23 +111,11 @@ export function getCurrentConversation(): Conversation | null {
 // ── Persistence ──────────────────────────────────────────────────────────
 
 function persist(): void {
-	if (typeof localStorage === 'undefined') return
-	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations))
-	} catch (e) {
-		// eslint-disable-next-line no-console
-		console.warn('Failed to persist conversations', e)
-	}
+	saveConversations(conversations)
 }
 
 function persistCurrentId(): void {
-	if (typeof localStorage === 'undefined') return
-	try {
-		if (currentRef.id) localStorage.setItem(CURRENT_KEY, currentRef.id)
-		else localStorage.removeItem(CURRENT_KEY)
-	} catch {
-		// Quota / private-mode failures — current-id is a UX nicety, not load-bearing.
-	}
+	saveCurrentId(currentRef.id)
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
@@ -202,28 +151,40 @@ function touch(id: ConversationId): void {
 	if (idx >= 0) conversations[idx].updatedAt = nowIso()
 }
 
-// ── Public API ───────────────────────────────────────────────────────────
-
-const TITLE_LEAD =
-	/^(?:please|can you|could you|show me|show|give me|make(?: me)?|build(?: me)?|generate|create|draw|render|plot|display|i want(?: to see)?|i'?d like(?: to see)?|let'?s see)\b[\s,:-]*/i
-const TITLE_ARTICLE = /^(?:a|an|the)\s+/i
-
-/** Tidy a chat prompt into a short history label. */
-export function summarizeTitle(query: string): string {
-	let t = query.trim().replace(/\s+/g, ' ')
-	let prev = ''
-	while (t !== prev) {
-		prev = t
-		t = t.replace(TITLE_LEAD, '').trim()
-	}
-	t = t.replace(TITLE_ARTICLE, '').trim()
-	if (t.length < 2) return 'New chat'
-	if (t.length > 40) {
-		const cut = t.slice(0, 40).replace(/\s+\S*$/, '').trim()
-		t = `${cut || t.slice(0, 40).trim()  }…`
-	}
-	return t.charAt(0).toUpperCase() + t.slice(1)
+/**
+ * Run `edit` on the current conversation when there is one. `edit` returns whether it
+ * changed anything; a change stamps `updatedAt` and persists.
+ */
+function editCurrent(edit: (conv: Conversation) => boolean, at = nowIso()): void {
+	const conv = getCurrentConversation()
+	if (!conv || !edit(conv)) return
+	conv.updatedAt = at
+	persist()
 }
+
+function pushTurn(turn: Turn): void {
+	editCurrent((conv) => conv.turns.push(turn) > 0, turn.at)
+}
+
+/** Rewrite the newest assistant turn of `kind` that `rewrite` accepts (returns non-null for). */
+function rewriteLastAssistant<K extends AssistantBody['kind']>(
+	kind: K,
+	rewrite: (body: Extract<AssistantBody, { kind: K }>) => AssistantBody | null
+): void {
+	editCurrent((conv) => {
+		for (let i = conv.turns.length - 1; i >= 0; i--) {
+			const t = conv.turns[i]
+			if (t.kind !== 'assistant' || t.body.kind !== kind) continue
+			const next = rewrite(t.body as Extract<AssistantBody, { kind: K }>)
+			if (!next) continue
+			t.body = next
+			return true
+		}
+		return false
+	})
+}
+
+// ── Public API ───────────────────────────────────────────────────────────
 
 /**
  * Start a new conversation, set it as current, and append the user's
@@ -255,7 +216,7 @@ function reuseAppConversation(
 
 export function startNew(surface: ConversationSurface, query: string, mode?: string): ConversationId {
 	const at = nowIso()
-	const title = surface === 'chat' ? summarizeTitle(query) : (query.trim().slice(0, 80) || 'New conversation')
+	const title = titleFor(surface, query)
 	const userTurn: UserTurn = { kind: 'user', id: makeId('t'), at, text: query }
 
 	// The `chat` surface always appends; `app` upserts by title.
@@ -284,13 +245,7 @@ export function startNew(surface: ConversationSurface, query: string, mode?: str
 
 /** Append a user turn to the current conversation. */
 export function appendUser(text: string): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
-	const turn: UserTurn = { kind: 'user', id: makeId('t'), at: nowIso(), text }
-	conversations[idx].turns.push(turn)
-	conversations[idx].updatedAt = turn.at
-	persist()
+	pushTurn({ kind: 'user', id: makeId('t'), at: nowIso(), text })
 }
 
 /** Append a tweak turn (live prop edit) to the current conversation. */
@@ -300,21 +255,7 @@ export function appendTweak(
 	from: unknown,
 	to: unknown
 ): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
-	const turn: TweakTurn = {
-		kind: 'tweak',
-		id: makeId('t'),
-		at: nowIso(),
-		demoType,
-		name,
-		from,
-		to
-	}
-	conversations[idx].turns.push(turn)
-	conversations[idx].updatedAt = turn.at
-	persist()
+	pushTurn({ kind: 'tweak', id: makeId('t'), at: nowIso(), demoType, name, from, to })
 }
 
 /**
@@ -322,26 +263,18 @@ export function appendTweak(
  * conversation — backs the Tweaks slab's "Reset to defaults" button.
  */
 export function clearTweaksFor(demoType: string): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
-	const turns = conversations[idx].turns
-	const filtered = turns.filter((t) => !(t.kind === 'tweak' && t.demoType === demoType))
-	if (filtered.length === turns.length) return
-	conversations[idx].turns = filtered
-	conversations[idx].updatedAt = nowIso()
-	persist()
+	editCurrent((conv) => {
+		const kept = conv.turns.filter((t) => !(t.kind === 'tweak' && t.demoType === demoType))
+		if (kept.length === conv.turns.length) return false
+		conv.turns = kept
+		return true
+	})
 }
 
 /** Append an assistant turn to the current conversation. */
 export function appendAssistant(body: AssistantBody): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
 	const turn: AssistantTurn = { kind: 'assistant', id: makeId('t'), at: nowIso(), body }
-	conversations[idx].turns.push(turn)
-	conversations[idx].updatedAt = turn.at
-	persist()
+	pushTurn(turn)
 }
 
 /**
@@ -350,19 +283,7 @@ export function appendAssistant(body: AssistantBody): void {
  * history with one turn per keystroke.
  */
 export function updateLastAssistantProps(props: unknown): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
-	const turns = conversations[idx].turns
-	for (let i = turns.length - 1; i >= 0; i--) {
-		const t = turns[i]
-		if (t.kind === 'assistant' && t.body.kind === 'component') {
-			t.body = { ...t.body, props }
-			conversations[idx].updatedAt = nowIso()
-			persist()
-			return
-		}
-	}
+	rewriteLastAssistant('component', (body) => ({ ...body, props }))
 }
 
 /**
@@ -371,20 +292,10 @@ export function updateLastAssistantProps(props: unknown): void {
  * adjustment to what is on screen is saved without adding a turn.
  */
 export function updateLastAssistantBlocks(update: (blocks: unknown[]) => unknown[] | null): void {
-	if (!currentRef.id) return
-	const idx = findIndexById(currentRef.id)
-	if (idx < 0) return
-	const turns = conversations[idx].turns
-	for (let i = turns.length - 1; i >= 0; i--) {
-		const t = turns[i]
-		if (t.kind !== 'assistant' || t.body.kind !== 'blocks') continue
-		const next = update(t.body.blocks)
-		if (!next) continue
-		t.body = { ...t.body, blocks: next }
-		conversations[idx].updatedAt = nowIso()
-		persist()
-		return
-	}
+	rewriteLastAssistant('blocks', (body) => {
+		const next = update(body.blocks)
+		return next ? { ...body, blocks: next } : null
+	})
 }
 
 /** Resume an existing conversation by id. */
@@ -437,49 +348,6 @@ export function clearAll(): void {
 
 // ── Bucketing (today / yesterday / earlier) ──────────────────────────────
 
-export interface ConversationBuckets {
-	today: Conversation[]
-	yesterday: Conversation[]
-	earlier: Conversation[]
-}
-
-function startOfDay(d: Date): number {
-	return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
-}
-
 export function bucketByRecency(surface?: ConversationSurface, mode?: string): ConversationBuckets {
-	const pool = conversations.filter(
-		(c) => (surface ? c.surface === surface : true) && (mode ? c.mode === mode : true)
-	)
-	const sorted = [...pool].sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
-	const now = new SvelteDate()
-	const todayStart = startOfDay(now)
-	const yesterdayStart = todayStart - 24 * 60 * 60 * 1000
-
-	const buckets: ConversationBuckets = { today: [], yesterday: [], earlier: [] }
-	for (const c of sorted) {
-		const t = Date.parse(c.updatedAt)
-		if (t >= todayStart) buckets.today.push(c)
-		else if (t >= yesterdayStart) buckets.yesterday.push(c)
-		else buckets.earlier.push(c)
-	}
-	return buckets
-}
-
-/** Relative "12m / 2h / yest / Mon / Sun" label for a conversation. */
-export function recencyLabel(c: Conversation): string {
-	const now = Date.now()
-	const t = Date.parse(c.updatedAt)
-	const diffMs = now - t
-	const min = Math.floor(diffMs / (60 * 1000))
-	if (min < 60) return `${Math.max(1, min)}m`
-	const hr = Math.floor(diffMs / (60 * 60 * 1000))
-	if (hr < 24) return `${hr}h`
-	const days = Math.floor(diffMs / (24 * 60 * 60 * 1000))
-	if (days === 1) return 'yest'
-	if (days < 7) {
-		const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-		return weekdays[new SvelteDate(t).getDay()]
-	}
-	return new SvelteDate(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+	return bucketConversations(conversations, surface, mode)
 }

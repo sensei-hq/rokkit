@@ -48,6 +48,7 @@
 	import ChartControls from '#lib/koan/demos/chart/ChartControls.svelte'
 	import SparklineConversation from '#lib/koan/demos/sparkline/SparklineConversation.svelte'
 	import GraphConversation from '#lib/koan/demos/graph/GraphConversation.svelte'
+	import DemoConversation from '#lib/koan/components/DemoConversation.svelte'
 	import GraphControls from '#lib/koan/demos/graph/GraphControls.svelte'
 	import SparklineControls from '#lib/koan/demos/sparkline/SparklineControls.svelte'
 	import DetailsSlab from '#lib/koan/components/DetailsSlab.svelte'
@@ -2179,6 +2180,9 @@ ${tabsTag}`
 				<SparklineConversation />
 			{:else if shell.phase === 'response' && shell.demoType === 'graph'}
 				<GraphConversation />
+			{:else if shell.phase === 'response' && currentMeta}
+				<!-- Every other demo: a reply built from its catalog entry (#224). -->
+				<DemoConversation meta={currentMeta} query={shell.lastQuery} />
 			{/if}
 
 			{#if shell.phase === 'response' && showDetails && tweaksOpen && shell.demoType}

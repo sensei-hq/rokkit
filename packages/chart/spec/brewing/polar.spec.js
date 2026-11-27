@@ -17,6 +17,7 @@ import {
 // non-file: URL, so resolve against cwd rather than the module URL (see
 // packages/icons/spec/exports.spec.js for the same pattern).
 const polarSourcePath = join(process.cwd(), 'packages/chart/src/lib/brewing/polar.js')
+const polarRadialSourcePath = join(process.cwd(), 'packages/chart/src/lib/brewing/polar-radial.js')
 
 const rows = [
 	{ m: 'a', v: 1 },
@@ -144,7 +145,7 @@ describe('domainsFor', () => {
 		expect(domainsFor(axes, data, channels)).toEqual([[0, 5]])
 	})
 
-	it('returns a declared domain verbatim even when data exceeds it (out-of-domain values are the caller/renderer problem, not domainsFor\'s)', () => {
+	it("returns a declared domain verbatim even when data exceeds it (out-of-domain values are the caller/renderer problem, not domainsFor's)", () => {
 		const data = [{ m: 'a', v: 100 }]
 		const axes = resolveAxes([{ key: 'a', domain: [0, 5] }], data, 'm')
 		expect(domainsFor(axes, data, channels)).toEqual([[0, 5]])
@@ -472,7 +473,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, channels)
 
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		const vertices = result.get('A')
 
 		expect(vertices).toHaveLength(3)
@@ -490,7 +496,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, channels)
 
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		const vertices = result.get('A')
 
 		expect(vertices).toHaveLength(3)
@@ -511,7 +522,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, channels)
 
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 
 		expect(result.size).toBe(2)
 		const a = result.get('A')
@@ -532,7 +548,12 @@ describe('verticesFor', () => {
 		const domains = domainsFor(axes, data, channels)
 
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		warn.mockRestore()
 
 		const vertex = result.get('A')[0]
@@ -549,7 +570,12 @@ describe('verticesFor', () => {
 		const domains = domainsFor(axes, data, channels)
 
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		warn.mockRestore()
 
 		const vertex = result.get('A')[0]
@@ -594,7 +620,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, channels)
 
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		const vertices = result.get('A')
 
 		expect(vertices).toHaveLength(2)
@@ -609,7 +640,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, channels)
 
-		const result = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 		const vertex = result.get('A')[0]
 
 		expect(vertex).toBeNull()
@@ -626,7 +662,12 @@ describe('verticesFor', () => {
 		const domains = domainsFor(axes, data, implicitChannels)
 
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-		const result = verticesFor(data, axes, implicitChannels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, implicitChannels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 
 		expect(warn).toHaveBeenCalled()
 		expect(result.get(undefined)[0].value).toBe(5)
@@ -644,7 +685,12 @@ describe('verticesFor', () => {
 		const angles = anglesFor(axes.map((ax) => ax.weight))
 		const domains = domainsFor(axes, data, implicitChannels)
 
-		const result = verticesFor(data, axes, implicitChannels, { angles, domains, R: 100, transform: 'linear' })
+		const result = verticesFor(data, axes, implicitChannels, {
+			angles,
+			domains,
+			R: 100,
+			transform: 'linear'
+		})
 
 		expect(result.size).toBe(1)
 		const vertices = [...result.values()][0]
@@ -820,7 +866,16 @@ describe('buildRadarLayout', () => {
 			{ s: 'A', m: 'c', v: 3 }
 		]
 		const layout = buildRadarLayout(data, channels, { axes: ['a', 'b', 'c'] })
-		for (const key of ['axes', 'angles', 'domains', 'series', 'rings', 'zeroRings', 'radius', 'transform']) {
+		for (const key of [
+			'axes',
+			'angles',
+			'domains',
+			'series',
+			'rings',
+			'zeroRings',
+			'radius',
+			'transform'
+		]) {
 			expect(layout).toHaveProperty(key)
 		}
 	})
@@ -860,7 +915,12 @@ describe('buildRadarLayout', () => {
 		const angles = anglesFor(axes.map((a) => a.weight))
 		const domains = domainsFor(axes, data, channels)
 		const transform = resolveRadiusTransform(axes.map((a) => a.weight))
-		const expectedSeries = verticesFor(data, axes, channels, { angles, domains, R: 100, transform: transform })
+		const expectedSeries = verticesFor(data, axes, channels, {
+			angles,
+			domains,
+			R: 100,
+			transform: transform
+		})
 
 		expect(layout.series.size).toBeGreaterThan(0)
 		expect(layout.series).toEqual(expectedSeries)
@@ -896,11 +956,14 @@ describe('buildRadarLayout', () => {
 })
 
 describe('module purity', () => {
-	it('imports nothing from svelte and never reaches into context -- polar.js is a plain data-in/data-out transform', () => {
-		const source = readFileSync(polarSourcePath, 'utf8')
-		expect(source).not.toMatch(/from\s+['"]svelte/)
-		expect(source).not.toMatch(/getContext/)
-	})
+	it.each([polarSourcePath, polarRadialSourcePath])(
+		'imports nothing from svelte and never reaches into context -- %s is a plain data-in/data-out transform',
+		(path) => {
+			const source = readFileSync(path, 'utf8')
+			expect(source).not.toMatch(/from\s+['"]svelte/)
+			expect(source).not.toMatch(/getContext/)
+		}
+	)
 })
 
 describe('resolveAxes — non-string categories from the data', () => {
@@ -915,7 +978,9 @@ describe('resolveAxes — non-string categories from the data', () => {
 
 	it('skips a null category like an undefined one, instead of throwing', () => {
 		quiet()
-		expect(resolveAxes(undefined, [{ k: null }, { k: 'a' }, {}], 'k').map((a) => a.key)).toEqual(['a'])
+		expect(resolveAxes(undefined, [{ k: null }, { k: 'a' }, {}], 'k').map((a) => a.key)).toEqual([
+			'a'
+		])
 	})
 
 	it('still reads an object entry as an axis spec', () => {

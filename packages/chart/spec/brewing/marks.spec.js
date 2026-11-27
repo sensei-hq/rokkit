@@ -18,19 +18,31 @@ describe('buildPoints', () => {
 	]
 
 	it('returns one point per data point', () => {
-		const pts = buildPoints(data, { x: 'x', y: 'y' }, xScaleLinear, yScale, colors, null)
+		const pts = buildPoints(
+			data,
+			{ x: 'x', y: 'y' },
+			{ xScale: xScaleLinear, yScale, colors, sizeScale: null }
+		)
 		expect(pts).toHaveLength(2)
 	})
 
 	it('point has cx, cy, r', () => {
-		const [pt] = buildPoints(data, { x: 'x', y: 'y' }, xScaleLinear, yScale, colors, null)
+		const [pt] = buildPoints(
+			data,
+			{ x: 'x', y: 'y' },
+			{ xScale: xScaleLinear, yScale, colors, sizeScale: null }
+		)
 		expect(pt).toHaveProperty('cx')
 		expect(pt).toHaveProperty('cy')
 		expect(pt).toHaveProperty('r')
 	})
 
 	it('symbolPath is null when no symbol channel', () => {
-		const [pt] = buildPoints(data, { x: 'x', y: 'y' }, xScaleLinear, yScale, colors, null)
+		const [pt] = buildPoints(
+			data,
+			{ x: 'x', y: 'y' },
+			{ xScale: xScaleLinear, yScale, colors, sizeScale: null }
+		)
 		expect(pt.symbolPath).toBeNull()
 	})
 
@@ -43,11 +55,7 @@ describe('buildPoints', () => {
 		const pts = buildPoints(
 			symbolData,
 			{ x: 'x', y: 'y', symbol: 'shape' },
-			xScaleLinear,
-			yScale,
-			colors,
-			null,
-			symbolMap
+			{ xScale: xScaleLinear, yScale, colors, sizeScale: null, symbolMap }
 		)
 		for (const pt of pts) {
 			expect(typeof pt.symbolPath).toBe('string')
@@ -103,7 +111,11 @@ describe('buildArcs', () => {
 	]
 
 	it('returns one arc per data point', () => {
-		const arcs = buildArcs(data, { label: 'label', y: 'value' }, colors, 100, 100)
+		const arcs = buildArcs(
+			data,
+			{ label: 'label', y: 'value' },
+			{ colors, width: 100, height: 100 }
+		)
 		expect(arcs).toHaveLength(2)
 	})
 
@@ -113,20 +125,34 @@ describe('buildArcs', () => {
 			{ label: 'A', value: 2 },
 			{ label: 'B', value: 3 }
 		]
-		const ids = buildArcs(repeated, { color: 'label', y: 'value' }, colors, 100, 100).map((a) => a.id)
+		const ids = buildArcs(
+			repeated,
+			{ color: 'label', y: 'value' },
+			{ colors, width: 100, height: 100 }
+		).map((a) => a.id)
 		expect(new Set(ids).size).toBe(3)
-		const unlabelled = buildArcs(repeated, { y: 'value' }, colors, 100, 100).map((a) => a.id)
+		const unlabelled = buildArcs(repeated, { y: 'value' }, { colors, width: 100, height: 100 }).map(
+			(a) => a.id
+		)
 		expect(new Set(unlabelled).size).toBe(3)
 	})
 
 	it('keeps the category as the colour key, and a stable id for unique categories', () => {
-		const arcs = buildArcs(data, { color: 'label', y: 'value' }, colors, 100, 100)
+		const arcs = buildArcs(
+			data,
+			{ color: 'label', y: 'value' },
+			{ colors, width: 100, height: 100 }
+		)
 		expect(arcs.map((a) => a.key)).toEqual(['A', 'B'])
 		expect(arcs.map((a) => a.id)).toEqual(['A#0', 'B#0'])
 	})
 
 	it('arc has d (path), fill, stroke', () => {
-		const [arc] = buildArcs(data, { label: 'label', y: 'value' }, colors, 100, 100)
+		const [arc] = buildArcs(
+			data,
+			{ label: 'label', y: 'value' },
+			{ colors, width: 100, height: 100 }
+		)
 		expect(arc).toHaveProperty('d')
 		expect(arc).toHaveProperty('fill')
 		expect(arc).toHaveProperty('stroke')

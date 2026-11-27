@@ -134,39 +134,31 @@ export const BUBBLE_CHART_SPEC = {
 	margin: { top: 8, right: 16, bottom: 36, left: 44 }
 }
 
-/** `box-plot` route. */
-export const BOX_PLOT_SPEC = {
-	title: 'Highway mpg distribution by class',
-	data: [
-		{ class: 'compact', hwy: 35 }, { class: 'compact', hwy: 33 }, { class: 'compact', hwy: 31 }, { class: 'compact', hwy: 29 }, { class: 'compact', hwy: 27 },
-		{ class: 'midsize', hwy: 30 }, { class: 'midsize', hwy: 28 }, { class: 'midsize', hwy: 26 }, { class: 'midsize', hwy: 25 }, { class: 'midsize', hwy: 24 },
-		{ class: 'suv', hwy: 23 }, { class: 'suv', hwy: 22 }, { class: 'suv', hwy: 20 }, { class: 'suv', hwy: 18 }, { class: 'suv', hwy: 17 },
-		{ class: 'pickup', hwy: 19 }, { class: 'pickup', hwy: 17 }, { class: 'pickup', hwy: 16 }, { class: 'pickup', hwy: 15 }, { class: 'pickup', hwy: 14 }
-	],
-	x: 'class',
-	y: 'hwy',
-	geoms: [{ type: 'box' }],
-	height: 260,
-	grid: true,
-	margin: { top: 8, right: 16, bottom: 36, left: 44 }
+/** Highway mpg samples per vehicle class — the rows both distribution plots draw. */
+const HWY_BY_CLASS: Record<string, number[]> = {
+	compact: [35, 33, 31, 29, 27],
+	midsize: [30, 28, 26, 25, 24],
+	suv: [23, 22, 20, 18, 17],
+	pickup: [19, 17, 16, 15, 14]
 }
 
-/** `violin-plot` route. */
-export const VIOLIN_PLOT_SPEC = {
-	title: 'Highway mpg density by class',
-	data: [
-		{ class: 'compact', hwy: 35 }, { class: 'compact', hwy: 33 }, { class: 'compact', hwy: 31 }, { class: 'compact', hwy: 29 }, { class: 'compact', hwy: 27 },
-		{ class: 'midsize', hwy: 30 }, { class: 'midsize', hwy: 28 }, { class: 'midsize', hwy: 26 }, { class: 'midsize', hwy: 25 }, { class: 'midsize', hwy: 24 },
-		{ class: 'suv', hwy: 23 }, { class: 'suv', hwy: 22 }, { class: 'suv', hwy: 20 }, { class: 'suv', hwy: 18 }, { class: 'suv', hwy: 17 },
-		{ class: 'pickup', hwy: 19 }, { class: 'pickup', hwy: 17 }, { class: 'pickup', hwy: 16 }, { class: 'pickup', hwy: 15 }, { class: 'pickup', hwy: 14 }
-	],
+/** A distribution of highway mpg by class, drawn with one geom — fresh rows per spec. */
+const hwyDistribution = (title: string, geom: string) => ({
+	title,
+	data: Object.entries(HWY_BY_CLASS).flatMap(([cls, values]) => values.map((hwy) => ({ class: cls, hwy }))),
 	x: 'class',
 	y: 'hwy',
-	geoms: [{ type: 'violin' }],
+	geoms: [{ type: geom }],
 	height: 260,
 	grid: true,
 	margin: { top: 8, right: 16, bottom: 36, left: 44 }
-}
+})
+
+/** `box-plot` route. */
+export const BOX_PLOT_SPEC = hwyDistribution('Highway mpg distribution by class', 'box')
+
+/** `violin-plot` route. */
+export const VIOLIN_PLOT_SPEC = hwyDistribution('Highway mpg density by class', 'violin')
 
 /** `chart` route. */
 export const CHART_SPEC = {

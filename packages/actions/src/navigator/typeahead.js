@@ -1,6 +1,12 @@
 import { TYPEAHEAD_RESET_MS } from '../nav-constants.js'
 
 /**
+ * One printable character that is not Space (Space selects).
+ * @param {string} key
+ */
+const isPrintable = (key) => key.length === 1 && key !== ' '
+
+/**
  * Type-to-find: printable keys accumulate into one search string until the reader pauses for
  * `TYPEAHEAD_RESET_MS`, so typing "ma" finds "Mango" rather than jumping to "M…" then "A…".
  */
@@ -14,7 +20,8 @@ export class Typeahead {
 	 * @param {{ key: string, ctrlKey: boolean, metaKey: boolean, altKey: boolean }} event
 	 */
 	accepts({ key, ctrlKey, metaKey, altKey }) {
-		return !ctrlKey && !metaKey && !altKey && key.length === 1 && key !== ' '
+		const modified = ctrlKey || metaKey || altKey
+		return !modified && isPrintable(key)
 	}
 
 	/**

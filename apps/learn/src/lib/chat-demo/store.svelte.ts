@@ -9,6 +9,7 @@
  * don't need to know about the underlying schema.
  */
 import type { ChatTurn, Block, DemoBlock, SuggestionAction } from './types'
+import { describeShape, exportBlocks, summariseUpload, switchedProviderBlocks, toChatTurn } from './store-blocks'
 import type { ChatMode } from './modes'
 import { tryParse } from './infer'
 import { act } from './intent/act'
@@ -31,8 +32,7 @@ import {
 	setCurrentId,
 	renameConversation,
 	updateLastAssistantBlocks,
-	type ChatProvider,
-	type Turn
+	type ChatProvider
 } from '#lib/koan/conversations.svelte.ts'
 
 /** Snapshot the current provider + model so the conversation records who
@@ -41,22 +41,6 @@ function currentProviderStamp(): { provider: ChatProvider; model?: string } {
 	if (!llm.enabled) return { provider: 'scripted' }
 	if (llm.provider === 'webllm') return { provider: 'webllm', model: llm.webllmModel }
 	return { provider: 'openrouter', model: llm.openRouterModel }
-}
-
-function toChatTurn(t: Turn): ChatTurn {
-	const timestamp = Date.parse(t.at)
-	if (t.kind === 'user') {
-		return { id: t.id, timestamp, role: 'user', text: t.text }
-	}
-	// `tweak` turns are canvas-scoped and never carry chat content; render them
-	// as an empty assistant turn. Only `assistant` turns have a `body`.
-	if (t.kind !== 'assistant') {
-		return { id: t.id, timestamp, role: 'assistant', blocks: [] }
-	}
-	const blocks = t.body.kind === 'blocks' ? (t.body.blocks as Block[]) : []
-	const provider = t.body.kind === 'blocks' ? t.body.provider : undefined
-	const model = t.body.kind === 'blocks' ? t.body.model : undefined
-	return { id: t.id, timestamp, role: 'assistant', blocks, provider, model }
 }
 
 let _thinking = $state(false)
@@ -241,52 +225,6 @@ export function submitExport(args: {
 	thinkThenBlocks(exportBlocks(data))
 }
 
-/** "12 rows" / "4 fields" / "value" — how the user turn summarises what changed. */
-function describeShape(data: unknown): string {
-	if (Array.isArray(data)) return `${data.length} rows`
-	if (typeof data === 'object' && data !== null) {
-		return `${Object.keys(data as Record<string, unknown>).length} fields`
-	}
-	return 'value'
-}
-
-/** Prose + the edited JSON + a "render it again" chip, so the round-trip continues. */
-function exportBlocks(data: unknown): Block[] {
-	return [
-		{
-			kind: 'prose',
-			text: "Here's the updated value — copy or paste it back to keep the round-trip going."
-		},
-		{
-			kind: 'code',
-			language: 'json',
-			filename: 'edited.json',
-			code: JSON.stringify(data, null, 2)
-		},
-		{
-			kind: 'suggestions',
-			intro: 'Or',
-			items: [{ label: 'Render again', query: JSON.stringify(data) }]
-		}
-	]
-}
-
-/** Flip the active provider and say what that means for the user. */
-function switchProviderBlocks(
-	action: Extract<SuggestionAction, { kind: 'switch-provider' }>
-): Block[] {
-	llm.provider = action.provider
-	return [
-		{
-			kind: 'prose',
-			text:
-				action.provider === 'webllm'
-					? 'Switched to Web-LLM. Click "Load model" in the chrome — first-time download is ~1–2 GB and runs entirely in the browser after.'
-					: 'Switched to OpenRouter.'
-		}
-	]
-}
-
 export function submitAction(item: { label?: string; action: SuggestionAction }): void {
 	const { action, label } = item
 	// The chip's text reads as what the user said.
@@ -298,7 +236,8 @@ export function submitAction(item: { label?: string; action: SuggestionAction })
 	if (action.kind === 'intent') {
 		thinkThenBlocks(reply(action.interpretation))
 	} else if (action.kind === 'switch-provider') {
-		thinkThenBlocks(switchProviderBlocks(action))
+		llm.provider = action.provider
+		thinkThenBlocks(switchedProviderBlocks(action.provider))
 	}
 }
 
@@ -315,19 +254,6 @@ export function submitText(text: string): void {
 		return
 	}
 	submitQuery(trimmed)
-}
-
-function summariseUpload(source: 'json' | 'csv', text: string, parsed: unknown, query?: string): string {
-	const head = query?.trim() ? `${query.trim()} — ` : ''
-	if (Array.isArray(parsed)) {
-		return `${head}pasted ${source.toUpperCase()} · ${parsed.length} rows`
-	}
-	if (typeof parsed === 'object' && parsed !== null) {
-		const keys = Object.keys(parsed as Record<string, unknown>)
-		return `${head}pasted ${source.toUpperCase()} · 1 record · ${keys.length} fields`
-	}
-	const preview = text.length > 80 ? `${text.slice(0, 80)}…` : text
-	return `${head}pasted ${source.toUpperCase()}: ${preview}`
 }
 
 export function resetConversation(): void {

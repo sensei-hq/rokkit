@@ -6,18 +6,18 @@ import { literalColor, markEntry } from '../colors.js'
  * Builds arc geometry for pie/donut charts.
  * @param {Record<string, unknown>[]} data
  * @param {{ color?: string, y?: string, pattern?: string }} channels
- * @param {Map} colors
- * @param {number} width
- * @param {number} height
- * @param {{ innerRadius?: number }} opts
- * @param {Map<unknown, string>} [patterns]
+ * @param {{ colors?: Map<unknown, {fill: string, stroke: string}>, width: number, height: number, innerRadius?: number, patterns?: Map<unknown, string> }} opts
  * `key` is the slice's category — what picks its colour and pattern — so it repeats when rows
  * share a category, and is undefined without a colour field. `id` is unique per slice (the key
  * plus its occurrence), for keyed rendering; stable across updates while categories are unique.
  *
  * @returns {{ id: string, d: string | null, fill: string, stroke: string, key: unknown, patternId: string | null, pct: number, centroid: [number, number], data: Record<string, unknown> }[]}
  */
-export function buildArcs(data, channels, colors, width, height, opts = {}, patterns) {
+export function buildArcs(
+	data,
+	channels,
+	{ colors, width, height, innerRadius: rawInner = 0, patterns }
+) {
 	const { color: lf, y: yf } = channels
 	// A literal color paints every slice directly; a field indexes the palette scale.
 	const lit = literalColor(lf)
@@ -26,7 +26,6 @@ export function buildArcs(data, channels, colors, width, height, opts = {}, patt
 	// a value > 1 is absolute pixels. Clamp below the outer radius so a bad value
 	// (e.g. a fraction/pixel mixup) can never invert the arc into a giant ring
 	// rendered outside the circle.
-	const rawInner = opts.innerRadius ?? 0
 	const innerPx = rawInner <= 1 ? rawInner * radius : rawInner
 	const innerRadius = Math.max(0, Math.min(innerPx, radius * 0.98))
 	const pieGen = pie().value((d) => Number(d[yf]))
@@ -43,7 +42,9 @@ export function buildArcs(data, channels, colors, width, height, opts = {}, patt
 		const key = lit ? i : slice.data[lf]
 		const colorEntry = markEntry(lit, key, colors, { fill: '#888', stroke: '#fff' })
 		const patternId =
-			!lit && key !== null && key !== undefined && patterns?.has(key) ? toPatternId(String(key)) : null
+			!lit && key !== null && key !== undefined && patterns?.has(key)
+				? toPatternId(String(key))
+				: null
 		const pct = Math.round(((slice.endAngle - slice.startAngle) / total) * 100)
 		const [cx, cy] = labelArc.centroid(slice)
 		const occurrence = seen.get(key) ?? 0

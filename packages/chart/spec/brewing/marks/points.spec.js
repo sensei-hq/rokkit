@@ -30,7 +30,15 @@ describe('buildPoints with jitter', () => {
 	const channels = { x: 'x', y: 'y' }
 
 	it('applies no offset when jitter is null', () => {
-		const points = buildPoints(data, channels, xScale, yScale, new Map(), null, null, 5, null)
+		const points = buildPoints(data, channels, {
+			xScale,
+			yScale,
+			colors: new Map(),
+			sizeScale: null,
+			symbolMap: null,
+			defaultRadius: 5,
+			jitter: null
+		})
 		points.forEach((pt, i) => {
 			expect(pt.cx).toBe(xScale(data[i].x))
 			expect(pt.cy).toBe(yScale(data[i].y))
@@ -38,8 +46,16 @@ describe('buildPoints with jitter', () => {
 	})
 
 	it('applies x offset when jitter.width is set', () => {
-		const points = buildPoints(data, channels, xScale, yScale, new Map(), null, null, 5, {
-			width: 10
+		const points = buildPoints(data, channels, {
+			xScale,
+			yScale,
+			colors: new Map(),
+			sizeScale: null,
+			symbolMap: null,
+			defaultRadius: 5,
+			jitter: {
+				width: 10
+			}
 		})
 		points.forEach((pt, i) => {
 			expect(pt.cx).not.toBe(xScale(data[i].x))
@@ -48,8 +64,16 @@ describe('buildPoints with jitter', () => {
 	})
 
 	it('applies y offset when jitter.height is set', () => {
-		const points = buildPoints(data, channels, xScale, yScale, new Map(), null, null, 5, {
-			height: 10
+		const points = buildPoints(data, channels, {
+			xScale,
+			yScale,
+			colors: new Map(),
+			sizeScale: null,
+			symbolMap: null,
+			defaultRadius: 5,
+			jitter: {
+				height: 10
+			}
 		})
 		points.forEach((pt, i) => {
 			expect(pt.cx).toBe(xScale(data[i].x))
@@ -58,9 +82,17 @@ describe('buildPoints with jitter', () => {
 	})
 
 	it('x and y offsets are uncorrelated (use different seeds)', () => {
-		const points = buildPoints(data, channels, xScale, yScale, new Map(), null, null, 5, {
-			width: 20,
-			height: 20
+		const points = buildPoints(data, channels, {
+			xScale,
+			yScale,
+			colors: new Map(),
+			sizeScale: null,
+			symbolMap: null,
+			defaultRadius: 5,
+			jitter: {
+				width: 20,
+				height: 20
+			}
 		})
 		points.forEach((pt, i) => {
 			const expectedJx = jitterOffset(i, 20)

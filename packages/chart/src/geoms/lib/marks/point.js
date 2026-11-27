@@ -25,17 +25,15 @@ export function buildPointMarks({ data, plot, channels, options = {}, alpha, typ
 	if (!data?.length || !xScale || !yScale) return []
 
 	const sizeScale = buildSizeScale(data, channels.size, options)
-	const raw = buildPoints(
-		data,
-		channels,
+	const raw = buildPoints(data, channels, {
 		xScale,
 		yScale,
 		colors,
 		sizeScale,
-		plot.symbols,
-		options.radius ?? 4,
-		options.jitter ?? null
-	)
+		symbolMap: plot.symbols,
+		defaultRadius: options.radius ?? 4,
+		jitter: options.jitter ?? null
+	})
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	const yf = channels.y
 

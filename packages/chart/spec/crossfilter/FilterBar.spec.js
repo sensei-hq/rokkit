@@ -23,6 +23,12 @@ describe('FilterBar', () => {
 		expect(container.querySelector('[data-plot-root]')).toBeTruthy()
 	})
 
+	it('defaults to no data: renders the plot frame with no bars', () => {
+		const { container } = render(FilterBar, { props: { field: 'class', valueField: 'hwy' } })
+		expect(container.querySelector('[data-plot-root]')).toBeTruthy()
+		expect(container.querySelectorAll('[data-plot-element="bar"]')).toHaveLength(0)
+	})
+
 	it('renders bars marked as filterable', () => {
 		const { container } = render(FilterBar, {
 			props: { data, field: 'class', valueField: 'hwy' }

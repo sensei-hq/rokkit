@@ -14,12 +14,14 @@ export function buildViolinMarks({ data, plot, channels, options = {}, alpha, ty
 	const violins = buildViolins(
 		data,
 		{ x: channels.x, fill: fillField, pattern: channels.pattern },
-		xScale,
-		yScale,
-		colors,
-		plot.place.bind(plot),
-		options.side,
-		plot.patterns
+		{
+			xScale,
+			yScale,
+			colors,
+			place: plot.place.bind(plot),
+			side: options.side,
+			patterns: plot.patterns
+		}
 	)
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	const colorField = channels.color

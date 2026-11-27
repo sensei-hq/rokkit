@@ -24,7 +24,7 @@ const colors = new Map([
 ])
 
 describe('buildBoxes — non-grouped (fill === x)', () => {
-	const boxes = buildBoxes(dataSimple, { x: 'class', fill: 'class' }, xScale, yScale, colors)
+	const boxes = buildBoxes(dataSimple, { x: 'class', fill: 'class' }, { xScale, yScale, colors })
 
 	it('returns one box per datum', () => {
 		expect(boxes).toHaveLength(2)
@@ -70,16 +70,14 @@ describe('buildBoxes — non-grouped (fill === x)', () => {
 		const result = buildBoxes(
 			dataSimple,
 			{ x: 'class', fill: 'class' },
-			xScale,
-			yScale,
-			emptyColors
+			{ xScale, yScale, colors: emptyColors }
 		)
 		expect(result[0].fill).toBe('#aaa')
 	})
 })
 
 describe('buildBoxes — grouped (fill !== x)', () => {
-	const boxes = buildBoxes(dataGrouped, { x: 'class', fill: 'drv' }, xScale, yScale, colors)
+	const boxes = buildBoxes(dataGrouped, { x: 'class', fill: 'drv' }, { xScale, yScale, colors })
 
 	it('returns one box per datum', () => {
 		expect(boxes).toHaveLength(3)
@@ -108,8 +106,8 @@ describe('buildBoxes — grouped (fill !== x)', () => {
 	})
 
 	it('grouped boxes are narrower than non-grouped', () => {
-		const grouped = buildBoxes(dataGrouped, { x: 'class', fill: 'drv' }, xScale, yScale, colors)
-		const single = buildBoxes(dataSimple, { x: 'class', fill: 'class' }, xScale, yScale, colors)
+		const grouped = buildBoxes(dataGrouped, { x: 'class', fill: 'drv' }, { xScale, yScale, colors })
+		const single = buildBoxes(dataSimple, { x: 'class', fill: 'class' }, { xScale, yScale, colors })
 		expect(grouped[0].width).toBeLessThan(single[0].width)
 	})
 })

@@ -11687,3 +11687,23 @@ any element escaping the viewport unless a user-scrollable ancestor holds it
   still expected `--ink`, but 5973a45cc deliberately rests dark items at `--ink-mute`
   (8.87:1 on the rail). Test now expects ink-mute by night and names the token it got.
   Full e2e 232/232.
+
+## 2026-11-26 — qlty smells + coverage cleanup, #224 empty conversation pane
+
+Branch `chore/qlty-smells-coverage` (34 commits). Three agents in worktrees (packages,
+chart, learn) cherry-picked onto it; conversations store + #224 done inline.
+
+- #224: 43 /app demos had no bespoke conversation branch, so the pane was blank on any
+  path (not a direct-visit bug as filed). Generic `DemoConversation` fallback built from
+  the catalog `DemoMeta`. Red e2e 8e3792d51 (every demo route) → green fc8627fce.
+- `conversations.svelte.ts`: characterized (44% → 99.5% lines), then split into
+  storage / titles / recency modules; `editCurrent` / `pushTurn` / `rewriteLastAssistant`.
+- Packages: 9 smells cleared; themes dist + PALETTE_FAMILIES byte-identical. Chart:
+  builders take `(data, channels, opts)`; 5 low .svelte files to 100%, floor 83 → 93.
+- Learn: 15 duplicated demo metas → `meta.json` + `snippets.md` via `defineDemo`
+  (qlty flags same-shaped literals; builders did not help). infer/validate/store/skins
+  and the architecture-metrics script split under the complexity threshold.
+- qlty: e2e in-page collectors are test_patterns. Coverage excludes JSON, markdown,
+  `.svelte-kit` and `.claude/` (agent worktrees inflated "All files" to 24%).
+- Gates: `qlty smells --all` 0 (×3), coverage 99.09% lines / thresholds pass, lint 0/0,
+  `bun run check` 9390 passed.

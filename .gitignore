@@ -224,3 +224,4 @@ docs/mockups/
 # afterAll, but an interrupted run leaves generated files behind that then fail lint
 # (`require()` style import in a generated index.js).
 packages/cli/spec/fixtures/output/
+.claude/worktrees/

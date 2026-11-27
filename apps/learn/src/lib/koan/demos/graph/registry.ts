@@ -31,24 +31,27 @@ import { LAYER_LABELS } from './layers'
  * hundreds of roots over a real repo, so capping its depth prunes almost nothing. Containment
  * is the tree that makes it legible, and the calls are drawn ON it.
  */
-export type DiagramId =
-	| 'er'
-	| 'dependencies'
-	| 'calls'
-	| 'structure'
-	| 'treemap'
-	| 'lazy-treemap'
-	| 'treemap-tested'
-	| 'sunburst'
-	| 'neighborhood'
-	| 'matrix'
-	| 'coupling'
-	| 'cycles'
-	| 'layers'
-	| 'layers-sample'
-	| 'polymetric'
-	| 'arcs'
-	| 'arcs-sample'
+export const DIAGRAM_IDS = [
+	'er',
+	'dependencies',
+	'calls',
+	'structure',
+	'treemap',
+	'lazy-treemap',
+	'treemap-tested',
+	'sunburst',
+	'neighborhood',
+	'matrix',
+	'coupling',
+	'cycles',
+	'layers',
+	'layers-sample',
+	'polymetric',
+	'arcs',
+	'arcs-sample'
+] as const
+
+export type DiagramId = (typeof DIAGRAM_IDS)[number]
 
 /** What question the diagram answers. Groups the picker, nothing more. */
 export type DiagramGroup = 'Schema' | 'Code'

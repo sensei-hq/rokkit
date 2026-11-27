@@ -33,13 +33,7 @@ describe('buildBars — continuous category (rank-based race)', () => {
 		buildBars(
 			data,
 			{ x: '_rank', y: 'revenue', color: 'category' },
-			rankScale,
-			valueScale,
-			colors,
-			200,
-			undefined,
-			swap,
-			true
+			{ xScale: rankScale, yScale: valueScale, colors, place: swap, continuousCategory: true }
 		)
 
 	it('returns one bar per datum', () => {
@@ -99,10 +93,7 @@ describe('buildBars — band mode: linear x scale (ensureBandX derivation)', () 
 		const bars = buildBars(
 			yearData,
 			{ x: 'year', y: 'val', color: 'group' },
-			xLinear,
-			yScale,
-			groupColors,
-			200
+			{ xScale: xLinear, yScale, colors: groupColors }
 		)
 		expect(bars).toHaveLength(4)
 	})
@@ -111,10 +102,7 @@ describe('buildBars — band mode: linear x scale (ensureBandX derivation)', () 
 		const bars = buildBars(
 			yearData,
 			{ x: 'year', y: 'val', color: 'group' },
-			xLinear,
-			yScale,
-			groupColors,
-			200
+			{ xScale: xLinear, yScale, colors: groupColors }
 		)
 		for (const bar of bars) {
 			expect(bar.width).toBeGreaterThan(0)
@@ -141,10 +129,7 @@ describe('buildStackedBars — extra coverage', () => {
 		const bars = buildStackedBars(
 			data,
 			{ x: 'cat', y: 'val', color: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200
+			{ xScale, yScale, colors }
 		)
 		expect(bars.length).toBeGreaterThan(0)
 		// Each bar has a fill sourced from the stack layer key
@@ -160,10 +145,7 @@ describe('buildStackedBars — extra coverage', () => {
 		const bars = buildStackedBars(
 			data,
 			{ x: 'cat', y: 'val', color: 'cat' },
-			xScale,
-			yScale,
-			xColors,
-			200
+			{ xScale, yScale, colors: xColors }
 		)
 		expect(bars.length).toBeGreaterThan(0)
 		// bars that correspond to 'cat:A' rows should use the 'A' color
@@ -172,30 +154,28 @@ describe('buildStackedBars — extra coverage', () => {
 	})
 
 	it('pattern lookup: pf === stackField', () => {
-		const patterns = new Map([['f', 'diagonal'], ['4', 'dots']])
+		const patterns = new Map([
+			['f', 'diagonal'],
+			['4', 'dots']
+		])
 		const bars = buildStackedBars(
 			data,
 			{ x: 'cat', y: 'val', color: 'drv', pattern: 'drv' },
-			xScale,
-			yScale,
-			colors,
-			200,
-			patterns
+			{ xScale, yScale, colors, patterns }
 		)
 		// All bars have stackKey ('f' or '4') as patternKey → all in patterns map → all have patternId
 		expect(bars.some((b) => b.patternId !== null)).toBe(true)
 	})
 
 	it('pattern lookup: pf === xf', () => {
-		const patterns = new Map([['A', 'diagonal'], ['B', 'dots']])
+		const patterns = new Map([
+			['A', 'diagonal'],
+			['B', 'dots']
+		])
 		const bars = buildStackedBars(
 			data,
 			{ x: 'cat', y: 'val', color: 'drv', pattern: 'cat' },
-			xScale,
-			yScale,
-			colors,
-			200,
-			patterns
+			{ xScale, yScale, colors, patterns }
 		)
 		expect(bars.length).toBeGreaterThan(0)
 	})
@@ -207,10 +187,7 @@ describe('buildStackedBars — extra coverage', () => {
 		const bars = buildStackedBars(
 			extraData,
 			{ x: 'cat', y: 'val', color: 'other' },
-			xScale,
-			yScale,
-			colors,
-			200
+			{ xScale, yScale, colors }
 		)
 		// Should not throw; colorKey=null → fallback
 		expect(bars.length).toBeGreaterThan(0)
@@ -218,14 +195,7 @@ describe('buildStackedBars — extra coverage', () => {
 
 	it('falls back to grouped bars when no sub fields', () => {
 		// No color or pattern fields that differ from x
-		const bars = buildStackedBars(
-			data,
-			{ x: 'cat', y: 'val' },
-			xScale,
-			yScale,
-			colors,
-			200
-		)
+		const bars = buildStackedBars(data, { x: 'cat', y: 'val' }, { xScale, yScale, colors })
 		// buildGroupedBars is called as fallback
 		expect(bars).toHaveLength(4)
 	})
@@ -251,12 +221,7 @@ describe('buildBars — grouped horizontal sub-bands (band category via place)',
 		const bars = buildBars(
 			data,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			classBand,
-			hwyLin,
-			groupColors,
-			200,
-			undefined,
-			swap
+			{ xScale: classBand, yScale: hwyLin, colors: groupColors, place: swap }
 		)
 		expect(bars).toHaveLength(4)
 		// Sub-banded → each bar's on-screen thickness (height) is less than the full band
@@ -274,12 +239,7 @@ describe('buildBars — grouped horizontal sub-bands (band category via place)',
 		const bars = buildBars(
 			singleColorData,
 			{ x: 'class', y: 'hwy', color: 'drv' },
-			classBand,
-			hwyLin,
-			singleColors,
-			200,
-			undefined,
-			swap
+			{ xScale: classBand, yScale: hwyLin, colors: singleColors, place: swap }
 		)
 		expect(bars).toHaveLength(2)
 		expect(bars[0].height).toBeCloseTo(classBand.bandwidth(), 1)
@@ -293,12 +253,7 @@ describe('buildBars — grouped horizontal sub-bands (band category via place)',
 		const bars = buildBars(
 			literalColorData,
 			{ x: 'class', y: 'hwy', color: '#ff0000' },
-			classBand,
-			hwyLin,
-			new Map(),
-			200,
-			undefined,
-			swap
+			{ xScale: classBand, yScale: hwyLin, colors: new Map(), place: swap }
 		)
 		expect(bars).toHaveLength(2)
 	})

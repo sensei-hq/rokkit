@@ -324,3 +324,20 @@ describe('schemaFromRecord', () => {
 		expect(schemaFromRecord({})).toEqual({ type: 'object', properties: {} })
 	})
 })
+
+// ─── column summaries ───────────────────────────────────────────────────
+
+describe('column summaries', () => {
+	it('ranges a numeric column over its numeric cells only, skipping empty ones', () => {
+		const rows = [{ v: 4 }, { v: null }, { v: '9' }, { v: '' }, { v: -2 }]
+		const result = inferShapeAuto(rows)
+		if (result.kind !== 'table') throw new Error(`expected table, got ${result.kind}`)
+		expect(result.columns).toEqual([{ name: 'v', type: 'number', density: 0.6, min: -2, max: 9 }])
+	})
+
+	it('gives no range to a column that is not numeric', () => {
+		const result = inferShapeAuto([{ name: 'a' }, { name: 'b' }])
+		if (result.kind !== 'table') throw new Error(`expected table, got ${result.kind}`)
+		expect(result.columns).toEqual([{ name: 'name', type: 'string', density: 1 }])
+	})
+})

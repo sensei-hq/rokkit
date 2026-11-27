@@ -14,7 +14,8 @@ import { resolveAlpha } from '../aesthetics.js'
  */
 export function buildAreaMarks({ data, plot, channels, options = {}, alpha, type = 'area' }) {
 	const { xScale, yScale, colors, patterns } = plot
-	if (!data?.length || !xScale || !yScale || !channels.x || !channels.y) return []
+	const ready = [data?.length, xScale, yScale, channels.x, channels.y].every(Boolean)
+	if (!ready) return []
 
 	const interiorField = channels.fill ?? channels.color
 	const hasBorder = Boolean(channels.fill && channels.color)
@@ -29,8 +30,24 @@ export function buildAreaMarks({ data, plot, channels, options = {}, alpha, type
 	const position = options.position ?? (options.stack ? 'stack' : 'identity')
 	const stacked = position === 'stack' || position === 'fill'
 	const raw = stacked
-		? buildStackedAreas(data, areaChannels, xScale, yScale, colors, options.curve, patterns, place, position === 'fill')
-		: buildAreas(data, areaChannels, xScale, yScale, colors, options.curve, patterns, place, options.baseline)
+		? buildStackedAreas(data, areaChannels, {
+				xScale,
+				yScale,
+				colors,
+				curve: options.curve,
+				patterns,
+				place,
+				normalize: position === 'fill'
+			})
+		: buildAreas(data, areaChannels, {
+				xScale,
+				yScale,
+				colors,
+				curve: options.curve,
+				patterns,
+				place,
+				baseline: options.baseline
+			})
 
 	const a = resolveAlpha(alpha, type, plot.chartPreset)
 	return raw.map((seg) => ({

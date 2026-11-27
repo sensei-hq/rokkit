@@ -239,114 +239,111 @@ const TRADITIONAL_OVERRIDES = {
 	info: ['ai', 600, 400]
 }
 
+/** A paper/ink pair with its matching divider edge. */
+const WARM_TONE = { base: WARM, edge: WARM_EDGE }
+const COOL_TONE = { base: COOL, edge: COOL_EDGE }
+
+/**
+ * Build a family on the traditional status roles: the paper tone, the four brand roles, and —
+ * when a family brings its own green — a success override. `primary` and `accent` carry their
+ * [palette, light shade, dark shade] so the same entry names the role and its override.
+ *
+ * @param {object} spec
+ * @param {string} spec.name
+ * @param {string} spec.description
+ * @param {Record<string, Record<number, string>>} spec.palettes
+ * @param {typeof WARM_TONE} spec.tone - WARM_TONE or COOL_TONE
+ * @param {[string, number, number]} spec.primary
+ * @param {string} spec.secondary
+ * @param {string} spec.tertiary
+ * @param {[string, number, number]} spec.accent
+ * @param {[string, number, number]} [spec.success] - replaces the traditional jade
+ */
+function family({ name, description, palettes, tone, primary, secondary, tertiary, accent, success }) {
+	const status = success ? { ...TRADITIONAL_STATUS, success: success[0] } : TRADITIONAL_STATUS
+	const statusOverrides = success ? { ...TRADITIONAL_OVERRIDES, success } : TRADITIONAL_OVERRIDES
+	return {
+		name,
+		description,
+		palettes,
+		skin: {
+			...tone.base,
+			primary: primary[0],
+			secondary,
+			tertiary,
+			accent: accent[0],
+			...status,
+			overrides: { ...roleOverrides({ ...statusOverrides, primary, accent }), ...tone.edge }
+		}
+	}
+}
+
 /**
  * zen-sumi — sumi ink on washi paper, a vermillion seal. Quiet, warm, deliberate.
  *
  * secondary is murasaki, not hisui: hisui is success, and a secondary action drawn in the
  * success colour reads as "this succeeded".
  */
-export const zenSumi = {
+export const zenSumi = family({
 	name: 'zen-sumi',
 	description: 'Sumi ink on washi paper with a vermillion seal — quiet, warm, deliberate.',
 	palettes: { kami, sumi, shu, hisui, kohaku, beni, ai, murasaki },
-	skin: {
-		...WARM,
-		primary: 'shu',
-		secondary: 'murasaki',
-		tertiary: 'kohaku',
-		accent: 'shu',
-		...TRADITIONAL_STATUS,
-		overrides: { ...roleOverrides({
-			...TRADITIONAL_OVERRIDES,
-			primary: ['shu', 600, 500],
-			accent: ['shu', 600, 500]
-		}), ...WARM_EDGE }
-	}
-}
+	tone: WARM_TONE,
+	primary: ['shu', 600, 500],
+	secondary: 'murasaki',
+	tertiary: 'kohaku',
+	accent: ['shu', 600, 500]
+})
 
 /** sea-glass — sea teal and open sky over cool mist. Calm, clear, airy. */
-export const seaGlass = {
+export const seaGlass = family({
 	name: 'sea-glass',
 	description: 'Sea teal and open sky over cool mist — calm, clear, airy.',
 	palettes: { kiri, yoru, umi, sora, koke, take, kohaku, beni, ai },
-	skin: {
-		...COOL,
-		primary: 'umi',
-		secondary: 'koke',
-		tertiary: 'sora',
-		accent: 'sora',
-		...TRADITIONAL_STATUS,
-		success: 'take',
-		overrides: { ...roleOverrides({
-			...TRADITIONAL_OVERRIDES,
-			success: ['take', 800, 400],
-			primary: ['umi', 700, 500],
-			accent: ['sora', 700, 500]
-		}), ...COOL_EDGE }
-	}
-}
+	tone: COOL_TONE,
+	primary: ['umi', 700, 500],
+	secondary: 'koke',
+	tertiary: 'sora',
+	accent: ['sora', 700, 500],
+	success: ['take', 800, 400]
+})
 
 /** sakura-ember — bitter-orange embers and cherry blossom on warm paper. Lively, friendly. */
-export const sakuraEmber = {
+export const sakuraEmber = family({
 	name: 'sakura-ember',
 	description: 'Bitter-orange embers and cherry blossom on warm paper — lively, friendly.',
 	palettes: { kami, sumi, daidai, sakura, momo, hisui, kohaku, beni, ai },
-	skin: {
-		...WARM,
-		primary: 'daidai',
-		secondary: 'sakura',
-		tertiary: 'momo',
-		accent: 'momo',
-		...TRADITIONAL_STATUS,
-		overrides: { ...roleOverrides({
-			...TRADITIONAL_OVERRIDES,
-			primary: ['daidai', 700, 500],
-			accent: ['momo', 700, 500]
-		}), ...WARM_EDGE }
-	}
-}
+	tone: WARM_TONE,
+	primary: ['daidai', 700, 500],
+	secondary: 'sakura',
+	tertiary: 'momo',
+	accent: ['momo', 700, 500]
+})
 
 /** fuji-dusk — wisteria and bellflower at dusk over cool mist. Dreamy, focused. */
-export const fujiDusk = {
+export const fujiDusk = family({
 	name: 'fuji-dusk',
 	description: 'Wisteria and bellflower at dusk over cool mist — dreamy, focused.',
 	palettes: { kiri, yoru, fuji, kikyo, murasaki, hisui, kohaku, beni, ai },
-	skin: {
-		...COOL,
-		primary: 'fuji',
-		secondary: 'murasaki',
-		tertiary: 'kikyo',
-		accent: 'kikyo',
-		...TRADITIONAL_STATUS,
-		overrides: { ...roleOverrides({
-			...TRADITIONAL_OVERRIDES,
-			primary: ['fuji', 700, 500],
-			accent: ['kikyo', 700, 500]
-		}), ...COOL_EDGE }
-	}
-}
+	tone: COOL_TONE,
+	primary: ['fuji', 700, 500],
+	secondary: 'murasaki',
+	tertiary: 'kikyo',
+	accent: ['kikyo', 700, 500]
+})
 
 /** moss-garden — moss and running water on warm stone paper. Grounded, fresh. */
-export const mossGarden = {
+export const mossGarden = family({
 	name: 'moss-garden',
 	description: 'Moss and running water on warm stone paper — grounded, fresh.',
 	palettes: { kami, sumi, koke, mizu, umi, wakaba, kohaku, beni, ai },
-	skin: {
-		...WARM,
-		primary: 'koke',
-		secondary: 'umi',
-		tertiary: 'mizu',
-		accent: 'mizu',
-		...TRADITIONAL_STATUS,
-		success: 'wakaba',
-		overrides: { ...roleOverrides({
-			...TRADITIONAL_OVERRIDES,
-			success: ['wakaba', 800, 400],
-			primary: ['koke', 700, 500],
-			accent: ['mizu', 700, 500]
-		}), ...WARM_EDGE }
-	}
-}
+	tone: WARM_TONE,
+	primary: ['koke', 700, 500],
+	secondary: 'umi',
+	tertiary: 'mizu',
+	accent: ['mizu', 700, 500],
+	success: ['wakaba', 800, 400]
+})
 
 /** Every family by name. */
 export const PALETTE_FAMILIES = {

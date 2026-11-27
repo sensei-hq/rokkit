@@ -21,3 +21,5 @@ packages/chart/src/template/**/*.svelte
 **/snippets/**/*.svelte
 **/snippets/**/*.js
 **/snippets/**/*.css
+# Koan demo Source-tab snippets: the fenced code IS the displayed source, verbatim.
+apps/learn/src/lib/koan/demos/*/snippets.md

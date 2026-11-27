@@ -6,8 +6,12 @@ export function hexPath(r) {
 	return `${angles.map((a, i) => `${i === 0 ? 'M' : 'L'}${r * Math.cos(a)},${r * Math.sin(a)}`).join('')}Z`
 }
 
-/** Group points into hexagonal bins and count per bin. */
-function hexBin(rows, xField, yField, xScale, yScale, r) {
+/**
+ * Group points into hexagonal bins and count per bin.
+ * @param {Record<string, unknown>[]} rows
+ * @param {{ xField?: string, yField?: string, xScale: Function, yScale: Function, r: number }} opts
+ */
+function hexBin(rows, { xField, yField, xScale, yScale, r }) {
 	const dx = r * 2 * Math.sin(Math.PI / 3)
 	const dy = r * 1.5
 	const bins = new Map()
@@ -41,7 +45,7 @@ export function buildHexbinMarks({ data, plot, channels, options = {}, alpha, ty
 	if (!data?.length || !xScale || !yScale) return []
 
 	const radius = options.radius ?? 20
-	const bins = hexBin(data, channels.x, channels.y, xScale, yScale, radius)
+	const bins = hexBin(data, { xField: channels.x, yField: channels.y, xScale, yScale, r: radius })
 	const maxCount = Math.max(1, ...bins.map((b) => b.count))
 	const colorScale = plot.continuousColorScale?.scale
 	const a = resolveAlpha(alpha, type, plot.chartPreset)

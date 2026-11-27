@@ -370,13 +370,15 @@ export class GraphState {
 	}
 	/** Whether a drill bar has anything to show: a trail, a load, a failure, or a box to open. */
 	get showsDrillBar(): boolean {
-		return (
-			this.drillPath.length > 0 ||
-			this.pending ||
-			this.drillError !== null ||
-			this.drillTarget !== null ||
-			this.groupAction !== null
-		)
+		return this.#hasDrillState || this.#hasDrillAction
+	}
+	/** A drill is under way: a trail to climb, a level loading, or a failure to report. */
+	get #hasDrillState(): boolean {
+		return this.drillPath.length > 0 || this.pending || this.drillError !== null
+	}
+	/** Something to act on: a box to open, or a group to fold or unfold. */
+	get #hasDrillAction(): boolean {
+		return this.drillTarget !== null || this.groupAction !== null
 	}
 
 	/**

@@ -43,7 +43,12 @@ export default defineConfig({
 				// Data and config (tailwind.json, icons config.json, tsconfig.build.json) — no
 				// statements to run, so they only ever count as 0% lines.
 				'**/*.json',
-				'**/.worktrees/**'
+				// Prose and generated output: READMEs under src/, svelte-check's
+				// `.svelte-kit` copies, and agent worktrees' own checkouts.
+				'**/*.md',
+				'**/.svelte-kit/**',
+				'**/.worktrees/**',
+				'.claude/**'
 			],
 			// Per-file ratchet (enforced on the full `bun run coverage`).
 			//

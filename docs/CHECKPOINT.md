@@ -1,20 +1,24 @@
 # Checkpoint
 
-**Slice:** learn site mobile/tablet layouts — branch `fix/mobile-layout`
-(red 41615d5a8, ba2edd5d0, 230d7c7b2 → green 050bb38a1).
+**Slice:** qlty smells + coverage cleanup and #224 (empty /app conversation
+pane) on `chore/qlty-smells-coverage`, based on develop 84d218180.
 
 **Done:**
-- Header, guides, /app, /chat, home responsive at 360/390/768px.
-- `e2e/mobile-layout.e2e.ts` (27 tests) green; 134-route audit clean at
-  360/390/768/1440; `bun run check` green.
+- #224: generic `DemoConversation` fallback; e2e on every /app demo route.
+- Conversations store characterized and split; packages, chart and learn
+  smells cleared (agent branches cherry-picked).
+- Coverage excludes JSON/markdown/.svelte-kit/.claude; 99.09% lines.
+- `qlty smells --all` reports 0; lint 0/0; `bun run check` green (9390).
 
-**Remaining:** user review; push + PR to develop.
+**Remaining:** full e2e result → push → PR to develop → merge + CI green →
+close #224 with the corrected root cause (missing bespoke branches).
 
-**Next command:** `git push -u origin fix/mobile-layout && gh pr create --base develop`
+**Next command:** `git push -u origin chore/qlty-smells-coverage`
 
-- Stale guides dark-rail e2e updated to the deliberate ink-mute design; full
-  e2e 232/232.
+**Open questions (user):**
+- Suspend the Qlty GitHub App in the org settings (still posts a failing,
+  non-required `qlty check` status).
+- 15 demos use `meta.json`/`snippets.md`, 42 are still inline TS; migrating
+  the rest is an optional mechanical follow-up.
 
-**Open questions (user):** none.
-
-**Known-broken:** none.
+**Known-broken:** none known; sensei MCP down, so no `/sensei:checkpoint`.

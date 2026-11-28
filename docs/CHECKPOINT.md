@@ -8,11 +8,12 @@
 - Schema spec (ajv) validates every card; demo-meta snapshot unchanged.
 - Gates: `bun run check` 9515, e2e 291, lint 0/0, `qlty smells --all` 0.
 
-**Remaining:** push → PR to develop → CI green → merge.
+**Remaining:** none — merged to develop (PR #226, 35fa40fb4).
 
-**Next command:** `git push -u origin chore/demo-meta-files`
+**Next command:** none — awaiting user direction.
 
 **Open questions (user):**
-- Suspend the Qlty GitHub App in org settings (non-required failing status).
+- None. Qlty GitHub App removed (2026-11-28); CI upload stays gated off
+  by the unset `QLTY_ENABLED` repo variable.
 
 **Known-broken:** none; sensei MCP down, so no `/sensei:checkpoint`.
